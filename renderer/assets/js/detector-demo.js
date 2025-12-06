@@ -22,9 +22,101 @@ class RadiationDetectorDemo {
         this.bindEvents();
         this.updateDeviceStatus('disconnected');
         this.logMessage('系统已初始化，等待设备连接...', 'info');
+        
+        // 延迟加载演示数据，确保 ChartModule 已初始化
+        setTimeout(() => {
+            this.loadDemoData();
+        }, 1500);
+    }
+    
+    /**
+     * 加载演示数据
+     */
+    loadDemoData() {
+        if (!window.SimulationDataGenerator) {
+            console.warn('⚠️ 模拟数据生成器未加载，2秒后重试...');
+            setTimeout(() => this.loadDemoData(), 2000);
+            return;
+        }
+        
+        console.log('📊 生成初始演示数据...');
+        const demoData = window.SimulationDataGenerator.generatePurityTestData(95);
+        
+        // 将数据转换为图表格式
+        this.scanData = demoData.points.map(p => ({
+            x: p.position,
+            y: p.counts
+        }));
+        
+        // 检查 ChartModule 是否已初始化
+        if (!window.ChartModule) {
+            console.warn('⚠️ ChartModule 未加载，1秒后重试...');
+            setTimeout(() => this.loadDemoData(), 1000);
+            return;
+        }
+        
+        if (!window.ChartModule.chart) {
+            console.warn('⚠️ ChartModule.chart 未初始化，1秒后重试...');
+            setTimeout(() => this.loadDemoData(), 1000);
+            return;
+        }
+        
+        // 使用 ChartModule 更新图表
+        if (typeof window.ChartModule.updateChart === 'function') {
+            try {
+                console.log(`🎯 准备更新图表: ${this.scanData.length} 个数据点`);
+                window.ChartModule.updateChart(this.scanData);
+                console.log('✅ 通过 ChartModule 更新图表数据');
+                this.logMessage(`✅ 已加载 ${demoData.points.length} 个演示数据点 (0-50mm)`, 'success');
+            } catch (error) {
+                console.error('❌ ChartModule 更新失败:', error);
+                this.updateChartDirectly(demoData);
+            }
+        } else {
+            console.warn('⚠️ ChartModule.updateChart 方法不存在');
+            this.updateChartDirectly(demoData);
+        }
+    }
+    
+    /**
+     * 直接更新图表（备用方法）
+     */
+    updateChartDirectly(demoData) {
+        console.log('🔧 使用备用方法直接更新图表...');
+        
+        if (!this.chart) {
+            console.error('❌ this.chart 不存在');
+            
+            // 尝试从 ChartModule 获取图表
+            if (window.ChartModule && window.ChartModule.chart) {
+                console.log('📊 从 ChartModule 获取图表实例');
+                this.chart = window.ChartModule.chart;
+            } else {
+                console.error('❌ 无法获取任何图表实例');
+                return;
+            }
+        }
+        
+        try {
+            console.log(`📝 更新图表数据: ${this.scanData.length} 个点`);
+            this.chart.data.datasets[0].data = this.scanData;
+            this.chart.data.labels = demoData.points.map(p => p.position.toFixed(1));
+            this.chart.update('active');
+            console.log('✅ 直接更新图表完成');
+            this.logMessage(`✅ 已加载 ${demoData.points.length} 个演示数据点 (0-50mm)`, 'success');
+        } catch (error) {
+            console.error('❌ 直接更新图表失败:', error);
+        }
     }
     
     initializeChart() {
+        // 优先使用 ChartModule，不创建独立图表
+        if (window.ChartModule) {
+            console.log('✅ detector-demo: 使用 ChartModule 管理图表');
+            this.chart = window.ChartModule.chart; // 引用现有图表
+            return;
+        }
+        
         // 检查Chart.js是否加载
         if (typeof Chart === 'undefined') {
             console.warn('⚠️ Chart.js未加载，使用文本模式显示数据');
@@ -38,26 +130,12 @@ class RadiationDetectorDemo {
             return;
         }
 
-        // 如果图表已存在，先销毁
-        if (this.chart) {
-            try {
-                this.chart.destroy();
-                console.log('detector-demo: 已销毁现有图表实例');
-            } catch (error) {
-                console.warn('detector-demo: 销毁图表时出错:', error);
-            }
-            this.chart = null;
-        }
-
         // 检查是否有其他图表实例使用该 canvas
         const existingChart = Chart.getChart(canvas);
         if (existingChart) {
-            try {
-                existingChart.destroy();
-                console.log('detector-demo: 销毁了其他模块的图表实例');
-            } catch (error) {
-                console.warn('detector-demo: 销毁其他图表时出错:', error);
-            }
+            console.log('✅ detector-demo: 使用现有图表实例');
+            this.chart = existingChart;
+            return;
         }
 
         const ctx = canvas.getContext('2d');
@@ -257,6 +335,27 @@ class RadiationDetectorDemo {
             this.logout();
         });
         
+        // 导出功能绑定
+        const exportRawBtn = document.getElementById('export-raw-data');
+        if (exportRawBtn) {
+            exportRawBtn.addEventListener('click', () => this.exportRawData());
+        }
+        
+        const exportAnalysisBtn = document.getElementById('export-analysis-report');
+        if (exportAnalysisBtn) {
+            exportAnalysisBtn.addEventListener('click', () => this.exportAnalysisReport());
+        }
+        
+        const exportPdfBtn = document.getElementById('export-pdf-report');
+        if (exportPdfBtn) {
+            exportPdfBtn.addEventListener('click', () => this.exportPdfReport());
+        }
+        
+        const printBtn = document.getElementById('print-report');
+        if (printBtn) {
+            printBtn.addEventListener('click', () => this.printReport());
+        }
+        
         // 自动登录演示
         this.autoLoginDemo();
     }
@@ -342,8 +441,10 @@ class RadiationDetectorDemo {
     }
     
     startScanning() {
+        // 即使没有设备连接，也允许使用模拟数据演示
         if (!this.isConnected) {
-            alert('请先连接设备');
+            console.log('📊 设备未连接，使用模拟数据生成器...');
+            this.runSimulationDemo();
             return;
         }
         
@@ -353,17 +454,136 @@ class RadiationDetectorDemo {
         this.totalPoints = 0;
         this.scanProgress = 0;
         
-        document.getElementById('start-detection-btn').disabled = true;
-        document.getElementById('stop-detection-btn').disabled = false;
+        const startBtn = document.getElementById('start-detection-btn');
+        const stopBtn = document.getElementById('stop-detection-btn');
+        if (startBtn) startBtn.disabled = true;
+        if (stopBtn) stopBtn.disabled = false;
         
         this.logMessage('开始硅胶板扫描...', 'info');
         this.updateSampleStatus('扫描中');
         
-        const scanRange = parseFloat(document.getElementById('scan-range').value);
-        const stepSize = parseFloat(document.getElementById('position-step').value);
-        const integrationTime = parseFloat(document.getElementById('integration-time').value) * 1000;
+        const scanRange = parseFloat(document.getElementById('scan-range')?.value || 50);
+        const stepSize = parseFloat(document.getElementById('position-step')?.value || 0.1);
+        const integrationTime = parseFloat(document.getElementById('integration-time')?.value || 1) * 1000;
         
         this.startScanTimer(scanRange, stepSize, integrationTime);
+    }
+    
+    /**
+     * 运行模拟演示
+     */
+    runSimulationDemo() {
+        if (!window.SimulationDataGenerator) {
+            alert('模拟数据生成器未加载，请刷新页面重试');
+            return;
+        }
+
+        this.logMessage('🎯 启动模拟扫描演示...', 'info');
+        this.isScanning = true;
+
+        // 生成模拟数据
+        const simData = window.SimulationDataGenerator.generatePurityTestData(92);
+        this.logMessage(`✅ 生成了 ${simData.points.length} 个数据点`, 'success');
+
+        // 应用数据处理算法
+        const processed = window.SimulationDataGenerator.applyDataProcessing(simData.points);
+        
+        // 显示处理结果
+        this.displayProcessedResults(processed);
+
+        // 逐步显示数据（模拟实时扫描）
+        this.animateSimulationData(simData.points, processed);
+    }
+
+    /**
+     * 动画显示模拟数据
+     */
+    animateSimulationData(points, processed) {
+        this.scanData = [];
+        let currentIndex = 0;
+        const updateInterval = 50; // 50ms 更新一次
+
+        const animate = () => {
+            if (currentIndex >= points.length || !this.isScanning) {
+                this.stopScanning();
+                this.showFinalAnalysis(processed);
+                return;
+            }
+
+            const point = points[currentIndex];
+            this.scanData.push({ x: point.position, y: point.counts });
+            
+            // 更新实时显示
+            this.updateRealTimeData(
+                point.position, 
+                point.counts, 
+                currentIndex + 1, 
+                points.length
+            );
+
+            // 更新图表
+            if (this.chart) {
+                this.updateChart();
+            }
+
+            currentIndex++;
+            setTimeout(animate, updateInterval);
+        };
+
+        animate();
+    }
+
+    /**
+     * 显示处理后的结果
+     */
+    displayProcessedResults(processed) {
+        console.log('📊 数据处理结果:');
+        console.log('  - 原始数据点:', processed.original.length);
+        console.log('  - 平滑后数据点:', processed.smoothed.length);
+        console.log('  - 检测到峰数:', processed.peaks.length);
+        
+        if (processed.peaks.length > 0) {
+            console.log('  - 峰值信息:');
+            processed.peaks.forEach((peak, i) => {
+                console.log(`    峰 ${i + 1}: 位置=${peak.position}mm, 高度=${peak.height}, 面积=${peak.area}`);
+            });
+        }
+
+        if (processed.purity) {
+            console.log('  - 放射化学纯度:', processed.purity.purity + '%');
+            console.log('  - 主峰位置:', processed.purity.mainPeak.position + 'mm');
+        }
+
+        this.logMessage(`检测到 ${processed.peaks.length} 个峰`, 'info');
+    }
+
+    /**
+     * 显示最终分析结果
+     */
+    showFinalAnalysis(processed) {
+        this.logMessage('✅ 扫描完成！开始分析...', 'success');
+
+        if (processed.purity) {
+            this.logMessage(
+                `放射化学纯度: ${processed.purity.purity}% (主峰位置: ${processed.purity.mainPeak.position}mm)`,
+                'success'
+            );
+
+            // 显示详细峰信息
+            processed.purity.peakDetails.forEach((peak, i) => {
+                this.logMessage(
+                    `峰 ${peak.peakNumber}: ${peak.position}mm (${peak.percentage}%)`,
+                    'info'
+                );
+            });
+
+            // 计算 Rf 值
+            const rfValue = window.SimulationDataGenerator.calculateRf(
+                processed.purity.mainPeak.position,
+                50
+            );
+            this.logMessage(`主峰 Rf 值: ${rfValue}`, 'info');
+        }
     }
     
     startScanTimer(range, step, delay) {
@@ -431,8 +651,10 @@ class RadiationDetectorDemo {
         
         this.isScanning = false;
         
-        document.getElementById('start-detection-btn').disabled = false;
-        document.getElementById('stop-detection-btn').disabled = true;
+        const startBtn = document.getElementById('start-detection-btn');
+        const stopBtn = document.getElementById('stop-detection-btn');
+        if (startBtn) startBtn.disabled = false;
+        if (stopBtn) stopBtn.disabled = true;
         
         this.logMessage('扫描完成', 'success');
         this.updateSampleStatus('扫描完成');
@@ -455,7 +677,8 @@ class RadiationDetectorDemo {
                 clearInterval(interval);
                 this.logMessage('探头已归零', 'success');
             }
-            document.getElementById('current-position').textContent = position.toFixed(1);
+            const posElem = document.getElementById('current-position');
+            if (posElem) posElem.textContent = position.toFixed(1);
         }, 50);
     }
     
@@ -465,12 +688,18 @@ class RadiationDetectorDemo {
         this.totalPoints = 0;
         this.scanProgress = 0;
         
-        // 重置显示
-        document.getElementById('current-position').textContent = '0.0';
-        document.getElementById('current-counts').textContent = '0';
-        document.getElementById('total-points').textContent = '0';
-        document.getElementById('scan-progress').textContent = '0';
-        document.querySelector('.progress-fill').style.width = '0%';
+        // 重置显示 - 添加安全检查
+        const currentPosition = document.getElementById('current-position');
+        const currentCounts = document.getElementById('current-counts');
+        const totalPoints = document.getElementById('total-points');
+        const scanProgress = document.getElementById('scan-progress');
+        const progressFill = document.querySelector('.progress-fill');
+        
+        if (currentPosition) currentPosition.textContent = '0.0';
+        if (currentCounts) currentCounts.textContent = '0';
+        if (totalPoints) totalPoints.textContent = '0';
+        if (scanProgress) scanProgress.textContent = '0';
+        if (progressFill) progressFill.style.width = '0%';
         
         // 重置图表
         if (this.chart) {
@@ -595,17 +824,121 @@ class RadiationDetectorDemo {
     }
     
     enableExportFunctions() {
-        document.getElementById('export-raw-data').disabled = false;
-        document.getElementById('export-analysis-report').disabled = false;
-        document.getElementById('export-pdf-report').disabled = false;
-        document.getElementById('print-report').disabled = false;
+        const exportRawBtn = document.getElementById('export-raw-data');
+        const exportAnalysisBtn = document.getElementById('export-analysis-report');
+        const exportPdfBtn = document.getElementById('export-pdf-report');
+        const printBtn = document.getElementById('print-report');
+        
+        if (exportRawBtn) exportRawBtn.disabled = false;
+        if (exportAnalysisBtn) exportAnalysisBtn.disabled = false;
+        if (exportPdfBtn) exportPdfBtn.disabled = false;
+        if (printBtn) printBtn.disabled = false;
     }
     
     disableExportFunctions() {
-        document.getElementById('export-raw-data').disabled = true;
-        document.getElementById('export-analysis-report').disabled = true;
-        document.getElementById('export-pdf-report').disabled = true;
-        document.getElementById('print-report').disabled = true;
+        const exportRawBtn = document.getElementById('export-raw-data');
+        const exportAnalysisBtn = document.getElementById('export-analysis-report');
+        const exportPdfBtn = document.getElementById('export-pdf-report');
+        const printBtn = document.getElementById('print-report');
+        
+        if (exportRawBtn) exportRawBtn.disabled = true;
+        if (exportAnalysisBtn) exportAnalysisBtn.disabled = true;
+        if (exportPdfBtn) exportPdfBtn.disabled = true;
+        if (printBtn) printBtn.disabled = true;
+    }
+    
+    /**
+     * 导出原始数据 (CSV格式)
+     */
+    exportRawData() {
+        if (this.scanData.length === 0) {
+            alert('没有可导出的数据');
+            return;
+        }
+        
+        let csv = '位置(mm),计数率(cps),时间戳\n';
+        this.scanData.forEach((point, index) => {
+            const timestamp = new Date(Date.now() - (this.scanData.length - index) * 100).toISOString();
+            csv += `${point.x},${point.y},${timestamp}\n`;
+        });
+        
+        this.downloadFile(csv, 'raw-data.csv', 'text/csv');
+        this.logMessage('原始数据已导出', 'success');
+    }
+    
+    /**
+     * 导出分析报告 (JSON格式)
+     */
+    exportAnalysisReport() {
+        if (!this.currentAnalysis) {
+            alert('请先进行数据分析');
+            return;
+        }
+        
+        const report = {
+            timestamp: new Date().toISOString(),
+            scanData: this.scanData,
+            analysis: this.currentAnalysis,
+            metadata: {
+                totalPoints: this.scanData.length,
+                scanRange: '0-50mm',
+                user: localStorage.getItem('currentUser') || 'demo'
+            }
+        };
+        
+        const json = JSON.stringify(report, null, 2);
+        this.downloadFile(json, 'analysis-report.json', 'application/json');
+        this.logMessage('分析报告已导出', 'success');
+    }
+    
+    /**
+     * 导出PDF报告
+     */
+    async exportPdfReport() {
+        this.logMessage('正在生成PDF报告...', 'info');
+        
+        try {
+            // 使用 ReportExporter 模块
+            if (window.ReportExporter) {
+                await window.ReportExporter.generateReport({
+                    template: 'standard',
+                    format: 'pdf',
+                    data: {
+                        scanData: this.scanData,
+                        analysis: this.currentAnalysis
+                    }
+                });
+                this.logMessage('PDF报告已生成', 'success');
+            } else {
+                alert('PDF导出功能需要报告导出模块');
+            }
+        } catch (error) {
+            console.error('PDF导出失败:', error);
+            alert('PDF导出失败，请查看控制台');
+        }
+    }
+    
+    /**
+     * 打印报告
+     */
+    printReport() {
+        this.logMessage('准备打印报告...', 'info');
+        window.print();
+    }
+    
+    /**
+     * 下载文件助手
+     */
+    downloadFile(content, filename, mimeType) {
+        const blob = new Blob([content], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
     }
     
     updateChart() {
@@ -653,11 +986,45 @@ class RadiationDetectorDemo {
             <span class="log-message">${message}</span>
         `;
         
-        logContainer.appendChild(logEntry);
-        logContainer.scrollTop = logContainer.scrollHeight;
+        if (logContainer) {
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
         
         // 更新日志统计
         this.updateLogStats();
+        
+        // 持久化日志到数据库
+        this.saveLogToDatabase(message, level);
+    }
+    
+    /**
+     * 保存日志到数据库
+     */
+    async saveLogToDatabase(message, level) {
+        try {
+            const logData = {
+                timestamp: new Date().toISOString(),
+                message: message,
+                level: level,
+                user: localStorage.getItem('currentUser') || 'demo',
+                session: sessionStorage.getItem('sessionId') || Date.now().toString()
+            };
+            
+            const response = await fetch('/api/logs/system', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(logData)
+            });
+            
+            if (!response.ok) {
+                console.warn('日志保存失败:', response.statusText);
+            }
+        } catch (error) {
+            console.error('保存日志异常:', error);
+        }
     }
     
     updateLogStats() {

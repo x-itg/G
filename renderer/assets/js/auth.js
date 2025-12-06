@@ -238,13 +238,17 @@ window.Auth = {
                 functionName: 'handleLogin'
             });
             
-            loginError.textContent = errorInfo.userMessage;
-            loginError.style.display = 'block';
+            if (loginError) {
+                loginError.textContent = errorInfo.userMessage;
+                loginError.style.display = 'block';
+            }
             this.log(`登录失败: ${errorInfo.userMessage}`, 'error');
         } finally {
             // 恢复按钮状态
-            submitBtn.disabled = false;
-            submitBtn.textContent = '登录';
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '登录';
+            }
         }
     },
 

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设备管理 - 放射化学纯度检测仪</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        .page-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .page-title {
+            font-size: 28px;
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .back-link:hover {
+            color: #5568d3;
+        }
+
+        .devices-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .device-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+
+        .device-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .device-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .device-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .device-title h3 {
+            color: #2d3748;
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .device-icon {
+            font-size: 32px;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-badge.connected {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-badge.disconnected {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .device-info {
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .info-value {
+            color: #2d3748;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .device-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #2d3748;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .btn-success {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #38a169;
+        }
+
+        .btn-danger {
+            background: #f56565;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #e53e3e;
+        }
+
+        .info-section {
+            background: #f7fafc;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+
+        .info-section h2 {
+            color: #2d3748;
+            margin: 0 0 12px 0;
+            font-size: 20px;
+        }
+
+        .info-section p {
+            color: #4a5568;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .diagnostic-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            margin-top: 30px;
+        }
+
+        .diagnostic-panel h2 {
+            color: #2d3748;
+            margin: 0 0 20px 0;
+            font-size: 22px;
+        }
+
+        .diagnostic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .diagnostic-item {
+            padding: 15px;
+            background: #f7fafc;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .diagnostic-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .diagnostic-label {
+            font-size: 12px;
+            color: #718096;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <a href="index.html" class="back-link">← 返回主页</a>
+        
+        <div class="page-header">
+            <h1 class="page-title">⚙️ 设备管理</h1>
+            <button class="btn btn-primary" id="scan-devices-btn">扫描设备</button>
+        </div>
+
+        <div class="info-section">
+            <h2>设备状态总览</h2>
+            <p>系统当前连接的设备列表。定期检查设备状态以确保检测系统正常运行。</p>
+        </div>
+
+        <!-- 设备列表 -->
+        <div class="devices-grid" id="devices-container">
+            <!-- 碘化钠探头 -->
+            <div class="device-card">
+                <div class="device-header">
+                    <div class="device-title">
+                        <span class="device-icon">🔬</span>
+                        <h3>碘化钠探头</h3>
+                    </div>
+                    <span class="status-badge disconnected" id="probe-status-badge">未连接</span>
+                </div>
+                <div class="device-info">
+                    <div class="info-item">
+                        <span class="info-label">设备ID</span>
+                        <span class="info-value">NaI-001</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">端口</span>
+                        <span class="info-value" id="probe-port">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">波特率</span>
+                        <span class="info-value">115200</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">最后连接</span>
+                        <span class="info-value" id="probe-last-connect">从未</span>
+                    </div>
+                </div>
+                <div class="device-actions">
+                    <button class="btn btn-success" id="connect-probe-btn">连接</button>
+                    <button class="btn btn-secondary" id="test-probe-btn">测试</button>
+                </div>
+            </div>
+
+            <!-- 位置控制器 -->
+            <div class="device-card">
+                <div class="device-header">
+                    <div class="device-title">
+                        <span class="device-icon">📏</span>
+                        <h3>位置控制器</h3>
+                    </div>
+                    <span class="status-badge disconnected" id="position-status-badge">未连接</span>
+                </div>
+                <div class="device-info">
+                    <div class="info-item">
+                        <span class="info-label">设备ID</span>
+                        <span class="info-value">POS-001</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">端口</span>
+                        <span class="info-value" id="position-port">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">行程范围</span>
+                        <span class="info-value">0-200mm</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">最后连接</span>
+                        <span class="info-value" id="position-last-connect">从未</span>
+                    </div>
+                </div>
+                <div class="device-actions">
+                    <button class="btn btn-success" id="connect-position-btn">连接</button>
+                    <button class="btn btn-secondary" id="test-position-btn">测试</button>
+                </div>
+            </div>
+
+            <!-- 数据采集卡 -->
+            <div class="device-card">
+                <div class="device-header">
+                    <div class="device-title">
+                        <span class="device-icon">💾</span>
+                        <h3>数据采集卡</h3>
+                    </div>
+                    <span class="status-badge connected" id="daq-status-badge">已连接</span>
+                </div>
+                <div class="device-info">
+                    <div class="info-item">
+                        <span class="info-label">设备ID</span>
+                        <span class="info-value">DAQ-001</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">采样率</span>
+                        <span class="info-value">10kHz</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">通道数</span>
+                        <span class="info-value">4</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">缓冲区</span>
+                        <span class="info-value">正常</span>
+                    </div>
+                </div>
+                <div class="device-actions">
+                    <button class="btn btn-danger" id="disconnect-daq-btn">断开</button>
+                    <button class="btn btn-secondary" id="test-daq-btn">测试</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 诊断信息 -->
+        <div class="diagnostic-panel">
+            <h2>系统诊断</h2>
+            <div class="diagnostic-grid">
+                <div class="diagnostic-item">
+                    <div class="diagnostic-value" id="diag-cpu">--</div>
+                    <div class="diagnostic-label">CPU使用率 (%)</div>
+                </div>
+                <div class="diagnostic-item">
+                    <div class="diagnostic-value" id="diag-memory">--</div>
+                    <div class="diagnostic-label">内存使用 (MB)</div>
+                </div>
+                <div class="diagnostic-item">
+                    <div class="diagnostic-value" id="diag-uptime">--</div>
+                    <div class="diagnostic-label">运行时间 (h)</div>
+                </div>
+                <div class="diagnostic-item">
+                    <div class="diagnostic-value" id="diag-scans">0</div>
+                    <div class="diagnostic-label">累计扫描次数</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/error-handler.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/device-manager.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            DeviceManager.init();
+            
+            // 模拟系统诊断数据
+            setInterval(() => {
+                document.getElementById('diag-cpu').textContent = (Math.random() * 30 + 10).toFixed(1);
+                document.getElementById('diag-memory').textContent = (Math.random() * 200 + 100).toFixed(0);
+                document.getElementById('diag-uptime').textContent = (Math.random() * 24).toFixed(1);
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

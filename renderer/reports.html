@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>报告导出 - 放射化学纯度检测仪</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        .page-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .page-title {
+            font-size: 28px;
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .template-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .template-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+            border-color: #667eea;
+        }
+
+        .template-card h3 {
+            color: #2d3748;
+            margin: 0 0 12px 0;
+            font-size: 20px;
+        }
+
+        .template-card p {
+            color: #718096;
+            margin: 0 0 16px 0;
+            line-height: 1.6;
+        }
+
+        .template-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #667eea;
+            color: white;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #2d3748;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .back-link:hover {
+            color: #5568d3;
+        }
+
+        .info-section {
+            background: #f7fafc;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+
+        .info-section h2 {
+            color: #2d3748;
+            margin: 0 0 12px 0;
+            font-size: 20px;
+        }
+
+        .info-section ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #4a5568;
+        }
+
+        .info-section li {
+            margin-bottom: 8px;
+        }
+
+        /* Modal 样式复用 detection-logs.html 的样式 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #2d3748;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #718096;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .success-message {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #48bb78;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            margin: 0 auto 20px;
+        }
+
+        .report-info h4 {
+            color: #2d3748;
+            margin: 20px 0 15px 0;
+            font-size: 18px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-item label {
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .summary-item {
+            text-align: center;
+            padding: 15px;
+            background: #f7fafc;
+            border-radius: 8px;
+        }
+
+        .summary-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .summary-label {
+            font-size: 12px;
+            color: #718096;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <a href="index.html" class="back-link">← 返回主页</a>
+        
+        <div class="page-header">
+            <h1 class="page-title">📄 报告导出</h1>
+            <button class="btn btn-primary" id="generate-report-btn">生成新报告</button>
+        </div>
+
+        <div class="info-section">
+            <h2>报告类型说明</h2>
+            <ul>
+                <li><strong>标准检测报告</strong> - 包含完整的检测数据、图表和分析结果</li>
+                <li><strong>简要报告</strong> - 仅包含关键数据和统计摘要</li>
+                <li><strong>Excel数据导出</strong> - 原始数据表格，便于进一步分析</li>
+            </ul>
+        </div>
+
+        <h2 style="color: #2d3748; margin-bottom: 20px;">可用报告模板</h2>
+        <div class="templates-grid" id="templates-container">
+            <div class="no-data">加载中...</div>
+        </div>
+
+        <div class="info-section">
+            <h2>使用说明</h2>
+            <ul>
+                <li>点击"生成新报告"按钮开始创建报告</li>
+                <li>选择合适的报告模板和导出格式</li>
+                <li>设置日期范围以筛选检测数据</li>
+                <li>可选择是否包含图表和原始数据</li>
+                <li>报告生成后可立即下载或查看</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 脚本 -->
+    <script src="assets/js/error-handler.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/ui.js"></script>
+    <script src="assets/js/report-exporter.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            ReportExporter.init();
+
+            // 渲染模板卡片
+            if (ReportExporter.templates && ReportExporter.templates.length > 0) {
+                const container = document.getElementById('templates-container');
+                container.innerHTML = ReportExporter.templates.map(template => `
+                    <div class="template-card" onclick="selectTemplate('${template.type}')">
+                        <h3>${template.name}</h3>
+                        <p>${template.description}</p>
+                        <span class="template-badge">${template.format.toUpperCase()}</span>
+                    </div>
+                `).join('');
+            }
+        });
+
+        function selectTemplate(type) {
+            ReportExporter.showGenerateDialog();
+            // 预选模板
+            setTimeout(() => {
+                const select = document.getElementById('report-template');
+                if (select) select.value = type;
+            }, 100);
+        }
+    </script>
+</body>
+</html>

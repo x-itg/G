@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>账号管理 - 放射化学纯度检测仪</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        .page-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .page-title {
+            font-size: 28px;
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .back-link:hover {
+            color: #5568d3;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: #718096;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab:hover {
+            color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .users-table {
+            width: 100%;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .users-table thead {
+            background: #667eea;
+            color: white;
+        }
+
+        .users-table th,
+        .users-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .users-table tbody tr:hover {
+            background: #f7fafc;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .role-badge.admin {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .role-badge.operator {
+            background: #feebc8;
+            color: #7c2d12;
+        }
+
+        .role-badge.viewer {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-badge.active {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-badge.inactive {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #2d3748;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #2d3748;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #718096;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .audit-log-item {
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .audit-log-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .audit-log-time {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .audit-log-user {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .audit-log-action {
+            color: #4a5568;
+            margin-bottom: 5px;
+        }
+
+        .audit-log-details {
+            font-size: 13px;
+            color: #718096;
+            background: #f7fafc;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #718096;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <a href="index.html" class="back-link">← 返回主页</a>
+        
+        <div class="page-header">
+            <h1 class="page-title">👥 账号管理与审计</h1>
+            <button class="btn btn-primary" id="add-user-btn">添加用户</button>
+        </div>
+
+        <!-- 统计卡片 -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="total-users">0</div>
+                <div class="stat-label">总用户数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="active-users">0</div>
+                <div class="stat-label">活跃用户</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="admin-count">0</div>
+                <div class="stat-label">管理员</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="audit-count">0</div>
+                <div class="stat-label">审计记录</div>
+            </div>
+        </div>
+
+        <!-- 选项卡 -->
+        <div class="tabs">
+            <button class="tab active" data-tab="users">用户列表</button>
+            <button class="tab" data-tab="permissions">权限管理</button>
+            <button class="tab" data-tab="audit">审计追踪</button>
+            <button class="tab" data-tab="signatures">电子签名</button>
+        </div>
+
+        <!-- 用户列表 -->
+        <div class="tab-content active" id="users-tab">
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>用户名</th>
+                        <th>姓名</th>
+                        <th>角色</th>
+                        <th>权限级别</th>
+                        <th>状态</th>
+                        <th>最后登录</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="users-tbody">
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 40px;">加载中...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 权限管理 -->
+        <div class="tab-content" id="permissions-tab">
+            <h3 style="color: #2d3748; margin-bottom: 20px;">三级权限系统 (CFR 21 Part 11)</h3>
+            <div class="permissions-info" style="background: white; padding: 20px; border-radius: 8px;">
+                <h4>权限级别说明：</h4>
+                <ul style="line-height: 1.8;">
+                    <li><strong>Level 1 - 查看者 (Viewer)</strong>: 只能查看数据，无法修改</li>
+                    <li><strong>Level 2 - 操作员 (Operator)</strong>: 可执行检测、查看和导出数据</li>
+                    <li><strong>Level 3 - 管理员 (Administrator)</strong>: 完全访问权限，可管理用户和系统设置</li>
+                </ul>
+                <div id="permissions-matrix" style="margin-top: 20px;"></div>
+            </div>
+        </div>
+
+        <!-- 审计追踪 -->
+        <div class="tab-content" id="audit-tab">
+            <div style="margin-bottom: 20px; display: flex; gap: 10px;">
+                <input type="date" id="audit-start-date" class="btn btn-secondary">
+                <input type="date" id="audit-end-date" class="btn btn-secondary">
+                <button class="btn btn-primary" id="load-audit-btn">加载审计日志</button>
+                <button class="btn btn-secondary" id="export-audit-btn">导出审计日志</button>
+            </div>
+            <div id="audit-logs-container">
+                <div style="text-align: center; padding: 40px; color: #718096;">
+                    点击"加载审计日志"查看记录
+                </div>
+            </div>
+        </div>
+
+        <!-- 电子签名 -->
+        <div class="tab-content" id="signatures-tab">
+            <h3 style="color: #2d3748; margin-bottom: 20px;">电子签名记录</h3>
+            <div id="signatures-container" style="background: white; padding: 20px; border-radius: 8px;">
+                <p>电子签名用于验证关键操作的授权人身份...</p>
+                <div id="signatures-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加/编辑用户模态框 -->
+    <div class="modal-overlay" id="user-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">添加用户</h3>
+                <button class="close-modal" onclick="closeUserModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="user-form">
+                    <div class="form-group">
+                        <label for="username">用户名 *</label>
+                        <input type="text" id="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fullname">姓名 *</label>
+                        <input type="text" id="fullname" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">密码 *</label>
+                        <input type="password" id="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="role">角色 *</label>
+                        <select id="role" required>
+                            <option value="viewer">查看者 (Level 1)</option>
+                            <option value="operator">操作员 (Level 2)</option>
+                            <option value="admin">管理员 (Level 3)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">邮箱</label>
+                        <input type="email" id="email">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeUserModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveUser()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/error-handler.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script>
+        // 模拟用户数据
+        let users = [
+            { id: 1, username: 'admin', fullname: '系统管理员', role: 'admin', level: 3, status: 'active', lastLogin: '2025-12-07 10:30:00' },
+            { id: 2, username: 'operator1', fullname: '操作员张三', role: 'operator', level: 2, status: 'active', lastLogin: '2025-12-07 09:15:00' },
+            { id: 3, username: 'viewer1', fullname: '查看员李四', role: 'viewer', level: 1, status: 'active', lastLogin: '2025-12-06 16:45:00' }
+        ];
+
+        let auditLogs = [];
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUsers();
+            loadStats();
+            bindTabEvents();
+            loadAuditLogs();
+        });
+
+        function loadUsers() {
+            const tbody = document.getElementById('users-tbody');
+            tbody.innerHTML = users.map(user => `
+                <tr>
+                    <td>${user.id}</td>
+                    <td>${user.username}</td>
+                    <td>${user.fullname}</td>
+                    <td><span class="role-badge ${user.role}">${getRoleName(user.role)}</span></td>
+                    <td>Level ${user.level}</td>
+                    <td><span class="status-badge ${user.status}">${user.status === 'active' ? '活跃' : '禁用'}</span></td>
+                    <td>${user.lastLogin}</td>
+                    <td>
+                        <button class="btn btn-secondary btn-small" onclick="editUser(${user.id})">编辑</button>
+                        <button class="btn btn-secondary btn-small" onclick="deleteUser(${user.id})">删除</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getRoleName(role) {
+            const names = {
+                'admin': '管理员',
+                'operator': '操作员',
+                'viewer': '查看者'
+            };
+            return names[role] || role;
+        }
+
+        function loadStats() {
+            document.getElementById('total-users').textContent = users.length;
+            document.getElementById('active-users').textContent = users.filter(u => u.status === 'active').length;
+            document.getElementById('admin-count').textContent = users.filter(u => u.role === 'admin').length;
+            document.getElementById('audit-count').textContent = auditLogs.length;
+        }
+
+        function bindTabEvents() {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // 移除所有激活状态
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    // 激活当前标签
+                    tab.classList.add('active');
+                    const tabName = tab.getAttribute('data-tab');
+                    document.getElementById(tabName + '-tab').classList.add('active');
+                });
+            });
+        }
+
+        function loadAuditLogs() {
+            // 生成模拟审计日志
+            auditLogs = [
+                { time: '2025-12-07 10:35:22', user: 'admin', action: '创建用户', details: '创建了用户 operator1' },
+                { time: '2025-12-07 10:30:15', user: 'admin', action: '登录系统', details: 'IP: 192.168.1.100' },
+                { time: '2025-12-07 09:15:40', user: 'operator1', action: '开始检测', details: '样品ID: S001, 设备: 碘化钠探头' },
+                { time: '2025-12-07 09:10:30', user: 'operator1', action: '登录系统', details: 'IP: 192.168.1.105' },
+                { time: '2025-12-06 16:50:12', user: 'admin', action: '修改系统设置', details: '更新了扫描参数' }
+            ];
+            
+            document.getElementById('load-audit-btn').addEventListener('click', displayAuditLogs);
+            document.getElementById('export-audit-btn').addEventListener('click', exportAuditLogs);
+        }
+
+        function displayAuditLogs() {
+            const container = document.getElementById('audit-logs-container');
+            container.innerHTML = auditLogs.map(log => `
+                <div class="audit-log-item">
+                    <div class="audit-log-header">
+                        <span class="audit-log-user">${log.user}</span>
+                        <span class="audit-log-time">${log.time}</span>
+                    </div>
+                    <div class="audit-log-action"><strong>操作:</strong> ${log.action}</div>
+                    <div class="audit-log-details">${log.details}</div>
+                </div>
+            `).join('');
+        }
+
+        function exportAuditLogs() {
+            const csv = '时间,用户,操作,详情\n' + 
+                auditLogs.map(log => `"${log.time}","${log.user}","${log.action}","${log.details}"`).join('\n');
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'audit-logs.csv';
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // 添加用户按钮
+        document.getElementById('add-user-btn').addEventListener('click', () => {
+            document.getElementById('modal-title').textContent = '添加用户';
+            document.getElementById('user-form').reset();
+            document.getElementById('user-modal').classList.add('active');
+        });
+
+        function closeUserModal() {
+            document.getElementById('user-modal').classList.remove('active');
+        }
+
+        function saveUser() {
+            const newUser = {
+                id: users.length + 1,
+                username: document.getElementById('username').value,
+                fullname: document.getElementById('fullname').value,
+                role: document.getElementById('role').value,
+                level: document.getElementById('role').value === 'admin' ? 3 : (document.getElementById('role').value === 'operator' ? 2 : 1),
+                status: 'active',
+                lastLogin: '从未登录'
+            };
+            
+            users.push(newUser);
+            loadUsers();
+            loadStats();
+            closeUserModal();
+            
+            alert('用户已添加成功！');
+        }
+
+        function editUser(id) {
+            const user = users.find(u => u.id === id);
+            if (user) {
+                document.getElementById('modal-title').textContent = '编辑用户';
+                document.getElementById('username').value = user.username;
+                document.getElementById('fullname').value = user.fullname;
+                document.getElementById('role').value = user.role;
+                document.getElementById('user-modal').classList.add('active');
+            }
+        }
+
+        function deleteUser(id) {
+            if (confirm('确定要删除此用户吗？')) {
+                users = users.filter(u => u.id !== id);
+                loadUsers();
+                loadStats();
+            }
+        }
+    </script>
+</body>
+</html>

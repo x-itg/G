@@ -113,6 +113,11 @@
             <div class="login-footer">
                 <p><strong>默认登录信息：</strong></p>
                 <p>管理员账户: admin / Admin123!</p>
+                <p style="margin-top: 15px;">
+                    <a href="register.html" style="color: #667eea; text-decoration: none; font-weight: 500;">
+                        还没有账号？立即注册 →
+                    </a>
+                </p>
             </div>
         </div>
     </div>
@@ -151,6 +156,33 @@
                             <span id="position-status" class="status-dot disconnected"></span>
                             <span id="position-status-text">未就绪</span>
                         </div>
+                    </div>
+                </div>
+
+                <!-- 功能导航 -->
+                <div class="function-navigation">
+                    <h3>系统功能</h3>
+                    <div class="nav-buttons">
+                        <a href="detection-logs.html" class="nav-btn">
+                            <span class="nav-icon">🔍</span>
+                            <span class="nav-text">检测日志</span>
+                        </a>
+                        <a href="reports.html" class="nav-btn">
+                            <span class="nav-icon">📄</span>
+                            <span class="nav-text">报告导出</span>
+                        </a>
+                        <a href="account-management.html" class="nav-btn">
+                            <span class="nav-icon">👥</span>
+                            <span class="nav-text">账号管理</span>
+                        </a>
+                        <a href="device-manager.html" class="nav-btn">
+                            <span class="nav-icon">⚙️</span>
+                            <span class="nav-text">设备管理</span>
+                        </a>
+                        <a href="system-settings.html" class="nav-btn">
+                            <span class="nav-icon">🛠️</span>
+                            <span class="nav-text">系统设置</span>
+                        </a>
                     </div>
                 </div>
 
@@ -566,11 +598,37 @@
     <script src="assets/js/system-settings.js"></script>
     <script src="assets/js/detection-logs.js"></script>
     <script src="assets/js/report-exporter.js"></script>
+    <script src="assets/js/simulation-data-generator.js"></script>
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/chart.js"></script>
     <script src="assets/js/serial.js"></script>
     <script src="assets/js/analysis.js"></script>
     <script src="assets/js/ui.js"></script>
+    
+    <!-- 占位模块 - 兼容性适配器 -->
+    <script>
+        // ProbeControl 占位模块
+        window.ProbeControl = {
+            init() {
+                console.log('🔬 ProbeControl 模块已初始化（占位模式）');
+                return Promise.resolve();
+            }
+        };
+        
+        // DataProcessing 占位模块
+        window.DataProcessing = {
+            init() {
+                console.log('📊 DataProcessing 模块已初始化（占位模式）');
+                return Promise.resolve();
+            }
+        };
+        
+        // 初始化模拟数据生成器
+        if (window.SimulationDataGenerator) {
+            window.SimulationDataGenerator.init();
+        }
+    </script>
+    
     <script src="assets/js/main.js"></script>
     <script src="assets/js/detector-demo.js"></script>
 </body>

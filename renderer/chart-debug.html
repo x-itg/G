@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图表调试工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #1a202c;
+            color: white;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #38a169;
+        }
+
+        .btn-danger {
+            background: #f56565;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #e53e3e;
+        }
+
+        .chart-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 500px;
+            margin-bottom: 20px;
+        }
+
+        .log-section {
+            background: #2d3748;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .log-item {
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+
+        .log-success {
+            background: rgba(72, 187, 120, 0.2);
+            color: #9ae6b4;
+        }
+
+        .log-error {
+            background: rgba(245, 101, 101, 0.2);
+            color: #fc8181;
+        }
+
+        .log-info {
+            background: rgba(102, 126, 234, 0.2);
+            color: #a3bffa;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: #2d3748;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #a0aec0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 图表调试工具</h1>
+            <p>检测图表渲染问题和数据加载</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="data-count">0</div>
+                <div class="stat-label">数据点</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="chart-status">未知</div>
+                <div class="stat-label">图表状态</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="render-time">0ms</div>
+                <div class="stat-label">渲染时间</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="update-count">0</div>
+                <div class="stat-label">更新次数</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-primary" onclick="testChartCreation()">1. 测试创建图表</button>
+            <button class="btn btn-primary" onclick="testDataGeneration()">2. 测试数据生成</button>
+            <button class="btn btn-success" onclick="testChartUpdate()">3. 测试更新图表</button>
+            <button class="btn btn-success" onclick="testFullFlow()">4. 完整流程测试</button>
+            <button class="btn btn-danger" onclick="clearChart()">清空图表</button>
+            <button class="btn btn-danger" onclick="clearLogs()">清空日志</button>
+        </div>
+
+        <div class="chart-section">
+            <h3 style="color: #2d3748; margin-bottom: 15px;">图表显示区</h3>
+            <div class="chart-container">
+                <canvas id="debug-chart"></canvas>
+            </div>
+        </div>
+
+        <div class="log-section" id="log-container">
+            <div class="log-item log-info">系统就绪，等待测试...</div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let chart = null;
+        let testData = [];
+        let updateCount = 0;
+
+        function log(message, type = 'info') {
+            const container = document.getElementById('log-container');
+            const logItem = document.createElement('div');
+            logItem.className = `log-item log-${type}`;
+            logItem.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            container.insertBefore(logItem, container.firstChild);
+            console.log(message);
+        }
+
+        function testChartCreation() {
+            const startTime = performance.now();
+            log('开始创建图表...', 'info');
+
+            try {
+                const canvas = document.getElementById('debug-chart');
+                
+                // 销毁现有图表
+                if (chart) {
+                    chart.destroy();
+                    log('已销毁现有图表', 'info');
+                }
+
+                // 检查是否有其他实例
+                const existing = Chart.getChart(canvas);
+                if (existing) {
+                    existing.destroy();
+                    log('销毁了其他图表实例', 'info');
+                }
+
+                const ctx = canvas.getContext('2d');
+
+                chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        datasets: [{
+                            label: '计数率 (cps)',
+                            data: [],
+                            borderColor: '#667eea',
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top'
+                            },
+                            title: {
+                                display: true,
+                                text: '辐射计数率曲线',
+                                font: {
+                                    size: 16,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                type: 'linear',
+                                title: {
+                                    display: true,
+                                    text: '位置 (mm)'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: '计数率 (cps)'
+                                },
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+
+                const endTime = performance.now();
+                document.getElementById('render-time').textContent = `${(endTime - startTime).toFixed(2)}ms`;
+                document.getElementById('chart-status').textContent = '已创建';
+                
+                log(`✅ 图表创建成功，耗时 ${(endTime - startTime).toFixed(2)}ms`, 'success');
+            } catch (error) {
+                log(`❌ 图表创建失败: ${error.message}`, 'error');
+                console.error(error);
+            }
+        }
+
+        function testDataGeneration() {
+            log('开始生成模拟数据...', 'info');
+
+            try {
+                // 生成 0-50mm 的模拟数据
+                testData = [];
+                const numPoints = 501;
+
+                for (let i = 0; i < numPoints; i++) {
+                    const position = i * 0.1; // 0.1mm 步长
+                    
+                    // 生成两个高斯峰
+                    const peak1 = 3000 * Math.exp(-Math.pow(position - 25, 2) / 20);
+                    const peak2 = 1500 * Math.exp(-Math.pow(position - 35, 2) / 15);
+                    const background = 50 + Math.random() * 20;
+                    const noise = (Math.random() - 0.5) * 50;
+                    
+                    const counts = peak1 + peak2 + background + noise;
+
+                    testData.push({
+                        x: position,
+                        y: Math.max(0, counts)
+                    });
+                }
+
+                document.getElementById('data-count').textContent = testData.length;
+                log(`✅ 生成了 ${testData.length} 个数据点 (0-50mm)`, 'success');
+                log(`数据范围: ${testData[0].x.toFixed(1)}mm - ${testData[testData.length-1].x.toFixed(1)}mm`, 'info');
+                
+                const maxY = Math.max(...testData.map(p => p.y));
+                log(`最大计数率: ${maxY.toFixed(0)} cps`, 'info');
+            } catch (error) {
+                log(`❌ 数据生成失败: ${error.message}`, 'error');
+                console.error(error);
+            }
+        }
+
+        function testChartUpdate() {
+            if (!chart) {
+                log('❌ 请先创建图表！', 'error');
+                return;
+            }
+
+            if (testData.length === 0) {
+                log('❌ 请先生成数据！', 'error');
+                return;
+            }
+
+            const startTime = performance.now();
+            log('开始更新图表数据...', 'info');
+
+            try {
+                // 更新图表数据
+                chart.data.datasets[0].data = testData;
+                
+                // 自动调整坐标轴范围
+                const xValues = testData.map(p => p.x);
+                const yValues = testData.map(p => p.y);
+                
+                chart.options.scales.x.min = Math.min(...xValues);
+                chart.options.scales.x.max = Math.max(...xValues);
+                chart.options.scales.y.max = Math.max(...yValues) * 1.2;
+                
+                // 执行更新
+                chart.update('active');
+                
+                updateCount++;
+                document.getElementById('update-count').textContent = updateCount;
+                
+                const endTime = performance.now();
+                document.getElementById('render-time').textContent = `${(endTime - startTime).toFixed(2)}ms`;
+                
+                log(`✅ 图表更新成功，显示 ${testData.length} 个点`, 'success');
+                log(`耗时: ${(endTime - startTime).toFixed(2)}ms`, 'info');
+            } catch (error) {
+                log(`❌ 图表更新失败: ${error.message}`, 'error');
+                console.error(error);
+            }
+        }
+
+        function testFullFlow() {
+            log('🚀 开始完整流程测试...', 'info');
+            
+            setTimeout(() => {
+                testChartCreation();
+                setTimeout(() => {
+                    testDataGeneration();
+                    setTimeout(() => {
+                        testChartUpdate();
+                        log('✅ 完整流程测试完成！', 'success');
+                    }, 500);
+                }, 500);
+            }, 100);
+        }
+
+        function clearChart() {
+            if (chart) {
+                chart.data.datasets[0].data = [];
+                chart.update();
+                testData = [];
+                document.getElementById('data-count').textContent = '0';
+                log('图表已清空', 'info');
+            }
+        }
+
+        function clearLogs() {
+            document.getElementById('log-container').innerHTML = '<div class="log-item log-info">日志已清空</div>';
+        }
+
+        // 页面加载时自动运行测试
+        window.addEventListener('load', () => {
+            log('🔧 图表调试工具已加载', 'success');
+            log('Chart.js 版本: ' + Chart.version, 'info');
+            
+            // 自动运行完整测试
+            setTimeout(() => {
+                testFullFlow();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

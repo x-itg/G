@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统总览 - 放射化学纯度检测仪</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        body {
+            background: #f7fafc;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .quick-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .quick-link-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .quick-link-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+
+        .quick-link-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .quick-link-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .quick-link-desc {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .feature-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .feature-section h2 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-item {
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .feature-item h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .feature-item p {
+            color: #718096;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .feature-item ul {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+
+        .feature-item li {
+            color: #4a5568;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .status-active {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-pending {
+            background: #feebc8;
+            color: #7c2d12;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .compliance-info {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .compliance-info h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .compliance-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .compliance-item {
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.2);
+            padding: 10px 15px;
+            border-radius: 8px;
+        }
+
+        .compliance-item::before {
+            content: '✓';
+            margin-right: 10px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔬 放射化学纯度检测仪验证系统</h1>
+            <p>CFR 21 Part 11 合规的硅胶板色谱扫描分析平台</p>
+        </div>
+
+        <div class="compliance-info">
+            <h3>🛡️ 合规性特性</h3>
+            <div class="compliance-list">
+                <div class="compliance-item">CFR 21 Part 11 合规</div>
+                <div class="compliance-item">完整审计追踪</div>
+                <div class="compliance-item">电子签名验证</div>
+                <div class="compliance-item">三级权限控制</div>
+                <div class="compliance-item">数据完整性保护</div>
+                <div class="compliance-item">自动备份恢复</div>
+            </div>
+        </div>
+
+        <div class="quick-links">
+            <a href="index.html" class="quick-link-card">
+                <div class="quick-link-icon">🏠</div>
+                <div class="quick-link-title">主控制台</div>
+                <div class="quick-link-desc">开始检测、实时监控、数据可视化</div>
+            </a>
+
+            <a href="simulation-test.html" class="quick-link-card">
+                <div class="quick-link-icon">🧪</div>
+                <div class="quick-link-title">模拟测试<span class="status-badge status-active">新功能</span></div>
+                <div class="quick-link-desc">测试0-50mm辐射扫描曲线生成</div>
+            </a>
+
+            <a href="account-management.html" class="quick-link-card">
+                <div class="quick-link-icon">👥</div>
+                <div class="quick-link-title">账号管理<span class="status-badge status-active">新功能</span></div>
+                <div class="quick-link-desc">用户管理、权限分配、审计追踪</div>
+            </a>
+
+            <a href="register.html" class="quick-link-card">
+                <div class="quick-link-icon">📝</div>
+                <div class="quick-link-title">用户注册<span class="status-badge status-active">新功能</span></div>
+                <div class="quick-link-desc">新用户账号申请和注册</div>
+            </a>
+
+            <a href="detection-logs.html" class="quick-link-card">
+                <div class="quick-link-icon">🔍</div>
+                <div class="quick-link-title">检测日志</div>
+                <div class="quick-link-desc">查看历史检测记录和详细数据</div>
+            </a>
+
+            <a href="reports.html" class="quick-link-card">
+                <div class="quick-link-icon">📄</div>
+                <div class="quick-link-title">报告导出</div>
+                <div class="quick-link-desc">生成和导出检测报告</div>
+            </a>
+
+            <a href="device-manager.html" class="quick-link-card">
+                <div class="quick-link-icon">⚙️</div>
+                <div class="quick-link-title">设备管理</div>
+                <div class="quick-link-desc">设备连接、校准和诊断</div>
+            </a>
+
+            <a href="system-settings.html" class="quick-link-card">
+                <div class="quick-link-icon">🛠️</div>
+                <div class="quick-link-title">系统设置</div>
+                <div class="quick-link-desc">参数配置、系统维护</div>
+            </a>
+        </div>
+
+        <div class="feature-section">
+            <h2>核心功能模块</h2>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <h3>🔬 检测与扫描</h3>
+                    <p>高精度硅胶板色谱扫描系统</p>
+                    <ul>
+                        <li>0-50mm扫描范围</li>
+                        <li>0.1mm位置精度</li>
+                        <li>实时计数率监测</li>
+                        <li>自动峰识别</li>
+                    </ul>
+                </div>
+
+                <div class="feature-item">
+                    <h3>🧪 模拟数据生成</h3>
+                    <p>无需硬件的演示和测试</p>
+                    <ul>
+                        <li>真实辐射曲线模拟</li>
+                        <li>可调纯度参数 (70-99%)</li>
+                        <li>Poisson 噪声模型</li>
+                        <li>Gaussian 峰拟合</li>
+                    </ul>
+                </div>
+
+                <div class="feature-item">
+                    <h3>👥 用户管理</h3>
+                    <p>三级权限控制系统</p>
+                    <ul>
+                        <li>Level 1: 查看者 (Viewer)</li>
+                        <li>Level 2: 操作员 (Operator)</li>
+                        <li>Level 3: 管理员 (Admin)</li>
+                        <li>用户注册与审批</li>
+                    </ul>
+                </div>
+
+                <div class="feature-item">
+                    <h3>📋 审计追踪</h3>
+                    <p>完整的操作记录系统</p>
+                    <ul>
+                        <li>所有操作自动记录</li>
+                        <li>用户、时间、IP追踪</li>
+                        <li>不可篡改的日志</li>
+                        <li>导出审计报告</li>
+                    </ul>
+                </div>
+
+                <div class="feature-item">
+                    <h3>📊 数据分析</h3>
+                    <p>智能数据处理算法</p>
+                    <ul>
+                        <li>移动平均平滑</li>
+                        <li>基线校正</li>
+                        <li>峰检测与积分</li>
+                        <li>纯度自动计算</li>
+                    </ul>
+                </div>
+
+                <div class="feature-item">
+                    <h3>📄 报告生成</h3>
+                    <p>多格式报告导出</p>
+                    <ul>
+                        <li>CSV 原始数据</li>
+                        <li>JSON 结构化数据</li>
+                        <li>PDF 专业报告</li>
+                        <li>直接打印功能</li>
+                    </ul>
+                </div>
+
+                <div class="feature-item">
+                    <h3>✍️ 电子签名</h3>
+                    <p>合规的签名验证</p>
+                    <ul>
+                        <li>双因素认证</li>
+                        <li>时间戳记录</li>
+                        <li>签名不可伪造</li>
+                        <li>签名历史追溯</li>
+                    </ul>
+                </div>
+
+                <div class="feature-item">
+                    <h3>💾 数据管理</h3>
+                    <p>安全的数据存储</p>
+                    <ul>
+                        <li>自动数据备份</li>
+                        <li>数据加密存储</li>
+                        <li>版本控制</li>
+                        <li>数据恢复功能</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="feature-section">
+            <h2>技术架构</h2>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <h3>前端技术</h3>
+                    <ul>
+                        <li>原生 JavaScript (模块化)</li>
+                        <li>Chart.js 数据可视化</li>
+                        <li>响应式 CSS 设计</li>
+                        <li>无障碍 ARIA 支持</li>
+                    </ul>
+                </div>
+
+                <div class="feature-item">
+                    <h3>后端架构</h3>
+                    <ul>
+                        <li>Express.js API 服务器</li>
+                        <li>SimplifiedDatabaseManager</li>
+                        <li>JWT 令牌认证</li>
+                        <li>RESTful API 设计</li>
+                    </ul>
+                </div>
+
+                <div class="feature-item">
+                    <h3>合规标准</h3>
+                    <ul>
+                        <li>CFR 21 Part 11</li>
+                        <li>电子记录规范</li>
+                        <li>电子签名标准</li>
+                        <li>数据完整性要求</li>
+                    </ul>
+                </div>
+
+                <div class="feature-item">
+                    <h3>安全特性</h3>
+                    <ul>
+                        <li>密码加密存储</li>
+                        <li>会话超时管理</li>
+                        <li>CSP 内容安全策略</li>
+                        <li>SQL 注入防护</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="feature-section" style="text-align: center;">
+            <h2>开始使用</h2>
+            <p style="color: #718096; margin-bottom: 20px;">选择下面的选项开始您的工作流程</p>
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="index.html" class="btn">🔬 开始检测</a>
+                <a href="simulation-test.html" class="btn">🧪 测试模拟</a>
+                <a href="account-management.html" class="btn">👥 管理账号</a>
+                <a href="register.html" class="btn">📝 注册账号</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

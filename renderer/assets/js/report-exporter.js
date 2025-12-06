@@ -12,8 +12,11 @@ window.ReportExporter = {
      */
     init() {
         console.log('📄 初始化报告导出模块...');
-        this.loadTemplates();
         this.bindEvents();
+        // 只在报告页面加载模板
+        if (document.getElementById('templates-container') || document.getElementById('generate-report-btn')) {
+            this.loadTemplates();
+        }
         console.log('✅ 报告导出模块初始化完成');
     },
 

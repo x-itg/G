@@ -21,7 +21,10 @@ window.DetectionLogs = {
     init() {
         console.log('🔍 初始化检测日志模块...');
         this.bindEvents();
-        this.loadLogs();
+        // 只在日志页面加载数据
+        if (document.getElementById('logs-container')) {
+            this.loadLogs();
+        }
         console.log('✅ 检测日志模块初始化完成');
     },
 
@@ -108,7 +111,7 @@ window.DetectionLogs = {
     renderLogs() {
         const container = document.getElementById('logs-container');
         if (!container) {
-            console.warn('日志容器未找到');
+            // 主页没有日志容器，静默返回
             return;
         }
 

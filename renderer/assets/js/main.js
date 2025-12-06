@@ -176,23 +176,27 @@ window.MainApp = {
                     console.log(`✅ ${name} 模块初始化完成`);
                 } else {
                     const errorMsg = `${name} 模块未找到或缺少 init 方法`;
-                    console.error(`❌ ${errorMsg}:`, {
-                        module: module,
-                        hasInit: module && typeof module.init,
-                        windowKeys: Object.keys(window).filter(key => key.toLowerCase().includes(name.toLowerCase()))
-                    });
-                    throw new Error(errorMsg);
+                    if (critical) {
+                        console.error(`❌ ${errorMsg}:`, {
+                            module: module,
+                            hasInit: module && typeof module.init
+                        });
+                        throw new Error(errorMsg);
+                    } else {
+                        console.warn(`⚠️ ${name} 模块跳过 (非关键):`, errorMsg);
+                    }
                 }
             } catch (error) {
-                console.error(`❌ ${name} 模块初始化失败:`, error);
-                console.error(`详细错误信息:`, {
-                    name: error.name,
-                    message: error.message,
-                    stack: error.stack,
-                    module: module
-                });
                 if (critical) {
+                    console.error(`❌ ${name} 模块初始化失败:`, error);
+                    console.error(`详细错误信息:`, {
+                        name: error.name,
+                        message: error.message,
+                        stack: error.stack
+                    });
                     throw new Error(`关键模块 ${name} 初始化失败: ${error.message}`);
+                } else {
+                    console.warn(`⚠️ ${name} 模块初始化跳过 (非关键):`, error.message);
                 }
             }
         }
@@ -250,19 +254,23 @@ window.MainApp = {
 
     // 设置全局事件处理器
     setupGlobalEventHandlers() {
-        // 全局错误处理
+        // 全局错误处理 - 改进版
         window.addEventListener('error', (event) => {
-            console.error('全局错误:', event.error);
-            if (this.modules.Auth) {
-                this.modules.Auth.log(`系统错误: ${event.error.message}`, 'error');
+            if (event.error && event.error.message && event.error.message !== 'Script error.') {
+                console.error('全局错误:', event.error);
+                if (this.modules.Auth) {
+                    this.modules.Auth.log(`系统错误: ${event.error.message}`, 'error');
+                }
             }
         });
 
-        // 未处理的Promise拒绝
+        // 未处理的Promise拒绝 - 改进版
         window.addEventListener('unhandledrejection', (event) => {
-            console.error('未处理的Promise拒绝:', event.reason);
-            if (this.modules.Auth) {
-                this.modules.Auth.log(`异步错误: ${event.reason}`, 'error');
+            if (event.reason && event.reason.message) {
+                console.error('未处理的Promise拒绝:', event.reason);
+                if (this.modules.Auth) {
+                    this.modules.Auth.log(`异步错误: ${event.reason.message}`, 'error');
+                }
             }
         });
 

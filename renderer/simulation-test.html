@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模拟数据测试 - 放射化学纯度检测仪</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f7fafc;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #718096;
+            margin-bottom: 30px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #2d3748;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-bottom: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .data-table th {
+            background: #f7fafc;
+            color: #4a5568;
+            font-weight: 600;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f7fafc;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-success {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-info {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← 返回主页</a>
+        
+        <h1>🧪 模拟数据生成测试</h1>
+        <p class="subtitle">验证0-50mm辐射扫描曲线生成功能</p>
+
+        <div class="controls">
+            <button class="btn btn-primary" onclick="generateCurve(95)">生成95%纯度曲线</button>
+            <button class="btn btn-primary" onclick="generateCurve(85)">生成85%纯度曲线</button>
+            <button class="btn btn-primary" onclick="generateCurve(70)">生成70%纯度曲线</button>
+            <button class="btn btn-secondary" onclick="clearChart()">清空图表</button>
+            <button class="btn btn-secondary" onclick="exportData()">导出数据</button>
+        </div>
+
+        <div class="stats-grid" id="stats-grid" style="display: none;">
+            <div class="stat-card">
+                <div class="stat-value" id="data-points">0</div>
+                <div class="stat-label">数据点数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="purity-value">0%</div>
+                <div class="stat-label">计算纯度</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="max-counts">0</div>
+                <div class="stat-label">最大计数率 (cps)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="scan-time">0s</div>
+                <div class="stat-label">扫描时间</div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="test-chart"></canvas>
+        </div>
+
+        <div id="data-info" style="display: none;">
+            <h3 style="margin-bottom: 15px; color: #2d3748;">数据详情</h3>
+            <div style="max-height: 300px; overflow-y: auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>位置 (mm)</th>
+                            <th>计数率 (cps)</th>
+                            <th>峰位置</th>
+                        </tr>
+                    </thead>
+                    <tbody id="data-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="assets/js/simulation-data-generator.js"></script>
+    <script>
+        let chart = null;
+        let currentData = null;
+
+        // 初始化模拟数据生成器
+        if (window.SimulationDataGenerator) {
+            window.SimulationDataGenerator.init();
+            console.log('✅ 模拟数据生成器已初始化');
+        }
+
+        function generateCurve(purity) {
+            if (!window.SimulationDataGenerator) {
+                alert('模拟数据生成器未加载！');
+                return;
+            }
+
+            console.log(`生成 ${purity}% 纯度曲线...`);
+            currentData = window.SimulationDataGenerator.generatePurityTestData(purity);
+            
+            if (!currentData || !currentData.points) {
+                alert('数据生成失败！');
+                return;
+            }
+
+            console.log(`✅ 生成了 ${currentData.points.length} 个数据点`);
+            
+            // 更新统计数据
+            document.getElementById('stats-grid').style.display = 'grid';
+            document.getElementById('data-points').textContent = currentData.points.length;
+            document.getElementById('purity-value').textContent = currentData.purity.toFixed(1) + '%';
+            
+            const maxCount = Math.max(...currentData.points.map(p => p.counts));
+            document.getElementById('max-counts').textContent = maxCount.toFixed(0);
+            document.getElementById('scan-time').textContent = (currentData.points.length * 0.1).toFixed(1) + 's';
+
+            // 显示图表
+            renderChart(currentData);
+            
+            // 显示数据表
+            displayDataTable(currentData);
+        }
+
+        function renderChart(data) {
+            const canvas = document.getElementById('test-chart');
+            const ctx = canvas.getContext('2d');
+
+            // 销毁现有图表
+            if (chart) {
+                chart.destroy();
+            }
+
+            // 创建新图表
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.points.map(p => p.position.toFixed(1)),
+                    datasets: [{
+                        label: '计数率 (cps)',
+                        data: data.points.map(p => p.counts),
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 1,
+                        pointHoverRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `放射化学纯度: ${data.purity.toFixed(1)}%`,
+                            font: {
+                                size: 18,
+                                weight: 'bold'
+                            }
+                        },
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                title: function(context) {
+                                    return `位置: ${context[0].label} mm`;
+                                },
+                                label: function(context) {
+                                    return `计数率: ${Math.round(context.parsed.y)} cps`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: '扫描位置 (mm)',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: '计数率 (cps)',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            beginAtZero: true
+                        }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+
+            console.log('✅ 图表已渲染');
+        }
+
+        function displayDataTable(data) {
+            const tbody = document.getElementById('data-tbody');
+            const peaks = data.peaks || [];
+            
+            tbody.innerHTML = data.points.slice(0, 50).map((point, index) => {
+                const isPeak = peaks.some(peak => 
+                    Math.abs(peak.position - point.position) < 0.5
+                );
+                
+                return `
+                    <tr>
+                        <td>${point.position.toFixed(2)}</td>
+                        <td>${point.counts.toFixed(0)}</td>
+                        <td>${isPeak ? '<span class="status status-success">峰</span>' : '-'}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            if (data.points.length > 50) {
+                tbody.innerHTML += `
+                    <tr>
+                        <td colspan="3" style="text-align: center; color: #718096;">
+                            ... 还有 ${data.points.length - 50} 个数据点
+                        </td>
+                    </tr>
+                `;
+            }
+
+            document.getElementById('data-info').style.display = 'block';
+        }
+
+        function clearChart() {
+            if (chart) {
+                chart.destroy();
+                chart = null;
+            }
+            document.getElementById('stats-grid').style.display = 'none';
+            document.getElementById('data-info').style.display = 'none';
+            currentData = null;
+        }
+
+        function exportData() {
+            if (!currentData) {
+                alert('请先生成数据！');
+                return;
+            }
+
+            const csv = '位置(mm),计数率(cps)\n' + 
+                currentData.points.map(p => `${p.position},${p.counts}`).join('\n');
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `scan-data-${currentData.purity.toFixed(0)}pct.csv`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // 页面加载时自动生成一个示例曲线
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                generateCurve(95);
+            }, 500);
+        });
+    </script>
+</body>
+</html>

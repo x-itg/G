@@ -71,10 +71,8 @@ window.ChartModule = {
 
         this.canvas = document.getElementById('main-chart');
         if (!this.canvas) {
-            ErrorHandler.handleError(new Error('找不到图表画布元素'), 'chart_canvas_not_found', {
-                expectedId: 'main-chart',
-                functionName: 'init'
-            });
+            console.warn('图表画布元素未找到，跳过图表初始化');
+            this.isInitialized = true; // 标记为已初始化以避免重复尝试
             return;
         }
 
@@ -890,6 +888,47 @@ window.ChartModule = {
             this.chart.options.animation = false;
             this.chart.options.events = ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove', 'wheel'];
         });
+    },
+    
+    // 简单更新图表（用于外部模块）
+    updateChart(dataPoints) {
+        if (!this.chart) {
+            console.warn('ChartModule: 图表未初始化');
+            return;
+        }
+        
+        if (!Array.isArray(dataPoints) || dataPoints.length === 0) {
+            console.warn('ChartModule: 无效的数据点');
+            return;
+        }
+        
+        console.log(`📊 ChartModule: 更新 ${dataPoints.length} 个数据点`);
+        
+        // 转换数据格式
+        const mainData = dataPoints.map(p => ({ x: p.x, y: p.y }));
+        const backgroundData = dataPoints.map(p => ({ x: p.x, y: 0 }));
+        
+        // 更新图表
+        this.chart.data.datasets[0].data = mainData;
+        this.chart.data.datasets[1].data = backgroundData;
+        
+        // 自动调整范围
+        const xValues = mainData.map(p => p.x);
+        const yValues = mainData.map(p => p.y);
+        
+        if (xValues.length > 0) {
+            this.chart.options.scales.x.min = Math.min(...xValues);
+            this.chart.options.scales.x.max = Math.max(...xValues);
+        }
+        
+        if (yValues.length > 0) {
+            this.chart.options.scales.y.min = 0;
+            this.chart.options.scales.y.max = Math.max(...yValues) * 1.2;
+        }
+        
+        // 执行更新
+        this.chart.update('active');
+        console.log('✅ ChartModule: 图表更新完成');
     },
 
     // 防抖更新

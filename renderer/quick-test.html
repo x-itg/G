@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>快速图表测试</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        .chart-box {
+            height: 500px;
+            margin: 20px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+        }
+        .btn {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn:hover {
+            background: #5568d3;
+        }
+        .log {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔬 快速图表测试</h1>
+        <p>测试 Chart.js 是否能正常显示 0-50mm 辐射曲线</p>
+        
+        <div>
+            <button class="btn" onclick="createChart()">创建图表</button>
+            <button class="btn" onclick="loadData()">加载数据</button>
+            <button class="btn" onclick="updateDisplay()">更新显示</button>
+            <button class="btn" onclick="fullTest()">完整测试</button>
+        </div>
+        
+        <div class="chart-box">
+            <canvas id="quick-chart"></canvas>
+        </div>
+        
+        <div class="log" id="log"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let myChart = null;
+        let myData = [];
+
+        function log(msg) {
+            const logDiv = document.getElementById('log');
+            const time = new Date().toLocaleTimeString();
+            logDiv.innerHTML = `[${time}] ${msg}<br>` + logDiv.innerHTML;
+            console.log(msg);
+        }
+
+        function createChart() {
+            log('🎨 开始创建图表...');
+            
+            const canvas = document.getElementById('quick-chart');
+            const ctx = canvas.getContext('2d');
+            
+            // 销毁现有图表
+            if (myChart) {
+                myChart.destroy();
+                log('已销毁旧图表');
+            }
+            
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: '计数率 (cps)',
+                        data: [],
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            title: { display: true, text: '位置 (mm)' }
+                        },
+                        y: {
+                            title: { display: true, text: '计数率 (cps)' },
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: '辐射扫描曲线 (0-50mm)'
+                        }
+                    }
+                }
+            });
+            
+            log('✅ 图表创建完成！');
+        }
+
+        function loadData() {
+            log('📊 生成模拟数据...');
+            myData = [];
+            
+            // 生成 0-50mm 数据，包含两个峰
+            for (let i = 0; i <= 500; i++) {
+                const x = i * 0.1; // 0.1mm 步长
+                const peak1 = 3000 * Math.exp(-Math.pow(x - 25, 2) / 20);
+                const peak2 = 1500 * Math.exp(-Math.pow(x - 35, 2) / 15);
+                const background = 50;
+                const noise = (Math.random() - 0.5) * 50;
+                const y = peak1 + peak2 + background + noise;
+                
+                myData.push({ x: x, y: Math.max(0, y) });
+            }
+            
+            log(`✅ 生成了 ${myData.length} 个数据点`);
+            log(`范围: ${myData[0].x.toFixed(1)} - ${myData[myData.length-1].x.toFixed(1)} mm`);
+        }
+
+        function updateDisplay() {
+            if (!myChart) {
+                log('❌ 请先创建图表！');
+                return;
+            }
+            
+            if (myData.length === 0) {
+                log('❌ 请先加载数据！');
+                return;
+            }
+            
+            log('🔄 更新图表显示...');
+            
+            // 更新数据
+            myChart.data.datasets[0].data = myData;
+            
+            // 更新范围
+            const xVals = myData.map(p => p.x);
+            const yVals = myData.map(p => p.y);
+            myChart.options.scales.x.min = Math.min(...xVals);
+            myChart.options.scales.x.max = Math.max(...xVals);
+            myChart.options.scales.y.max = Math.max(...yVals) * 1.2;
+            
+            // 刷新
+            myChart.update();
+            
+            log('✅ 图表更新完成！应该能看到曲线了');
+        }
+
+        function fullTest() {
+            log('🚀 开始完整测试...');
+            createChart();
+            setTimeout(() => {
+                loadData();
+                setTimeout(() => {
+                    updateDisplay();
+                    log('✅ 完整测试完成！');
+                }, 300);
+            }, 300);
+        }
+
+        // 页面加载后自动运行
+        window.onload = () => {
+            log('系统就绪');
+            setTimeout(() => {
+                fullTest();
+            }, 500);
+        };
+    </script>
+</body>
+</html>

@@ -895,6 +895,84 @@ apiRouter.post('/reports/export', (req, res) => {
     });
 });
 
+// 系统日志 API - 保存日志
+apiRouter.post('/logs/system', async (req, res) => {
+    try {
+        const { timestamp, message, level, user, session } = req.body;
+        
+        const logEntry = {
+            id: Date.now(),
+            timestamp: timestamp || new Date().toISOString(),
+            message: message || '',
+            level: level || 'info',
+            user: user || 'anonymous',
+            session: session || 'unknown',
+            createdAt: new Date().toISOString()
+        };
+        
+        // 保存到数据库
+        if (dbManager) {
+            await dbManager.addRecord('system_logs', logEntry);
+        }
+        
+        res.json({
+            success: true,
+            message: '日志已保存',
+            data: logEntry
+        });
+    } catch (error) {
+        console.error('保存系统日志失败:', error);
+        res.status(500).json({
+            success: false,
+            message: '保存日志失败',
+            error: error.message
+        });
+    }
+});
+
+// 系统日志 API - 查询日志
+apiRouter.get('/logs/system', async (req, res) => {
+    try {
+        const { startDate, endDate, level, user, limit = 100 } = req.query;
+        
+        let logs = [];
+        if (dbManager) {
+            logs = await dbManager.getRecords('system_logs') || [];
+            
+            // 筛选
+            if (startDate) {
+                logs = logs.filter(log => log.timestamp >= startDate);
+            }
+            if (endDate) {
+                logs = logs.filter(log => log.timestamp <= endDate);
+            }
+            if (level) {
+                logs = logs.filter(log => log.level === level);
+            }
+            if (user) {
+                logs = logs.filter(log => log.user === user);
+            }
+            
+            // 限制数量并按时间倒序
+            logs = logs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                .slice(0, parseInt(limit));
+        }
+        
+        res.json({
+            success: true,
+            data: logs,
+            total: logs.length
+        });
+    } catch (error) {
+        console.error('查询系统日志失败:', error);
+        res.status(500).json({
+            success: false,
+            message: '查询日志失败',
+            error: error.message
+        });
+    }
+});
+
 apiRouter.get('/reports/download/:id', (req, res) => {
     const { id } = req.params;
     
