@@ -202,6 +202,28 @@ window.ChartModule = {
 
     // 创建优化后的Chart.js图表
     createOptimizedChart() {
+        // 如果图表已存在，先销毁
+        if (this.chart) {
+            try {
+                this.chart.destroy();
+                console.log('已销毁现有图表实例');
+            } catch (error) {
+                console.warn('销毁图表时出错:', error);
+            }
+            this.chart = null;
+        }
+
+        // 检查 canvas 是否被其他图表实例使用
+        const existingChart = Chart.getChart(this.canvas);
+        if (existingChart) {
+            try {
+                existingChart.destroy();
+                console.log('ChartModule: 销毁了其他模块的图表实例');
+            } catch (error) {
+                console.warn('ChartModule: 销毁其他图表时出错:', error);
+            }
+        }
+
         const ctx = this.canvas.getContext('2d');
         
         const config = {

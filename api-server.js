@@ -603,6 +603,404 @@ apiRouter.get('/devices/status', (req, res) => {
     });
 });
 
+// 硬件状态 API (为 system-settings.js 提供)
+apiRouter.get('/hardware/status', (req, res) => {
+    res.json({
+        success: true,
+        data: {
+            probe: 'offline',
+            detector: 'offline',
+            serialPort: 'disconnected',
+            temperature: 25.5,
+            voltage: 0,
+            lastUpdate: new Date().toISOString()
+        }
+    });
+});
+
+// 获取设备列表
+apiRouter.get('/devices', (req, res) => {
+    res.json({
+        success: true,
+        data: [
+            {
+                id: 1,
+                name: '碘化钠探头',
+                type: 'probe',
+                port: 'COM2',
+                baud_rate: 9600,
+                status: 'offline',
+                model: 'NaI Detector',
+                serial_number: 'NAI-001'
+            },
+            {
+                id: 2,
+                name: '计数器',
+                type: 'detector',
+                port: 'COM3',
+                baud_rate: 9600,
+                status: 'offline',
+                model: 'Counter Module',
+                serial_number: 'CNT-001'
+            }
+        ],
+        total: 2
+    });
+});
+
+// 设备连接
+apiRouter.post('/devices/:deviceId/connect', (req, res) => {
+    const { deviceId } = req.params;
+    res.json({
+        success: true,
+        message: `设备 ${deviceId} 连接成功`,
+        data: {
+            deviceId,
+            status: 'connected',
+            timestamp: new Date().toISOString()
+        }
+    });
+});
+
+// 设备校准
+apiRouter.post('/devices/:deviceId/calibrate', (req, res) => {
+    const { deviceId } = req.params;
+    res.json({
+        success: true,
+        message: `设备 ${deviceId} 校准完成`,
+        data: {
+            deviceId,
+            calibration_status: 'completed',
+            timestamp: new Date().toISOString()
+        }
+    });
+});
+
+// 设备校准历史
+apiRouter.get('/devices/:deviceId/calibrations', (req, res) => {
+    const { deviceId } = req.params;
+    res.json({
+        success: true,
+        data: [],
+        total: 0
+    });
+});
+
+// 设备日志
+apiRouter.get('/devices/:deviceId/logs', (req, res) => {
+    const { deviceId } = req.params;
+    res.json({
+        success: true,
+        data: [],
+        total: 0
+    });
+});
+
+// 系统设置相关API
+apiRouter.get('/settings/system', (req, res) => {
+    res.json({
+        success: true,
+        data: {
+            language: 'zh-CN',
+            theme: 'light',
+            autoSave: true,
+            notifications: true,
+            dateFormat: 'YYYY-MM-DD',
+            timeFormat: '24h',
+            timezone: 'Asia/Shanghai'
+        }
+    });
+});
+
+apiRouter.put('/settings/system', (req, res) => {
+    const settings = req.body;
+    res.json({
+        success: true,
+        message: '系统设置已更新',
+        data: settings
+    });
+});
+
+apiRouter.get('/settings/hardware', (req, res) => {
+    res.json({
+        success: true,
+        data: {
+            detectorType: 'NaI',
+            scanSpeed: 1.0,
+            resolution: 1024,
+            sensitivity: 'high',
+            calibrationDate: new Date().toISOString()
+        }
+    });
+});
+
+apiRouter.get('/settings/preferences', (req, res) => {
+    res.json({
+        success: true,
+        data: {
+            displayMode: 'chart',
+            autoRefresh: true,
+            refreshInterval: 5000,
+            chartType: 'line',
+            showGrid: true
+        }
+    });
+});
+
+apiRouter.post('/settings/preferences', (req, res) => {
+    const preferences = req.body;
+    res.json({
+        success: true,
+        message: '用户偏好已更新',
+        data: preferences
+    });
+});
+
+apiRouter.get('/settings/hardware-status', (req, res) => {
+    res.json({
+        success: true,
+        data: {
+            probe: 'offline',
+            detector: 'offline',
+            serialPort: 'disconnected',
+            temperature: 25.5,
+            voltage: 0
+        }
+    });
+});
+
+apiRouter.get('/settings/export', (req, res) => {
+    const format = req.query.format || 'json';
+    const settings = {
+        system: {
+            language: 'zh-CN',
+            theme: 'light',
+            autoSave: true,
+            notifications: true
+        },
+        hardware: {
+            detectorType: 'NaI',
+            scanSpeed: 1.0,
+            resolution: 1024
+        },
+        preferences: {
+            displayMode: 'chart',
+            autoRefresh: true,
+            refreshInterval: 5000
+        },
+        exportDate: new Date().toISOString(),
+        version: '1.0.0'
+    };
+
+    if (format === 'json') {
+        res.json({
+            success: true,
+            data: settings
+        });
+    } else {
+        res.json({
+            success: false,
+            message: `不支持的导出格式: ${format}`
+        });
+    }
+});
+
+// 检测日志 API
+apiRouter.get('/detection/logs', (req, res) => {
+    const { startDate, endDate, limit = 50, offset = 0 } = req.query;
+    
+    // 模拟检测日志数据
+    const logs = [];
+    const count = parseInt(limit);
+    const now = new Date();
+    
+    for (let i = 0; i < count; i++) {
+        const timestamp = new Date(now.getTime() - i * 3600000); // 每小时一条
+        logs.push({
+            id: 1000 + i,
+            timestamp: timestamp.toISOString(),
+            type: 'scan',
+            device: i % 2 === 0 ? '碘化钠探头' : '计数器',
+            status: 'completed',
+            duration: Math.floor(Math.random() * 300) + 60, // 60-360秒
+            peakCount: Math.floor(Math.random() * 1000) + 100,
+            averageRate: (Math.random() * 100).toFixed(2),
+            operator: 'admin',
+            notes: `检测记录 ${i + 1}`
+        });
+    }
+    
+    res.json({
+        success: true,
+        data: logs,
+        total: 1000, // 总记录数
+        offset: parseInt(offset),
+        limit: count
+    });
+});
+
+apiRouter.get('/detection/logs/:id', (req, res) => {
+    const { id } = req.params;
+    
+    res.json({
+        success: true,
+        data: {
+            id: parseInt(id),
+            timestamp: new Date().toISOString(),
+            type: 'scan',
+            device: '碘化钠探头',
+            status: 'completed',
+            duration: 180,
+            peakCount: 567,
+            averageRate: 45.3,
+            operator: 'admin',
+            notes: '详细检测记录',
+            rawData: Array.from({ length: 100 }, (_, i) => ({
+                position: i,
+                count: Math.floor(Math.random() * 1000)
+            }))
+        }
+    });
+});
+
+// 报告导出 API
+apiRouter.post('/reports/export', (req, res) => {
+    const { reportType, format, startDate, endDate, includeCharts } = req.body;
+    
+    const report = {
+        id: Date.now(),
+        type: reportType || 'detection',
+        format: format || 'pdf',
+        generatedAt: new Date().toISOString(),
+        generatedBy: 'admin',
+        dateRange: {
+            start: startDate || new Date(Date.now() - 7 * 24 * 3600000).toISOString(),
+            end: endDate || new Date().toISOString()
+        },
+        summary: {
+            totalScans: 156,
+            successfulScans: 148,
+            failedScans: 8,
+            averageDuration: 185,
+            totalSamples: 42
+        },
+        downloadUrl: `/api/reports/download/${Date.now()}`,
+        status: 'ready'
+    };
+    
+    res.json({
+        success: true,
+        message: '报告生成成功',
+        data: report
+    });
+});
+
+apiRouter.get('/reports/download/:id', (req, res) => {
+    const { id } = req.params;
+    
+    // 生成示例报告数据
+    const reportContent = {
+        reportId: id,
+        title: '放射化学纯度检测报告',
+        generatedAt: new Date().toISOString(),
+        summary: {
+            totalScans: 156,
+            successfulScans: 148,
+            failedScans: 8,
+            period: '最近7天'
+        },
+        details: [
+            {
+                scanId: 1,
+                date: new Date().toISOString(),
+                device: '碘化钠探头',
+                result: 'Pass',
+                purity: 98.5
+            }
+        ]
+    };
+    
+    res.json({
+        success: true,
+        data: reportContent
+    });
+});
+
+apiRouter.get('/reports/templates', (req, res) => {
+    res.json({
+        success: true,
+        data: [
+            {
+                id: 1,
+                name: '标准检测报告',
+                description: '包含所有检测数据和图表',
+                type: 'standard',
+                format: 'pdf'
+            },
+            {
+                id: 2,
+                name: '简要报告',
+                description: '仅包含汇总数据',
+                type: 'summary',
+                format: 'pdf'
+            },
+            {
+                id: 3,
+                name: 'Excel数据导出',
+                description: '原始数据导出',
+                type: 'data',
+                format: 'xlsx'
+            }
+        ]
+    });
+});
+
+// 系统设置相关API（旧的，保留向后兼容）
+apiRouter.get('/settings/system', (req, res) => {
+    res.json({
+        success: true,
+        data: {
+            language: 'zh-CN',
+            theme: 'light',
+            autoSave: true,
+            notifications: true
+        }
+    });
+});
+
+apiRouter.get('/settings/hardware', (req, res) => {
+    res.json({
+        success: true,
+        data: {
+            detectorType: 'NaI',
+            scanSpeed: 1.0,
+            resolution: 1024
+        }
+    });
+});
+
+apiRouter.get('/settings/preferences', (req, res) => {
+    res.json({
+        success: true,
+        data: {
+            displayMode: 'chart',
+            autoRefresh: true,
+            refreshInterval: 5000
+        }
+    });
+});
+
+apiRouter.get('/settings/hardware-status', (req, res) => {
+    res.json({
+        success: true,
+        data: {
+            probe: 'offline',
+            detector: 'offline',
+            serialPort: 'disconnected'
+        }
+    });
+});
+
 // 数据库性能监控API
 
 // 获取数据库统计信息

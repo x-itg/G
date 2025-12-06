@@ -65,7 +65,7 @@
         "script-src-elem": ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com"],
         "style-src": ["'self'", "'unsafe-inline'"],
         "img-src": ["'self'", "data:", "blob:", "https:"],
-        "connect-src": ["'self'", "http://localhost:*", "ws://localhost:*", "ws:", "wss:"],
+        "connect-src": ["'self'", "http://localhost:*", "ws://localhost:*", "ws:", "wss:", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com"],
         "font-src": ["'self'"],
         "object-src": ["'none'"],
         "media-src": ["'self'"],

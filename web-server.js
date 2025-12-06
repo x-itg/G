@@ -31,7 +31,7 @@ app.use((req, res, next) => {
             "script-src-attr 'unsafe-inline'; " +
             "style-src 'self' 'unsafe-inline'; " +
             "img-src 'self' data: blob:; " +
-            "connect-src 'self' http://localhost:* ws://localhost:*; " +
+            "connect-src 'self' http://localhost:* ws://localhost:* https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; " +
             "font-src 'self';"
         );
     }

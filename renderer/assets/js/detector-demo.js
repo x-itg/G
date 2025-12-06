@@ -38,6 +38,28 @@ class RadiationDetectorDemo {
             return;
         }
 
+        // 如果图表已存在，先销毁
+        if (this.chart) {
+            try {
+                this.chart.destroy();
+                console.log('detector-demo: 已销毁现有图表实例');
+            } catch (error) {
+                console.warn('detector-demo: 销毁图表时出错:', error);
+            }
+            this.chart = null;
+        }
+
+        // 检查是否有其他图表实例使用该 canvas
+        const existingChart = Chart.getChart(canvas);
+        if (existingChart) {
+            try {
+                existingChart.destroy();
+                console.log('detector-demo: 销毁了其他模块的图表实例');
+            } catch (error) {
+                console.warn('detector-demo: 销毁其他图表时出错:', error);
+            }
+        }
+
         const ctx = canvas.getContext('2d');
         
         // 创建演示用的辐射分布曲线

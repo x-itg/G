@@ -176,7 +176,7 @@ node testing/coreFunctionalityTest.js
 修改脚本中的配置参数:
 ```javascript
 const CONFIG = {
-    API_BASE_URL: 'http://localhost:3001',
+    API_BASE_URL: 'http://localhost:3000',
     TIMEOUT: 30000,
     PERFORMANCE_THRESHOLDS: {
         API_RESPONSE_TIME: 200,    // API响应时间阈值

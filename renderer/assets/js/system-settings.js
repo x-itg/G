@@ -77,7 +77,7 @@ class SystemSettingsManager {
      */
     async loadCurrentSettings() {
         try {
-            const response = await fetch('/api/settings', {
+            const response = await fetch('/api/settings/system', {
                 headers: {
                     'Content-Type': 'application/json',
                     'X-Session-Id': localStorage.getItem('sessionId') || ''
@@ -407,7 +407,7 @@ class SystemSettingsManager {
     async saveSystemSettings() {
         try {
             const formData = this.getFormData();
-            const response = await fetch('/api/settings', {
+            const response = await fetch('/api/settings/system', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

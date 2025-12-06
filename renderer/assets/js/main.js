@@ -152,6 +152,8 @@ window.MainApp = {
             { name: 'ChartModule', module: window.ChartModule, critical: false },
             { name: 'AnalysisModule', module: window.AnalysisModule, critical: true },
             { name: 'SystemSettingsManager', module: window.systemSettingsManager, critical: false },
+            { name: 'DetectionLogs', module: window.DetectionLogs, critical: false },
+            { name: 'ReportExporter', module: window.ReportExporter, critical: false },
             { name: 'ProbeControl', module: window.ProbeControl, critical: false },
             { name: 'DataProcessing', module: window.DataProcessing, critical: false }
         ];

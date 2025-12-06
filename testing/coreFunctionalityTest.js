@@ -10,7 +10,7 @@ const { performance } = require('perf_hooks');
 
 // 基础配置
 const CONFIG = {
-    API_BASE_URL: 'http://localhost:3001',
+    API_BASE_URL: 'http://localhost:3000',
     TIMEOUT: 30000,
     PERFORMANCE_THRESHOLDS: {
         API_RESPONSE_TIME: 200, // ms
