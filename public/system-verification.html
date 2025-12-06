@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>放射化学纯度检测仪系统验证</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .system-architecture {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+        }
+        .port-config {
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        .api-endpoint {
+            background: #e3f2fd;
+            border: 1px solid #2196f3;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+        }
+        .serial-flow {
+            background: #fff3e0;
+            border: 2px solid #ff9800;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        .deployment-step {
+            background: #e8f5e8;
+            border-left: 5px solid #4caf50;
+            padding: 1rem;
+            margin: 0.5rem 0;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-running { background-color: #4caf50; }
+        .status-stopped { background-color: #f44336; }
+        .status-warning { background-color: #ff9800; }
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+        .protocol-frame {
+            background: #f1f3f4;
+            border: 1px solid #dadce0;
+            border-radius: 6px;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            font-family: 'Courier New', monospace;
+        }
+        .script-section {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        .nav-pills .nav-link.active {
+            background-color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid mt-4">
+        <div class="system-architecture text-center">
+            <h1><i class="fas fa-radiation-alt"></i> 放射化学纯度检测仪系统验证</h1>
+            <p class="lead">前后端分离架构 · 串口通讯 · CFR 21 Part 11合规</p>
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <i class="fas fa-desktop fa-2x"></i>
+                            <h5 class="card-title">前端服务</h5>
+                            <p class="card-text">端口 3001<br>Web界面与用户交互</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <i class="fas fa-server fa-2x"></i>
+                            <h5 class="card-title">后端服务</h5>
+                            <p class="card-text">端口 3000<br>API接口与数据处理</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body">
+                            <i class="fas fa-microchip fa-2x"></i>
+                            <h5 class="card-title">硬件设备</h5>
+                            <p class="card-text">串口通讯<br>检测器数据采集</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <ul class="nav nav-pills mb-4" id="verificationTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="ports-tab" data-bs-toggle="pill" data-bs-target="#ports" type="button" role="tab">
+                            <i class="fas fa-network-wired"></i> 端口配置
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="api-tab" data-bs-toggle="pill" data-bs-target="#api" type="button" role="tab">
+                            <i class="fas fa-plug"></i> API接口
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="serial-tab" data-bs-toggle="pill" data-bs-target="#serial" type="button" role="tab">
+                            <i class="fas fa-exchange-alt"></i> 串口通讯
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="deployment-tab" data-bs-toggle="pill" data-bs-target="#deployment" type="button" role="tab">
+                            <i class="fas fa-rocket"></i> 部署方法
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="scripts-tab" data-bs-toggle="pill" data-bs-target="#scripts" type="button" role="tab">
+                            <i class="fas fa-file-code"></i> 脚本使用
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="verificationTabsContent">
+                    <!-- 端口配置 -->
+                    <div class="tab-pane fade show active" id="ports" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="port-config">
+                                    <h4><i class="fas fa-globe"></i> 前端服务端口</h4>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <strong>端口:</strong> 3001<br>
+                                            <strong>协议:</strong> HTTP<br>
+                                            <strong>状态:</strong> <span class="status-indicator status-running"></span>运行中
+                                        </div>
+                                        <div class="col-6">
+                                            <strong>访问地址:</strong><br>
+                                            <code>http://localhost:3001</code>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="port-config">
+                                    <h4><i class="fas fa-server"></i> 后端服务端口</h4>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <strong>端口:</strong> 3000<br>
+                                            <strong>协议:</strong> HTTP<br>
+                                            <strong>状态:</strong> <span class="status-indicator status-running"></span>运行中
+                                        </div>
+                                        <div class="col-6">
+                                            <strong>API地址:</strong><br>
+                                            <code>http://localhost:3000/api</code>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="port-config">
+                                    <h4><i class="fas fa-microchip"></i> 串口设备配置</h4>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h6>控制端口</h6>
+                                            <strong>端口:</strong> COM2<br>
+                                            <strong>波特率:</strong> 9600<br>
+                                            <strong>数据位:</strong> 8<br>
+                                            <strong>停止位:</strong> 1<br>
+                                            <strong>校验位:</strong> None
+                                        </div>
+                                        <div class="col-md-4">
+                                            <h6>数据端口</h6>
+                                            <strong>端口:</strong> COM3<br>
+                                            <strong>波特率:</strong> 9600<br>
+                                            <strong>数据位:</strong> 8<br>
+                                            <strong>停止位:</strong> 1<br>
+                                            <strong>校验位:</strong> None
+                                        </div>
+                                        <div class="col-md-4">
+                                            <h6>设备模式</h6>
+                                            <strong>模式:</strong> 模拟设备<br>
+                                            <strong>设备类型:</strong> HPGe检测器<br>
+                                            <strong>采样率:</strong> 1000 Hz<br>
+                                            <strong>数据模式:</strong> 连续<br>
+                                            <strong>状态:</strong> <span class="status-indicator status-running"></span>已连接
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="port-config">
+                                    <h4><i class="fas fa-shield-alt"></i> 安全配置</h4>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <strong>CORS配置:</strong><br>
+                                            <ul>
+                                                <li>允许来源: http://localhost:3001</li>
+                                                <li>允许方法: GET, POST, PUT, DELETE</li>
+                                                <li>允许头: Content-Type, Authorization</li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <strong>安全头:</strong><br>
+                                            <ul>
+                                                <li>X-Content-Type-Options: nosniff</li>
+                                                <li>X-Frame-Options: DENY</li>
+                                                <li>X-XSS-Protection: 1; mode=block</li>
+                                                <li>Content Security Policy: 启用</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- API接口 -->
+                    <div class="tab-pane fade" id="api" role="tabpanel">
+                        <h4><i class="fas fa-plug"></i> API接口展示</h4>
+                        <p class="text-muted">以下是系统的主要API接口及其功能说明</p>
+
+                        <div class="api-endpoint">
+                            <h6><i class="fas fa-heartbeat"></i> 系统健康检查</h6>
+                            <code>GET /api/health</code>
+                            <p>返回系统健康状态和基本信息</p>
+                            <div class="code-block">
+{
+  "status": "healthy",
+  "timestamp": "2025-12-06T18:44:46.000Z",
+  "uptime": "2h 15m 30s",
+  "memory": {
+    "used": "45MB",
+    "total": "512MB"
+  }
+}
+                            </div>
+                        </div>
+
+                        <div class="api-endpoint">
+                            <h6><i class="fas fa-database"></i> 数据获取接口</h6>
+                            <code>GET /api/data/spectrum</code>
+                            <p>获取当前检测光谱数据</p>
+                            <div class="code-block">
+{
+  "spectrum": [0, 15, 23, 45, 67, 89, 123, 156, 189, 234],
+  "channels": 4096,
+  "liveTime": 30000,
+  "realTime": 30500,
+  "countRate": 1000,
+  "timestamp": "2025-12-06T18:44:46.000Z"
+}
+                            </div>
+                        </div>
+
+                        <div class="api-endpoint">
+                            <h6><i class="fas fa-cog"></i> 设备控制接口</h6>
+                            <code>POST /api/devices/control</code>
+                            <p>控制检测设备参数</p>
+                            <div class="code-block">
+{
+  "command": "start_acquisition",
+  "parameters": {
+    "sampleTime": 60000,
+    "liveTime": true,
+    "peakSearch": true
+  }
+}
+                            </div>
+                        </div>
+
+                        <div class="api-endpoint">
+                            <h6><i class="fas fa-user-shield"></i> 用户认证接口</h6>
+                            <code>POST /api/auth/login</code>
+                            <p>用户登录验证</p>
+                            <div class="code-block">
+{
+  "username": "admin",
+  "password": "***",
+  "role": "administrator"
+}
+                            </div>
+                        </div>
+
+                        <div class="api-endpoint">
+                            <h6><i class="fas fa-chart-line"></i> 性能监控接口</h6>
+                            <code>GET /api/monitoring/performance</code>
+                            <p>获取系统性能指标</p>
+                            <div class="code-block">
+{
+  "cpu": {
+    "usage": "15.3%",
+    "cores": 4
+  },
+  "memory": {
+    "used": "45MB",
+    "total": "512MB",
+    "usage": "8.8%"
+  },
+  "api": {
+    "responseTime": "125ms",
+    "requestsPerMinute": 45,
+    "errorRate": "0.2%"
+  }
+}
+                            </div>
+                        </div>
+
+                        <div class="api-endpoint">
+                            <h6><i class="fas fa-clipboard-check"></i> 审计日志接口</h6>
+                            <code>GET /api/audit/logs</code>
+                            <p>获取审计跟踪日志</p>
+                            <div class="code-block">
+{
+  "logs": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "userId": "admin",
+      "action": "data_export",
+      "timestamp": "2025-12-06T18:40:00.000Z",
+      "details": "导出光谱数据到CSV"
+    }
+  ],
+  "total": 1250,
+  "page": 1
+}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 串口通讯 -->
+                    <div class="tab-pane fade" id="serial" role="tabpanel">
+                        <h4><i class="fas fa-exchange-alt"></i> 串口通讯流程</h4>
+                        <p class="text-muted">检测设备与系统间的串口通讯协议和数据流程</p>
+
+                        <div class="serial-flow">
+                            <h5><i class="fas fa-project-diagram"></i> 通讯架构</h5>
+                            <div class="row">
+                                <div class="col-md-4 text-center">
+                                    <div class="card bg-primary text-white">
+                                        <div class="card-body">
+                                            <i class="fas fa-desktop fa-2x"></i>
+                                            <h6>前端界面 (3001)</h6>
+                                            <p>用户操作界面</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <div class="card bg-success text-white">
+                                        <div class="card-body">
+                                            <i class="fas fa-server fa-2x"></i>
+                                            <h6>后端服务 (3000)</h6>
+                                            <p>API接口处理</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <div class="card bg-warning text-white">
+                                        <div class="card-body">
+                                            <i class="fas fa-microchip fa-2x"></i>
+                                            <h6>检测设备</h6>
+                                            <p>串口数据采集</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="serial-flow">
+                            <h5><i class="fas fa-exchange-alt"></i> 数据传输流程</h5>
+                            <ol>
+                                <li><strong>用户操作:</strong> 前端界面发送操作请求到后端API</li>
+                                <li><strong>API处理:</strong> 后端服务接收请求，验证权限</li>
+                                <li><strong>串口发送:</strong> 后端通过串口向检测设备发送命令</li>
+                                <li><strong>设备响应:</strong> 检测设备执行命令并返回数据</li>
+                                <li><strong>数据解析:</strong> 后端解析串口数据并格式化为JSON</li>
+                                <li><strong>前端展示:</strong> 前端获取API数据并更新界面</li>
+                            </ol>
+                        </div>
+
+                        <div class="serial-flow">
+                            <h5><i class="fas fa-code"></i> 通讯协议格式</h5>
+                            <h6>命令帧格式:</h6>
+                            <div class="protocol-frame">
+帧头(0xAA) | 长度 | 命令码 | 数据 | 校验和 | 帧尾(0x55)
+0xAA    | 0x08 | 0x01  | ... | 0xXX  | 0x55
+                            </div>
+
+                            <h6>响应帧格式:</h6>
+                            <div class="protocol-frame">
+帧头(0xAA) | 长度 | 状态码 | 数据 | 校验和 | 帧尾(0x55)
+0xAA    | 0x10 | 0x00  | ... | 0xXX  | 0x55
+                            </div>
+
+                            <h6>常见命令码:</h6>
+                            <ul>
+                                <li>0x01: 开始采集</li>
+                                <li>0x02: 停止采集</li>
+                                <li>0x03: 获取光谱数据</li>
+                                <li>0x04: 设置参数</li>
+                                <li>0x05: 设备状态查询</li>
+                            </ul>
+                        </div>
+
+                        <div class="serial-flow">
+                            <h5><i class="fas fa-chart-line"></i> 数据流向示例</h5>
+                            <div class="code-block">
+// 前端请求
+fetch('http://localhost:3000/api/devices/control', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+        command: 'start_acquisition',
+        parameters: { sampleTime: 30000 }
+    })
+});
+
+// 后端处理
+const serialService = new SerialCommunicationService();
+await serialService.send('COM2', commandFrame);
+
+// 串口发送命令
+// AA 08 01 00 75 30 00 00 00 00 00 XX 55
+
+// 设备响应
+// AA 10 00 00 00 00 01 00 00 00 00 XX 55
+
+// 前端接收响应
+fetch('http://localhost:3000/api/data/spectrum')
+    .then(response => response.json())
+    .then(data => {
+        // 更新光谱图表
+        updateSpectrumChart(data.spectrum);
+    });
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 部署方法 -->
+                    <div class="tab-pane fade" id="deployment" role="tabpanel">
+                        <h4><i class="fas fa-rocket"></i> 系统部署方法</h4>
+                        <p class="text-muted">放射化学纯度检测仪系统完整部署指南</p>
+
+                        <div class="deployment-step">
+                            <h5><i class="fas fa-laptop-code"></i> 步骤1: 环境准备</h5>
+                            <ul>
+                                <li>安装 Node.js 16.0+ 版本</li>
+                                <li>安装 npm 或 yarn 包管理器</li>
+                                <li>确保系统支持串口通讯 (Windows/Linux)</li>
+                                <li>准备检测设备连接线材</li>
+                            </ul>
+                        </div>
+
+                        <div class="deployment-step">
+                            <h5><i class="fas fa-download"></i> 步骤2: 下载系统</h5>
+                            <div class="code-block">
+# 克隆项目
+git clone https://github.com/your-org/radiation-detector.git
+cd radiation-detector
+
+# 或直接下载压缩包并解压
+                            </div>
+                        </div>
+
+                        <div class="deployment-step">
+                            <h5><i class="fas fa-box"></i> 步骤3: 安装依赖</h5>
+                            <div class="code-block">
+# 安装Node.js依赖
+npm install
+
+# 或使用yarn
+yarn install
+                            </div>
+                        </div>
+
+                        <div class="deployment-step">
+                            <h5><i class="fas fa-cog"></i> 步骤4: 配置系统</h5>
+                            <ul>
+                                <li>修改 config/port-config.json 中的端口配置</li>
+                                <li>调整 config/communication-config.json 中的通讯参数</li>
+                                <li>配置 config/system-settings.json 中的设备参数</li>
+                                <li>设置环境变量 (.env文件)</li>
+                            </ul>
+                        </div>
+
+                        <div class="deployment-step">
+                            <h5><i class="fas fa-play"></i> 步骤5: 启动系统</h5>
+                            <div class="code-block">
+# 启动后端服务 (端口3000)
+npm start
+
+# 新开终端启动前端服务 (端口3001)
+npm run dev
+
+# 或使用提供的脚本
+./start-system.ps1
+                            </div>
+                        </div>
+
+                        <div class="deployment-step">
+                            <h5><i class="fas fa-check"></i> 步骤6: 验证部署</h5>
+                            <ul>
+                                <li>访问 http://localhost:3001 确认前端正常</li>
+                                <li>测试 http://localhost:3000/api/health 确认API正常</li>
+                                <li>检查串口连接状态</li>
+                                <li>运行验证脚本确认系统完整性</li>
+                            </ul>
+                        </div>
+
+                        <div class="deployment-step">
+                            <h5><i class="fas fa-shield-alt"></i> 安全配置</h5>
+                            <ul>
+                                <li>设置强密码策略</li>
+                                <li>配置SSL证书 (生产环境)</li>
+                                <li>启用防火墙规则</li>
+                                <li>配置审计日志保留策略</li>
+                                <li>设置定期备份</li>
+                            </ul>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <h6><i class="fas fa-info-circle"></i> 部署注意事项</h6>
+                            <ul class="mb-0">
+                                <li>确保所有端口不被其他程序占用</li>
+                                <li>串口设备权限设置正确</li>
+                                <li>数据库文件读写权限充足</li>
+                                <li>日志目录可写</li>
+                                <li>网络防火墙允许必要端口访问</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- 脚本使用 -->
+                    <div class="tab-pane fade" id="scripts" role="tabpanel">
+                        <h4><i class="fas fa-file-code"></i> PowerShell脚本使用</h4>
+                        <p class="text-muted">系统提供的PowerShell脚本功能和使用方法</p>
+
+                        <div class="script-section">
+                            <h5><i class="fas fa-play-circle"></i> 启动脚本 (start-system.ps1)</h5>
+                            <p>一键启动前后端服务并验证系统状态</p>
+                            <div class="code-block">
+# 使用方法
+.\start-system.ps1
+
+# 功能说明:
+# 1. 检查Node.js环境
+# 2. 安装缺失依赖
+# 3. 启动后端服务 (端口3000)
+# 4. 启动前端服务 (端口3001)
+# 5. 验证服务状态
+# 6. 打开浏览器访问系统
+                            </div>
+                        </div>
+
+                        <div class="script-section">
+                            <h5><i class="fas fa-stop-circle"></i> 停止脚本 (stop-system.ps1)</h5>
+                            <p>安全停止所有服务并清理资源</p>
+                            <div class="code-block">
+# 使用方法
+.\stop-system.ps1
+
+# 功能说明:
+# 1. 停止前端服务
+# 2. 停止后端服务
+# 3. 断开串口连接
+# 4. 清理临时文件
+# 5. 释放系统资源
+                            </div>
+                        </div>
+
+                        <div class="script-section">
+                            <h5><i class="fas fa-sync"></i> 重启脚本 (restart-system.ps1)</h5>
+                            <p>重启所有服务并重新初始化系统</p>
+                            <div class="code-block">
+# 使用方法
+.\restart-system.ps1
+
+# 功能说明:
+# 1. 先执行停止操作
+# 2. 等待服务完全停止
+# 3. 重新初始化数据库
+# 4. 启动所有服务
+# 5. 验证系统状态
+                            </div>
+                        </div>
+
+                        <div class="script-section">
+                            <h5><i class="fas fa-check-circle"></i> 验证脚本 (verify-system.ps1)</h5>
+                            <p>全面验证系统各个组件的状态</p>
+                            <div class="code-block">
+# 使用方法
+.\verify-system.ps1
+
+# 验证项目:
+# ✓ Node.js环境检查
+# ✓ 依赖包检查
+# ✓ 端口占用检查
+# ✓ 配置文件验证
+# ✓ 数据库连接测试
+# ✓ API接口测试
+# ✓ 串口连接测试
+# ✓ 前端页面测试
+# ✓ 性能指标检查
+# ✓ 安全配置验证
+                            </div>
+                        </div>
+
+                        <div class="script-section">
+                            <h5><i class="fas fa-database"></i> 数据库脚本 (reset-database.ps1)</h5>
+                            <p>重置数据库并重新初始化数据</p>
+                            <div class="code-block">
+# 使用方法
+.\reset-database.ps1
+
+# 功能说明:
+# 1. 备份现有数据库
+# 2. 创建新的数据库文件
+# 3. 初始化表结构
+# 4. 创建默认管理员用户
+# 5. 设置默认权限配置
+# 6. 重置审计日志
+                            </div>
+                        </div>
+
+                        <div class="script-section">
+                            <h5><i class="fas fa-wrench"></i> 维护脚本 (maintenance.ps1)</h5>
+                            <p>系统维护和优化操作</p>
+                            <div class="code-block">
+# 使用方法
+.\maintenance.ps1
+
+# 维护操作:
+# 1. 清理过期日志文件
+# 2. 压缩数据库文件
+# 3. 优化缓存性能
+# 4. 检查磁盘空间
+# 5. 更新系统配置
+# 6. 生成系统报告
+                            </div>
+                        </div>
+
+                        <div class="alert alert-warning">
+                            <h6><i class="fas fa-exclamation-triangle"></i> 脚本执行注意事项</h6>
+                            <ul class="mb-0">
+                                <li>以管理员权限运行PowerShell</li>
+                                <li>确保脚本执行策略允许运行</li>
+                                <li>执行前请备份重要数据</li>
+                                <li>生产环境谨慎使用重置脚本</li>
+                            </ul>
+                        </div>
+
+                        <div class="alert alert-success">
+                            <h6><i class="fas fa-lightbulb"></i> 脚本使用技巧</h6>
+                            <ul class="mb-0">
+                                <li>使用 -Force 参数跳过确认提示</li>
+                                <li>使用 -Verbose 参数显示详细输出</li>
+                                <li>定期运行验证脚本检查系统健康</li>
+                                <li>自动化部署时可调用脚本进行初始化</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-info-circle"></i> 系统信息</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>版本:</strong> v2.0.0<br>
+                                <strong>构建时间:</strong> 2025-12-06<br>
+                                <strong>Node.js版本:</strong> <span id="node-version">-</span><br>
+                                <strong>系统架构:</strong> 前后端分离
+                            </div>
+                            <div class="col-md-6">
+                                <strong>CFR 21 Part 11:</strong> <span class="status-indicator status-running"></span>合规<br>
+                                <strong>数据库:</strong> SimplifiedDatabaseManager<br>
+                                <strong>缓存系统:</strong> 已启用<br>
+                                <strong>审计跟踪:</strong> 已启用
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 获取Node.js版本信息
+        fetch('/api/health')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('node-version').textContent = data.nodeVersion || '检测中...';
+            })
+            .catch(error => {
+                document.getElementById('node-version').textContent = '无法获取';
+            });
+
+        // 实时更新端口状态
+        function updatePortStatus() {
+            fetch('/api/status')
+                .then(response => response.json())
+                .then(data => {
+                    // 更新端口状态显示
+                    console.log('系统状态:', data);
+                })
+                .catch(error => {
+                    console.log('无法获取系统状态:', error);
+                });
+        }
+
+        // 定期检查系统状态
+        setInterval(updatePortStatus, 30000);
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updatePortStatus();
+        });
+    </script>
+</body>
+</html>

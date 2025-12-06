@@ -1,0 +1,46 @@
+{
+  "metadata": {
+    "timestamp": "2025-12-06T08:17:05.822Z",
+    "version": "1.0",
+    "source": "radiation-detector-data-collector"
+  },
+  "data": {
+    "performance_metrics": [
+      {
+        "metric_type": "SYSTEM",
+        "metric_name": "disk_usage",
+        "value": "45.57",
+        "unit": "percent",
+        "source": "system_monitor",
+        "timestamp": "2025-12-06T08:17:05.818Z",
+        "alert_level": "NORMAL",
+        "metadata": {
+          "device_id": "/",
+          "total_bytes": 518906970112,
+          "used_bytes": 236482994176,
+          "free_bytes": 282423975936
+        },
+        "id": "57dc7470-32fe-408e-a388-0271f43ef1ae",
+        "created_at": "2025-12-06T08:17:05.822Z"
+      },
+      {
+        "metric_type": "SYSTEM",
+        "metric_name": "memory_usage",
+        "value": "17.62",
+        "unit": "percent",
+        "source": "system_monitor",
+        "timestamp": "2025-12-06T08:17:05.803Z",
+        "alert_level": "NORMAL",
+        "metadata": {
+          "total_bytes": 132648558592,
+          "used_bytes": 23372066816,
+          "free_bytes": 109276491776,
+          "process_rss": 101449728,
+          "process_heap_used": 10063232
+        },
+        "id": "0770949d-ac66-4afc-a51d-f812a8c10a8b",
+        "created_at": "2025-12-06T08:17:05.807Z"
+      }
+    ]
+  }
+}

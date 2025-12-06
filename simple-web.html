@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>辐射检测器软件 - Web演示版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #4f46e5, #7c3aed);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #fff, #f0f9ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .status {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(34, 197, 94, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+        
+        .status::before {
+            content: "✓";
+            color: #22c55e;
+            margin-right: 8px;
+            font-weight: bold;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .feature {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .feature h3 {
+            color: #fbbf24;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .feature p {
+            font-size: 0.9em;
+            line-height: 1.4;
+            opacity: 0.9;
+        }
+        
+        .demo-info {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 30px 0;
+        }
+        
+        .demo-info h3 {
+            color: #60a5fa;
+            margin-bottom: 15px;
+        }
+        
+        .login-credentials {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        .command {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin: 5px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #4f46e5, #7c3aed);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .note {
+            margin-top: 30px;
+            padding: 15px;
+            background: rgba(251, 191, 36, 0.2);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 8px;
+            font-size: 0.9em;
+        }
+        
+        .note strong {
+            color: #fbbf24;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">☢</div>
+        
+        <h1>辐射检测器软件</h1>
+        <div class="subtitle">CFR 21 Part 11 合规版本</div>
+        
+        <div class="status">
+            Web演示版本已成功运行
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>🔐 用户认证系统</h3>
+                <p>三级访问控制（管理员/监督员/操作员），密码策略，电子签名</p>
+            </div>
+            
+            <div class="feature">
+                <h3>📊 实时数据采集</h3>
+                <p>COM2控制探头移动，COM3读取计数率，实时曲线显示</p>
+            </div>
+            
+            <div class="feature">
+                <h3>📝 审计日志</h3>
+                <p>不可变审计跟踪，哈希链技术，完整的操作记录</p>
+            </div>
+            
+            <div class="feature">
+                <h3>🎯 峰值分析</h3>
+                <p>自动峰值检测，面积积分，Rf值计算，放化纯度</p>
+            </div>
+            
+            <div class="feature">
+                <h3>🔧 设备管理</h3>
+                <p>多设备支持，状态监控，校准管理，参数配置</p>
+            </div>
+            
+            <div class="feature">
+                <h3>📋 合规特性</h3>
+                <p>电子记录，完整性检查，密码过期，数据保留</p>
+            </div>
+        </div>
+        
+        <div class="demo-info">
+            <h3>🚀 启动Web服务器版本</h3>
+            <p>要体验完整的Web界面功能，请运行以下命令：</p>
+            
+            <div class="command">install-minimal.bat</div>
+            <div class="command">start-web.bat</div>
+            
+            <div class="login-credentials">
+                <div><strong>默认登录信息：</strong></div>
+                <div>用户名：admin</div>
+                <div>密码：Admin123!</div>
+                <div>角色：管理员</div>
+            </div>
+            
+            <p><strong>访问地址：</strong> http://localhost:3000</p>
+        </div>
+        
+        <div class="buttons">
+            <button class="btn btn-primary" onclick="checkNodeJS()">
+                🔍 检查Node.js环境
+            </button>
+            
+            <button class="btn btn-secondary" onclick="showInstructions()">
+                📋 查看安装指南
+            </button>
+        </div>
+        
+        <div class="note">
+            <strong>注意：</strong> 这是一个HTML演示页面。要运行完整的软件功能，请安装Node.js依赖包并启动Web服务器。
+            详细的安装和使用说明请参考项目中的文档文件。
+        </div>
+    </div>
+    
+    <script>
+        function checkNodeJS() {
+            const result = {
+                node: 'unknown',
+                npm: 'unknown',
+                modules: 'unknown'
+            };
+            
+            // 检查Node.js
+            if (typeof process !== 'undefined' && process.versions) {
+                result.node = process.versions.node;
+            }
+            
+            // 检查npm
+            try {
+                const fs = require('fs');
+                if (fs.existsSync('./package.json')) {
+                    result.npm = '✓ 检测到项目文件';
+                }
+            } catch (e) {
+                result.npm = '✗ 无法访问文件系统';
+            }
+            
+            // 显示结果
+            let message = `Node.js版本: ${result.node}\n`;
+            message += `npm状态: ${result.npm}\n`;
+            message += `模块状态: 请运行 install-minimal.bat 检查\n\n`;
+            message += `如需安装依赖，请运行：\n`;
+            message += `1. install-minimal.bat\n`;
+            message += `2. start-web.bat\n\n`;
+            message += `然后访问: http://localhost:3000`;
+            
+            alert(message);
+        }
+        
+        function showInstructions() {
+            const instructions = `
+📋 安装使用指南
+
+🔧 系统要求：
+- Node.js 16+ 
+- npm 8+
+- Windows/Linux/macOS
+
+🚀 快速开始：
+1. 检查Node.js：node --version
+2. 安装依赖：install-minimal.bat  
+3. 启动应用：start-web.bat
+4. 访问页面：http://localhost:3000
+
+🔑 登录信息：
+- 用户名：admin
+- 密码：Admin123!
+- 角色：管理员
+
+📚 完整文档：
+- README.md - 详细使用说明
+- ELECTRON-FAQ.md - 常见问题
+- 安装脚本说明
+
+⚠️  Web版本说明：
+- 串口功能为模拟实现
+- 数据保存在内存中
+- 适合演示和界面测试
+
+🔗 Electron桌面版：
+如需连接真实硬件设备，
+需要解决网络问题并安装
+Electron完整版本。
+
+💡 提示：Web版本可以完美展示
+软件的界面和CFR 21 Part 11功能！
+            `;
+            
+            alert(instructions);
+        }
+        
+        // 页面加载完成后的动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.querySelector('.container');
+            const features = document.querySelectorAll('.feature');
+            
+            // 添加淡入动画
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                container.style.transition = 'all 0.6s ease';
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 100);
+            
+            // 特性卡片依次显示
+            features.forEach((feature, index) => {
+                feature.style.opacity = '0';
+                feature.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    feature.style.transition = 'all 0.4s ease';
+                    feature.style.opacity = '1';
+                    feature.style.transform = 'translateY(0)';
+                }, 200 + (index * 100));
+            });
+        });
+        
+        // 实时时间显示
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('zh-CN');
+            document.title = `辐射检测器 - ${timeString}`;
+        }
+        
+        setInterval(updateTime, 1000);
+        updateTime();
+    </script>
+</body>
+</html>

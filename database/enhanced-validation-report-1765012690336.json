@@ -1,0 +1,341 @@
+{
+  "timestamp": "2025-12-06T09:18:09.769Z",
+  "overall_status": "WARN",
+  "execution_time": 0,
+  "total_tests": 60,
+  "passed_tests": 48,
+  "failed_tests": 12,
+  "validation_results": {
+    "database_architecture": {
+      "table_structure": {
+        "existing_tables": [
+          "users",
+          "user_permissions",
+          "audit_logs",
+          "performance_metrics",
+          "electronic_signatures"
+        ],
+        "missing_tables": [],
+        "table_counts": {
+          "users": 42,
+          "user_permissions": 43,
+          "audit_logs": 49,
+          "performance_metrics": 4827,
+          "electronic_signatures": 27
+        },
+        "validation_status": "PASS"
+      },
+      "table_relationships": {
+        "foreign_key_integrity": true,
+        "relationship_tests": [
+          {
+            "relationship": "users -> user_permissions",
+            "test": "管理员权限关联",
+            "passed": true,
+            "details": "找到 13 个权限记录"
+          },
+          {
+            "relationship": "audit_logs -> users",
+            "test": "系统日志关联",
+            "passed": true,
+            "details": "系统日志存在"
+          }
+        ],
+        "validation_status": "PASS"
+      },
+      "indexes_constraints": {
+        "performance_metrics": {
+          "query_time_ms": 0,
+          "filtered_records": 0,
+          "index_efficiency": "GOOD"
+        },
+        "audit_log_indexes": {
+          "status": "PASS",
+          "note": "索引结构正确"
+        },
+        "validation_status": "PASS"
+      },
+      "data_integrity": {
+        "null_checks": {
+          "users": true,
+          "permissions": true
+        },
+        "duplicate_checks": {
+          "username": false
+        },
+        "format_checks": {},
+        "validation_status": "WARN"
+      }
+    },
+    "permission_system": {
+      "permission_levels": {
+        "level_1_permissions": [
+          {
+            "user_id": "ec335416-af7c-4146-ade6-1c5e97645d3f",
+            "permission_level": 1,
+            "permission_name": "Level 1 Test Permission",
+            "resource": "detection",
+            "action": "READ",
+            "granted_by": "ec335416-af7c-4146-ade6-1c5e97645d3f",
+            "granted_at": "2025-12-06T09:18:09.872Z",
+            "conditions": null,
+            "is_active": true,
+            "id": "50de9dca-c475-4def-b34d-020f28ccfb11",
+            "created_at": "2025-12-06T09:18:09.874Z"
+          },
+          {
+            "user_id": "ec335416-af7c-4146-ade6-1c5e97645d3f",
+            "permission_level": 1,
+            "permission_name": "Level 1 Test Permission",
+            "resource": "analysis",
+            "action": "CREATE",
+            "granted_by": "ec335416-af7c-4146-ade6-1c5e97645d3f",
+            "granted_at": "2025-12-06T09:18:09.958Z",
+            "conditions": null,
+            "is_active": true,
+            "id": "ab10f7df-28ca-4e7b-b1ab-e16a35ea3291",
+            "created_at": "2025-12-06T09:18:09.965Z"
+          }
+        ],
+        "level_2_permissions": [
+          {
+            "user_id": "ec335416-af7c-4146-ade6-1c5e97645d3f",
+            "permission_level": 2,
+            "permission_name": "Level 2 Test Permission",
+            "resource": "analysis",
+            "action": "UPDATE",
+            "granted_by": "ec335416-af7c-4146-ade6-1c5e97645d3f",
+            "granted_at": "2025-12-06T09:18:10.021Z",
+            "conditions": null,
+            "is_active": true,
+            "id": "8028b470-47ec-4d32-b993-ec057189e90d",
+            "created_at": "2025-12-06T09:18:10.030Z"
+          },
+          {
+            "user_id": "ec335416-af7c-4146-ade6-1c5e97645d3f",
+            "permission_level": 2,
+            "permission_name": "Level 2 Test Permission",
+            "resource": "users",
+            "action": "READ",
+            "granted_by": "ec335416-af7c-4146-ade6-1c5e97645d3f",
+            "granted_at": "2025-12-06T09:18:10.086Z",
+            "conditions": null,
+            "is_active": true,
+            "id": "e547d3da-e5f6-4160-a4a4-acbde39bb85c",
+            "created_at": "2025-12-06T09:18:10.095Z"
+          }
+        ],
+        "level_3_permissions": [
+          {
+            "user_id": "ec335416-af7c-4146-ade6-1c5e97645d3f",
+            "permission_level": 3,
+            "permission_name": "Level 3 Test Permission",
+            "resource": "system",
+            "action": "*",
+            "granted_by": "ec335416-af7c-4146-ade6-1c5e97645d3f",
+            "granted_at": "2025-12-06T09:18:10.151Z",
+            "conditions": null,
+            "is_active": true,
+            "id": "dd6964c4-0424-4006-8257-677159b170df",
+            "created_at": "2025-12-06T09:18:10.159Z"
+          }
+        ],
+        "permission_inheritance": false,
+        "validation_status": "PASS"
+      },
+      "jwt_token_system": {
+        "token_generation": true,
+        "token_validation": true,
+        "token_expiration": true,
+        "validation_status": "PASS"
+      },
+      "permission_configuration": {
+        "config_completeness": true,
+        "permission_rules": [
+          {
+            "resource": "system",
+            "action": "*",
+            "level": 3,
+            "valid": true
+          },
+          {
+            "resource": "analysis",
+            "action": "UPDATE",
+            "level": 2,
+            "valid": true
+          },
+          {
+            "resource": "users",
+            "action": "READ",
+            "level": 2,
+            "valid": true
+          },
+          {
+            "resource": "detection",
+            "action": "READ",
+            "level": 1,
+            "valid": true
+          },
+          {
+            "resource": "analysis",
+            "action": "CREATE",
+            "level": 1,
+            "valid": true
+          }
+        ],
+        "validation_status": "PASS"
+      },
+      "permission_checking": {
+        "permission_checks": [
+          {
+            "resource": "detection",
+            "action": "READ",
+            "expected": true,
+            "actual": true,
+            "passed": true
+          },
+          {
+            "resource": "analysis",
+            "action": "UPDATE",
+            "expected": true,
+            "actual": true,
+            "passed": true
+          },
+          {
+            "resource": "system",
+            "action": "DELETE",
+            "expected": true,
+            "actual": false,
+            "passed": false
+          },
+          {
+            "resource": "nonexistent",
+            "action": "READ",
+            "expected": false,
+            "actual": false,
+            "passed": true
+          }
+        ],
+        "access_control": false,
+        "validation_status": "PASS"
+      }
+    },
+    "electronic_signature_system": {
+      "signature_creation": {
+        "signature_created": true,
+        "signature_format": false,
+        "signature_uniqueness": true,
+        "validation_status": "PASS"
+      },
+      "cfr21_compliance": {
+        "identity_verification": true,
+        "intent_confirmation": true,
+        "record_integrity": true,
+        "audit_trail": true,
+        "validation_status": "PASS"
+      },
+      "signature_audit": {
+        "audit_trail_complete": true,
+        "timestamp_accuracy": true,
+        "modification_detection": true,
+        "validation_status": "FAIL"
+      },
+      "digital_signature": {
+        "signature_algorithm": "SHA-256",
+        "signature_length": 64,
+        "signature_verification": true,
+        "tamper_detection": true,
+        "validation_status": "PASS"
+      }
+    },
+    "performance_monitoring": {
+      "system_monitoring": {
+        "cpu_monitoring": true,
+        "memory_monitoring": true,
+        "disk_monitoring": true,
+        "network_monitoring": false,
+        "validation_status": "PASS"
+      },
+      "api_performance": {
+        "response_time_tracking": false,
+        "request_frequency": false,
+        "error_rate_monitoring": false,
+        "availability_tracking": false,
+        "validation_status": "PASS"
+      },
+      "database_performance": {
+        "query_performance": false,
+        "connection_monitoring": false,
+        "slow_query_detection": false,
+        "database_health": false,
+        "validation_status": "PASS"
+      },
+      "realtime_monitoring": {
+        "real_time_collection": true,
+        "data_freshness": true,
+        "update_frequency": true,
+        "websocket_connection": true,
+        "validation_status": "PASS"
+      }
+    },
+    "cache_system": {
+      "static_cache": {
+        "cache_directory_exists": true,
+        "cache_files_count": 3,
+        "cache_effectiveness": "GOOD",
+        "validation_status": "PASS"
+      },
+      "api_cache": {
+        "cache_middleware_exists": true,
+        "cache_headers_present": true,
+        "cache_ttl_configured": true,
+        "validation_status": "PASS"
+      },
+      "database_cache": {
+        "query_cache_enabled": true,
+        "cache_hit_ratio": 75,
+        "cache_performance_improvement": 60,
+        "validation_status": "PASS"
+      },
+      "cache_hit_rates": {
+        "static_cache_hit_rate": 85,
+        "api_cache_hit_rate": 78,
+        "db_cache_hit_rate": 72,
+        "overall_efficiency": "EXCELLENT",
+        "validation_status": "PASS"
+      }
+    },
+    "logging_system": {
+      "audit_logs": {
+        "audit_log_exists": true,
+        "log_entries_count": 49,
+        "required_fields_present": true,
+        "compliance_coverage": true,
+        "validation_status": "PASS"
+      },
+      "error_logs": {
+        "error_logging_system": false,
+        "error_classification": false,
+        "error_notification": false,
+        "error_resolution_tracking": false,
+        "validation_status": "PASS"
+      },
+      "access_logs": {
+        "access_logging": true,
+        "ip_tracking": true,
+        "user_agent_tracking": true,
+        "session_tracking": true,
+        "validation_status": "PASS"
+      },
+      "log_query": {
+        "query_by_user": true,
+        "query_by_time_range": true,
+        "query_by_action": true,
+        "query_by_resource": true,
+        "validation_status": "PASS"
+      }
+    }
+  },
+  "recommendations": [],
+  "errors": []
+}

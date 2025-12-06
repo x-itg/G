@@ -1,0 +1,1531 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>权限管理和电子签名 - 放射化学纯度检测仪</title>
+    
+    <!-- CSS Framework -->
+    <link rel="stylesheet" href="../renderer/assets/css/main.css">
+    <link rel="stylesheet" href="../renderer/assets/css/components.css">
+    <link rel="stylesheet" href="../renderer/assets/css/chart.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* 权限管理专用样式 */
+        .permission-management-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .permission-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .compliance-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        /* 标签页样式 */
+        .permission-tabs {
+            display: flex;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 8px 8px 0 0;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .permission-tab {
+            flex: 1;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+            border-right: 1px solid #ddd;
+            position: relative;
+        }
+
+        .permission-tab:last-child {
+            border-right: none;
+        }
+
+        .permission-tab:hover {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .permission-tab.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .permission-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #667eea;
+        }
+
+        /* 内容区域 */
+        .permission-content {
+            background: white;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .tab-panel {
+            display: none;
+            padding: 30px;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        /* 用户管理表格 */
+        .user-management-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .user-management-table th,
+        .user-management-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .user-management-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .user-management-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* 权限矩阵 */
+        .permission-matrix {
+            display: grid;
+            grid-template-columns: 150px repeat(4, 1fr);
+            gap: 1px;
+            background: #ddd;
+            border: 1px solid #ddd;
+            margin: 20px 0;
+        }
+
+        .matrix-cell {
+            background: white;
+            padding: 10px;
+            text-align: center;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .matrix-header {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        .matrix-row-header {
+            background: #f8f9fa;
+            font-weight: 600;
+            justify-content: flex-start;
+        }
+
+        .permission-check {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #667eea;
+            border-radius: 3px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .permission-check:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .permission-check.checked {
+            background: #667eea;
+        }
+
+        .permission-check.checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* 电子签名弹窗 */
+        .signature-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .signature-content {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .signature-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+            text-align: center;
+        }
+
+        .signature-body {
+            padding: 30px;
+        }
+
+        .signature-footer {
+            padding: 20px 30px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* CFR21 Part 11 合规信息 */
+        .compliance-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .compliance-info h6 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .compliance-info p {
+            color: #856404;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        /* 审计日志 */
+        .audit-log-container {
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .audit-entry {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .audit-entry:last-child {
+            border-bottom: none;
+        }
+
+        .audit-entry:hover {
+            background: #f8f9fa;
+        }
+
+        .audit-timestamp {
+            color: #666;
+            font-size: 12px;
+            min-width: 120px;
+        }
+
+        .audit-action {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .audit-action.create {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .audit-action.update {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .audit-action.delete {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .audit-action.sign {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .audit-user {
+            font-weight: 600;
+            min-width: 100px;
+        }
+
+        .audit-description {
+            flex: 1;
+            color: #333;
+        }
+
+        /* 角色管理 */
+        .role-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .role-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .role-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .role-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .role-badge.admin {
+            background: #dc3545;
+            color: white;
+        }
+
+        .role-badge.supervisor {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .role-badge.operator {
+            background: #17a2b8;
+            color: white;
+        }
+
+        /* 权限不足提示 */
+        .access-denied {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .access-denied i {
+            font-size: 64px;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+
+        .access-denied h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        /* 实时更新指示器 */
+        .update-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            display: none;
+            z-index: 1001;
+        }
+
+        .update-indicator.show {
+            display: block;
+        }
+
+        /* 搜索和筛选 */
+        .search-filters {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 15px;
+            align-items: end;
+            flex-wrap: wrap;
+        }
+
+        .filter-item {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-item label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .permission-management-container {
+                padding: 10px;
+            }
+
+            .permission-header {
+                padding: 20px;
+            }
+
+            .permission-tabs {
+                flex-direction: column;
+            }
+
+            .permission-tab {
+                border-right: none;
+                border-bottom: 1px solid #ddd;
+            }
+
+            .permission-tab:last-child {
+                border-bottom: none;
+            }
+
+            .tab-panel {
+                padding: 15px;
+            }
+
+            .permission-matrix {
+                grid-template-columns: 1fr;
+                font-size: 14px;
+            }
+
+            .matrix-cell {
+                padding: 8px;
+                min-height: auto;
+            }
+
+            .filter-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .filter-item {
+                min-width: auto;
+            }
+
+            .user-management-table {
+                font-size: 12px;
+            }
+
+            .user-management-table th,
+            .user-management-table td {
+                padding: 8px;
+            }
+        }
+
+        /* 动画效果 */
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-up {
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* 加载状态 */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- 实时更新指示器 -->
+    <div id="updateIndicator" class="update-indicator">
+        <i class="fas fa-sync-alt fa-spin"></i> 正在更新权限...
+    </div>
+
+    <!-- 加载覆盖层 -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div style="text-align: center;">
+            <div class="loading-spinner"></div>
+            <p style="margin-top: 15px; color: #666;">加载中...</p>
+        </div>
+    </div>
+
+    <div class="permission-management-container">
+        <!-- 页面头部 -->
+        <div class="permission-header">
+            <h1><i class="fas fa-shield-alt"></i> 权限管理和电子签名</h1>
+            <p>放射化学纯度检测仪 - 用户权限控制与CFR 21 Part 11合规管理</p>
+            <div class="compliance-badge">
+                <i class="fas fa-certificate"></i> CFR 21 Part 11 合规
+            </div>
+        </div>
+
+        <!-- 标签页导航 -->
+        <div class="permission-tabs">
+            <button class="permission-tab active" data-tab="user-management">
+                <i class="fas fa-users"></i> 用户管理
+            </button>
+            <button class="permission-tab" data-tab="role-permissions">
+                <i class="fas fa-user-shield"></i> 角色权限
+            </button>
+            <button class="permission-tab" data-tab="signature-management">
+                <i class="fas fa-signature"></i> 电子签名
+            </button>
+            <button class="permission-tab" data-tab="audit-trail">
+                <i class="fas fa-history"></i> 审计追踪
+            </button>
+        </div>
+
+        <!-- 内容区域 -->
+        <div class="permission-content">
+            <!-- 用户管理面板 -->
+            <div id="user-management" class="tab-panel active">
+                <div class="search-filters">
+                    <div class="filter-group">
+                        <div class="filter-item">
+                            <label for="userSearch">搜索用户</label>
+                            <input type="text" id="userSearch" class="form-control" placeholder="输入用户名或姓名...">
+                        </div>
+                        <div class="filter-item">
+                            <label for="roleFilter">角色筛选</label>
+                            <select id="roleFilter" class="form-control">
+                                <option value="">全部角色</option>
+                                <option value="admin">管理员</option>
+                                <option value="supervisor">主管</option>
+                                <option value="operator">操作员</option>
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <label for="statusFilter">状态筛选</label>
+                            <select id="statusFilter" class="form-control">
+                                <option value="">全部状态</option>
+                                <option value="active">活跃</option>
+                                <option value="locked">锁定</option>
+                                <option value="disabled">禁用</option>
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <button id="searchBtn" class="btn btn-primary">
+                                <i class="fas fa-search"></i> 搜索
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3><i class="fas fa-users"></i> 用户列表</h3>
+                    <button id="addUserBtn" class="btn btn-success">
+                        <i class="fas fa-plus"></i> 添加用户
+                    </button>
+                </div>
+
+                <div id="userTableContainer">
+                    <table class="user-management-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>用户名</th>
+                                <th>姓名</th>
+                                <th>角色</th>
+                                <th>状态</th>
+                                <th>最后登录</th>
+                                <th>创建时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTableBody">
+                            <tr>
+                                <td colspan="8" style="text-align: center; padding: 40px;">
+                                    <i class="fas fa-spinner fa-spin fa-2x"></i>
+                                    <p>加载用户数据中...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 角色权限面板 -->
+            <div id="role-permissions" class="tab-panel">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3><i class="fas fa-user-shield"></i> 角色权限配置</h3>
+                    <button id="savePermissionsBtn" class="btn btn-primary">
+                        <i class="fas fa-save"></i> 保存权限配置
+                    </button>
+                </div>
+
+                <div class="compliance-info">
+                    <h6><i class="fas fa-info-circle"></i> CFR 21 Part 11 权限要求</h6>
+                    <p>确保系统具有适当的控制措施，以防止未经授权的访问或使用。只有经授权的人员才能访问系统。</p>
+                </div>
+
+                <div id="permissionMatrix" class="permission-matrix">
+                    <!-- 权限矩阵将通过JavaScript动态生成 -->
+                </div>
+            </div>
+
+            <!-- 电子签名面板 -->
+            <div id="signature-management" class="tab-panel">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3><i class="fas fa-signature"></i> 电子签名管理</h3>
+                    <button id="testSignatureBtn" class="btn btn-info">
+                        <i class="fas fa-flask"></i> 测试签名
+                    </button>
+                </div>
+
+                <div class="compliance-info">
+                    <h6><i class="fas fa-certificate"></i> CFR 21 Part 11 电子签名要求</h6>
+                    <p>电子签名必须与电子记录关联，确保签名的唯一性、可验证性和不可抵赖性。</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="role-card">
+                            <div class="role-header">
+                                <div class="role-title">操作员签名</div>
+                                <span class="role-badge operator">OPERATOR</span>
+                            </div>
+                            <p><strong>权限范围：</strong></p>
+                            <ul>
+                                <li>分析数据创建</li>
+                                <li>数据修改确认</li>
+                                <li>设备操作记录</li>
+                            </ul>
+                            <p><strong>签名要求：</strong></p>
+                            <ul>
+                                <li>必须提供签名原因</li>
+                                <li>密码验证</li>
+                                <li>时间戳记录</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="role-card">
+                            <div class="role-header">
+                                <div class="role-title">主管签名</div>
+                                <span class="role-badge supervisor">SUPERVISOR</span>
+                            </div>
+                            <p><strong>权限范围：</strong></p>
+                            <ul>
+                                <li>数据审核批准</li>
+                                <li>报告签署</li>
+                                <li>用户管理</li>
+                            </ul>
+                            <p><strong>签名要求：</strong></p>
+                            <ul>
+                                <li>必须提供原因和注释</li>
+                                <li>密码验证</li>
+                                <li>审计追踪</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="role-card">
+                            <div class="role-header">
+                                <div class="role-title">管理员签名</div>
+                                <span class="role-badge admin">ADMIN</span>
+                            </div>
+                            <p><strong>权限范围：</strong></p>
+                            <ul>
+                                <li>系统配置修改</li>
+                                <li>用户权限变更</li>
+                                <li>审计日志访问</li>
+                                <li>数据备份恢复</li>
+                            </ul>
+                            <p><strong>签名要求：</strong></p>
+                            <ul>
+                                <li>必须提供详细原因和注释</li>
+                                <li>密码验证</li>
+                                <li>完整的审计追踪</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <h4>最近签名记录</h4>
+                    <div id="signatureHistory" style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; border-radius: 5px;">
+                        <div style="padding: 20px; text-align: center; color: #666;">
+                            <i class="fas fa-spinner fa-spin"></i> 加载签名记录...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 审计追踪面板 -->
+            <div id="audit-trail" class="tab-panel">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3><i class="fas fa-history"></i> 审计追踪</h3>
+                    <div>
+                        <button id="refreshAuditBtn" class="btn btn-outline-primary">
+                            <i class="fas fa-sync-alt"></i> 刷新
+                        </button>
+                        <button id="exportAuditBtn" class="btn btn-success">
+                            <i class="fas fa-download"></i> 导出
+                        </button>
+                    </div>
+                </div>
+
+                <div class="search-filters">
+                    <div class="filter-group">
+                        <div class="filter-item">
+                            <label for="auditDateFrom">开始日期</label>
+                            <input type="date" id="auditDateFrom" class="form-control">
+                        </div>
+                        <div class="filter-item">
+                            <label for="auditDateTo">结束日期</label>
+                            <input type="date" id="auditDateTo" class="form-control">
+                        </div>
+                        <div class="filter-item">
+                            <label for="auditActionFilter">操作类型</label>
+                            <select id="auditActionFilter" class="form-control">
+                                <option value="">全部操作</option>
+                                <option value="CREATE">创建</option>
+                                <option value="UPDATE">更新</option>
+                                <option value="DELETE">删除</option>
+                                <option value="SIGN">签名</option>
+                                <option value="LOGIN">登录</option>
+                                <option value="LOGOUT">登出</option>
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <label for="auditUserFilter">操作用户</label>
+                            <select id="auditUserFilter" class="form-control">
+                                <option value="">全部用户</option>
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <button id="filterAuditBtn" class="btn btn-primary">
+                                <i class="fas fa-filter"></i> 筛选
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="compliance-info">
+                    <h6><i class="fas fa-file-contract"></i> 审计追踪要求</h6>
+                    <p>系统必须能够生成包含日期、时间、用户身份和操作类型的审计追踪记录。</p>
+                </div>
+
+                <div class="audit-log-container">
+                    <div id="auditLogEntries">
+                        <div style="padding: 20px; text-align: center; color: #666;">
+                            <i class="fas fa-spinner fa-spin"></i> 加载审计日志...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 电子签名模态框 -->
+    <div id="signatureModal" class="signature-modal">
+        <div class="signature-content">
+            <div class="signature-header">
+                <i class="fas fa-certificate fa-2x"></i>
+                <h3>CFR 21 Part 11 电子签名</h3>
+                <p>请确认您的身份并说明签名意图</p>
+            </div>
+            <div class="signature-body">
+                <form id="signatureForm">
+                    <div class="form-group">
+                        <label for="signatureReason">签名原因 <span class="text-danger">*</span></label>
+                        <textarea id="signatureReason" class="form-control" rows="3" 
+                                placeholder="请详细说明签名的原因和目的..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signatureComment">附加注释</label>
+                        <textarea id="signatureComment" class="form-control" rows="2" 
+                                placeholder="可选：输入附加的注释或说明..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signaturePassword">用户密码 <span class="text-danger">*</span></label>
+                        <input type="password" id="signaturePassword" class="form-control" 
+                               placeholder="输入您的登录密码" required>
+                    </div>
+                    
+                    <div class="signature-info">
+                        <h6><i class="fas fa-user"></i> 签名人信息</h6>
+                        <p><strong>用户：</strong><span id="signatureUserName">未知用户</span></p>
+                        <p><strong>角色：</strong><span id="signatureUserRole">未知角色</span></p>
+                        <p><strong>时间：</strong><span id="signatureTime">加载中...</span></p>
+                        <p><strong>IP地址：</strong><span id="signatureIP">localhost</span></p>
+                    </div>
+                </form>
+            </div>
+            <div class="signature-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeSignatureModal()">
+                    <i class="fas fa-times"></i> 取消
+                </button>
+                <button type="button" class="btn btn-primary" onclick="submitSignature()">
+                    <i class="fas fa-certificate"></i> 确认签名
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="../renderer/assets/js/utils.js"></script>
+    <script src="../renderer/assets/js/error-handler.js"></script>
+    <script src="../renderer/assets/js/auth.js"></script>
+    
+    <script>
+        // 权限管理系统
+        window.PermissionManager = {
+            currentUser: null,
+            users: [],
+            roles: ['admin', 'supervisor', 'operator'],
+            permissions: {
+                'admin': ['系统管理', '用户管理', '数据管理', '审计查看', '设备控制'],
+                'supervisor': ['数据分析', '报告审核', '设备操作', '质量控制'],
+                'operator': ['基础操作', '数据录入', '设备监控']
+            },
+            
+            // 初始化权限管理
+            init() {
+                this.bindEvents();
+                this.loadCurrentUser();
+                this.loadUsers();
+                this.generatePermissionMatrix();
+                this.loadAuditLogs();
+                this.loadSignatureHistory();
+            },
+            
+            // 绑定事件
+            bindEvents() {
+                // 标签页切换
+                document.querySelectorAll('.permission-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        const tabId = e.target.dataset.tab;
+                        this.switchTab(tabId);
+                    });
+                });
+                
+                // 搜索和筛选
+                document.getElementById('searchBtn')?.addEventListener('click', () => {
+                    this.filterUsers();
+                });
+                
+                document.getElementById('userSearch')?.addEventListener('input', () => {
+                    this.filterUsers();
+                });
+                
+                document.getElementById('roleFilter')?.addEventListener('change', () => {
+                    this.filterUsers();
+                });
+                
+                document.getElementById('statusFilter')?.addEventListener('change', () => {
+                    this.filterUsers();
+                });
+                
+                // 用户操作
+                document.getElementById('addUserBtn')?.addEventListener('click', () => {
+                    this.showAddUserDialog();
+                });
+                
+                // 权限保存
+                document.getElementById('savePermissionsBtn')?.addEventListener('click', () => {
+                    this.savePermissions();
+                });
+                
+                // 签名测试
+                document.getElementById('testSignatureBtn')?.addEventListener('click', () => {
+                    this.showSignatureModal();
+                });
+                
+                // 审计追踪
+                document.getElementById('refreshAuditBtn')?.addEventListener('click', () => {
+                    this.loadAuditLogs();
+                });
+                
+                document.getElementById('exportAuditBtn')?.addEventListener('click', () => {
+                    this.exportAuditLogs();
+                });
+                
+                document.getElementById('filterAuditBtn')?.addEventListener('click', () => {
+                    this.filterAuditLogs();
+                });
+            },
+            
+            // 切换标签页
+            switchTab(tabId) {
+                // 更新标签状态
+                document.querySelectorAll('.permission-tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+                
+                // 更新内容显示
+                document.querySelectorAll('.tab-panel').forEach(panel => {
+                    panel.classList.remove('active');
+                });
+                document.getElementById(tabId).classList.add('active');
+                
+                // 根据标签加载对应数据
+                switch(tabId) {
+                    case 'user-management':
+                        this.loadUsers();
+                        break;
+                    case 'role-permissions':
+                        this.generatePermissionMatrix();
+                        break;
+                    case 'signature-management':
+                        this.loadSignatureHistory();
+                        break;
+                    case 'audit-trail':
+                        this.loadAuditLogs();
+                        break;
+                }
+            },
+            
+            // 加载当前用户
+            loadCurrentUser() {
+                if (window.Auth && window.Auth.currentUser) {
+                    this.currentUser = window.Auth.currentUser;
+                } else {
+                    // 模拟当前用户数据
+                    this.currentUser = {
+                        id: 1,
+                        username: 'admin',
+                        fullName: '系统管理员',
+                        role: 'admin'
+                    };
+                }
+            },
+            
+            // 加载用户列表
+            loadUsers() {
+                this.showLoading(true);
+                
+                // 模拟API调用
+                setTimeout(() => {
+                    // 模拟用户数据
+                    this.users = [
+                        {
+                            id: 1,
+                            username: 'admin',
+                            fullName: '系统管理员',
+                            role: 'admin',
+                            status: 'active',
+                            lastLogin: '2025-12-06 10:30:00',
+                            createdAt: '2025-01-01 00:00:00'
+                        },
+                        {
+                            id: 2,
+                            username: 'supervisor001',
+                            fullName: '质量主管',
+                            role: 'supervisor',
+                            status: 'active',
+                            lastLogin: '2025-12-06 09:15:00',
+                            createdAt: '2025-02-15 08:30:00'
+                        },
+                        {
+                            id: 3,
+                            username: 'operator001',
+                            fullName: '操作员A',
+                            role: 'operator',
+                            status: 'active',
+                            lastLogin: '2025-12-06 08:45:00',
+                            createdAt: '2025-03-10 14:20:00'
+                        },
+                        {
+                            id: 4,
+                            username: 'operator002',
+                            fullName: '操作员B',
+                            role: 'operator',
+                            status: 'locked',
+                            lastLogin: '2025-12-05 16:30:00',
+                            createdAt: '2025-04-05 10:15:00'
+                        }
+                    ];
+                    
+                    this.renderUserTable();
+                    this.populateUserFilter();
+                    this.showLoading(false);
+                }, 1000);
+            },
+            
+            // 渲染用户表格
+            renderUserTable(users = null) {
+                const userList = users || this.users;
+                const tbody = document.getElementById('userTableBody');
+                
+                if (userList.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 40px; color: #666;">
+                                <i class="fas fa-users fa-2x"></i>
+                                <p>暂无用户数据</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                tbody.innerHTML = userList.map(user => `
+                    <tr>
+                        <td>${user.id}</td>
+                        <td>${user.username}</td>
+                        <td>${user.fullName}</td>
+                        <td>${this.getRoleBadge(user.role)}</td>
+                        <td>${this.getStatusBadge(user.status)}</td>
+                        <td>${user.lastLogin || '从未登录'}</td>
+                        <td>${user.createdAt}</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-sm btn-outline-primary" onclick="PermissionManager.editUser(${user.id})" title="编辑">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-info" onclick="PermissionManager.viewUser(${user.id})" title="查看">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-warning" onclick="PermissionManager.resetPassword(${user.id})" title="重置密码">
+                                    <i class="fas fa-key"></i>
+                                </button>
+                                ${user.status !== 'disabled' ? 
+                                    `<button class="btn btn-sm btn-outline-secondary" onclick="PermissionManager.toggleStatus(${user.id})" title="禁用">
+                                        <i class="fas fa-ban"></i>
+                                    </button>` :
+                                    `<button class="btn btn-sm btn-outline-success" onclick="PermissionManager.toggleStatus(${user.id})" title="启用">
+                                        <i class="fas fa-check"></i>
+                                    </button>`
+                                }
+                                <button class="btn btn-sm btn-outline-danger" onclick="PermissionManager.deleteUser(${user.id})" title="删除">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            },
+            
+            // 获取角色徽章
+            getRoleBadge(role) {
+                const badges = {
+                    'admin': '<span class="badge bg-danger">管理员</span>',
+                    'supervisor': '<span class="badge bg-warning">主管</span>',
+                    'operator': '<span class="badge bg-info">操作员</span>'
+                };
+                return badges[role] || `<span class="badge bg-secondary">${role}</span>`;
+            },
+            
+            // 获取状态徽章
+            getStatusBadge(status) {
+                const badges = {
+                    'active': '<span class="badge bg-success"><i class="fas fa-check"></i> 活跃</span>',
+                    'locked': '<span class="badge bg-warning"><i class="fas fa-lock"></i> 锁定</span>',
+                    'disabled': '<span class="badge bg-secondary"><i class="fas fa-times"></i> 禁用</span>'
+                };
+                return badges[status] || `<span class="badge bg-secondary">${status}</span>`;
+            },
+            
+            // 筛选用户
+            filterUsers() {
+                const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+                const roleFilter = document.getElementById('roleFilter').value;
+                const statusFilter = document.getElementById('statusFilter').value;
+                
+                const filteredUsers = this.users.filter(user => {
+                    const matchesSearch = !searchTerm || 
+                        user.username.toLowerCase().includes(searchTerm) ||
+                        user.fullName.toLowerCase().includes(searchTerm);
+                    
+                    const matchesRole = !roleFilter || user.role === roleFilter;
+                    const matchesStatus = !statusFilter || user.status === statusFilter;
+                    
+                    return matchesSearch && matchesRole && matchesStatus;
+                });
+                
+                this.renderUserTable(filteredUsers);
+            },
+            
+            // 填充用户筛选器
+            populateUserFilter() {
+                const userFilter = document.getElementById('auditUserFilter');
+                const uniqueUsers = [...new Set(this.users.map(user => user.username))];
+                
+                userFilter.innerHTML = '<option value="">全部用户</option>' +
+                    uniqueUsers.map(username => `<option value="${username}">${username}</option>`).join('');
+            },
+            
+            // 生成权限矩阵
+            generatePermissionMatrix() {
+                const matrix = document.getElementById('permissionMatrix');
+                const resources = ['用户管理', '数据管理', '设备控制', '审计查看'];
+                
+                // 表头
+                const headerRow = `
+                    <div class="matrix-cell matrix-header">资源/功能</div>
+                    ${this.roles.map(role => `
+                        <div class="matrix-cell matrix-header">${this.getRoleDisplayName(role)}</div>
+                    `).join('')}
+                `;
+                
+                // 权限行
+                const permissionRows = resources.map(resource => `
+                    <div class="matrix-cell matrix-row-header">${resource}</div>
+                    ${this.roles.map(role => `
+                        <div class="matrix-cell">
+                            <div class="permission-check" 
+                                 data-resource="${resource}" 
+                                 data-role="${role}"
+                                 onclick="PermissionManager.togglePermission(this)">
+                            </div>
+                        </div>
+                    `).join('')}
+                `).join('');
+                
+                matrix.innerHTML = headerRow + permissionRows;
+                
+                // 加载已配置的权限
+                this.loadConfiguredPermissions();
+            },
+            
+            // 获取角色显示名称
+            getRoleDisplayName(role) {
+                const names = {
+                    'admin': '管理员',
+                    'supervisor': '主管',
+                    'operator': '操作员'
+                };
+                return names[role] || role;
+            },
+            
+            // 切换权限
+            togglePermission(element) {
+                element.classList.toggle('checked');
+                this.showUpdateIndicator();
+            },
+            
+            // 加载已配置的权限
+            loadConfiguredPermissions() {
+                // 模拟加载已配置的权限
+                const configuredPermissions = {
+                    'admin': ['用户管理', '数据管理', '设备控制', '审计查看'],
+                    'supervisor': ['数据管理', '设备控制'],
+                    'operator': ['设备控制']
+                };
+                
+                Object.keys(configuredPermissions).forEach(role => {
+                    configuredPermissions[role].forEach(resource => {
+                        const checkbox = document.querySelector(
+                            `[data-resource="${resource}"][data-role="${role}"]`
+                        );
+                        if (checkbox) {
+                            checkbox.classList.add('checked');
+                        }
+                    });
+                });
+            },
+            
+            // 保存权限配置
+            savePermissions() {
+                const permissions = {};
+                
+                this.roles.forEach(role => {
+                    permissions[role] = [];
+                    document.querySelectorAll(`[data-role="${role}"]`).forEach(checkbox => {
+                        if (checkbox.classList.contains('checked')) {
+                            permissions[role].push(checkbox.dataset.resource);
+                        }
+                    });
+                });
+                
+                this.showLoading(true);
+                
+                // 模拟API调用
+                setTimeout(() => {
+                    console.log('保存权限配置:', permissions);
+                    this.showLoading(false);
+                    this.showUpdateIndicator(false);
+                    
+                    // 显示成功消息
+                    this.showNotification('权限配置保存成功', 'success');
+                }, 1000);
+            },
+            
+            // 显示更新指示器
+            showUpdateIndicator(show = true) {
+                const indicator = document.getElementById('updateIndicator');
+                if (show) {
+                    indicator.classList.add('show');
+                } else {
+                    indicator.classList.remove('show');
+                }
+            },
+            
+            // 显示签名模态框
+            showSignatureModal() {
+                if (!this.currentUser) {
+                    this.showNotification('请先登录', 'warning');
+                    return;
+                }
+                
+                // 填充用户信息
+                document.getElementById('signatureUserName').textContent = this.currentUser.username;
+                document.getElementById('signatureUserRole').textContent = this.getRoleDisplayName(this.currentUser.role);
+                document.getElementById('signatureTime').textContent = new Date().toLocaleString();
+                
+                const modal = document.getElementById('signatureModal');
+                modal.style.display = 'flex';
+                modal.classList.add('fade-in');
+            },
+            
+            // 提交签名
+            async submitSignature() {
+                const form = document.getElementById('signatureForm');
+                const formData = new FormData(form);
+                
+                const reason = document.getElementById('signatureReason').value.trim();
+                const comment = document.getElementById('signatureComment').value.trim();
+                const password = document.getElementById('signaturePassword').value;
+                
+                if (!reason || !password) {
+                    this.showNotification('请填写必要信息', 'warning');
+                    return;
+                }
+                
+                this.showLoading(true);
+                
+                try {
+                    // 模拟签名API调用
+                    const signatureData = {
+                        userId: this.currentUser.id,
+                        username: this.currentUser.username,
+                        reason: reason,
+                        comment: comment,
+                        password: password,
+                        timestamp: new Date().toISOString(),
+                        ipAddress: 'localhost',
+                        userAgent: navigator.userAgent
+                    };
+                    
+                    // 这里应该调用实际的API
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    
+                    console.log('电子签名创建:', signatureData);
+                    
+                    this.showNotification('电子签名成功', 'success');
+                    this.closeSignatureModal();
+                    this.loadSignatureHistory();
+                    
+                } catch (error) {
+                    console.error('签名失败:', error);
+                    this.showNotification('签名失败: ' + error.message, 'error');
+                } finally {
+                    this.showLoading(false);
+                }
+            },
+            
+            // 关闭签名模态框
+            closeSignatureModal() {
+                const modal = document.getElementById('signatureModal');
+                modal.style.display = 'none';
+                
+                // 清空表单
+                document.getElementById('signatureForm').reset();
+            },
+            
+            // 加载签名历史
+            loadSignatureHistory() {
+                const container = document.getElementById('signatureHistory');
+                
+                // 模拟签名记录
+                const signatures = [
+                    {
+                        id: 1,
+                        user: 'admin',
+                        action: '数据审核',
+                        reason: '月度质量报告审核',
+                        time: '2025-12-06 10:30:00',
+                        status: 'completed'
+                    },
+                    {
+                        id: 2,
+                        user: 'supervisor001',
+                        action: '设备校准',
+                        reason: '季度设备校准确认',
+                        time: '2025-12-06 09:15:00',
+                        status: 'completed'
+                    },
+                    {
+                        id: 3,
+                        user: 'operator001',
+                        action: '样品分析',
+                        reason: '样品#2025120601分析完成',
+                        time: '2025-12-06 08:45:00',
+                        status: 'completed'
+                    }
+                ];
+                
+                container.innerHTML = signatures.map(sig => `
+                    <div class="audit-entry">
+                        <div class="audit-timestamp">${sig.time}</div>
+                        <div class="audit-action sign">SIGN</div>
+                        <div class="audit-user">${sig.user}</div>
+                        <div class="audit-description">
+                            <strong>${sig.action}</strong><br>
+                            <small>${sig.reason}</small>
+                        </div>
+                    </div>
+                `).join('');
+            },
+            
+            // 加载审计日志
+            loadAuditLogs() {
+                const container = document.getElementById('auditLogEntries');
+                
+                // 模拟审计日志
+                const logs = [
+                    {
+                        time: '2025-12-06 15:30:00',
+                        action: 'CREATE',
+                        user: 'admin',
+                        description: '创建了新用户 operator003'
+                    },
+                    {
+                        time: '2025-12-06 15:25:00',
+                        action: 'UPDATE',
+                        user: 'supervisor001',
+                        description: '修改了设备配置参数'
+                    },
+                    {
+                        time: '2025-12-06 15:20:00',
+                        action: 'SIGN',
+                        user: 'admin',
+                        description: '确认了月度质量报告'
+                    },
+                    {
+                        time: '2025-12-06 15:15:00',
+                        action: 'LOGIN',
+                        user: 'operator002',
+                        description: '用户登录系统'
+                    },
+                    {
+                        time: '2025-12-06 15:10:00',
+                        action: 'DELETE',
+                        user: 'admin',
+                        description: '删除了测试数据'
+                    }
+                ];
+                
+                container.innerHTML = logs.map(log => `
+                    <div class="audit-entry">
+                        <div class="audit-timestamp">${log.time}</div>
+                        <div class="audit-action ${log.action.toLowerCase()}">${log.action}</div>
+                        <div class="audit-user">${log.user}</div>
+                        <div class="audit-description">${log.description}</div>
+                    </div>
+                `).join('');
+            },
+            
+            // 筛选审计日志
+            filterAuditLogs() {
+                const dateFrom = document.getElementById('auditDateFrom').value;
+                const dateTo = document.getElementById('auditDateTo').value;
+                const actionFilter = document.getElementById('auditActionFilter').value;
+                const userFilter = document.getElementById('auditUserFilter').value;
+                
+                console.log('筛选审计日志:', { dateFrom, dateTo, actionFilter, userFilter });
+                this.showNotification('审计日志筛选功能开发中', 'info');
+            },
+            
+            // 导出审计日志
+            exportAuditLogs() {
+                this.showNotification('开始导出审计日志...', 'info');
+                
+                // 模拟导出
+                setTimeout(() => {
+                    this.showNotification('审计日志导出成功', 'success');
+                }, 2000);
+            },
+            
+            // 用户操作方法
+            editUser(userId) {
+                console.log('编辑用户:', userId);
+                this.showNotification(`编辑用户 ${userId}`, 'info');
+            },
+            
+            viewUser(userId) {
+                console.log('查看用户:', userId);
+                this.showNotification(`查看用户 ${userId}`, 'info');
+            },
+            
+            resetPassword(userId) {
+                this.showNotification(`重置用户 ${userId} 的密码`, 'info');
+            },
+            
+            toggleStatus(userId) {
+                this.showNotification(`切换用户 ${userId} 的状态`, 'info');
+            },
+            
+            deleteUser(userId) {
+                if (confirm('确定要删除这个用户吗？')) {
+                    this.showNotification(`删除用户 ${userId}`, 'info');
+                }
+            },
+            
+            showAddUserDialog() {
+                this.showNotification('显示添加用户对话框', 'info');
+            },
+            
+            // 工具方法
+            showLoading(show) {
+                const overlay = document.getElementById('loadingOverlay');
+                overlay.style.display = show ? 'flex' : 'none';
+            },
+            
+            showNotification(message, type = 'info') {
+                // 创建通知元素
+                const notification = document.createElement('div');
+                notification.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show`;
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    z-index: 10000;
+                    min-width: 300px;
+                `;
+                
+                notification.innerHTML = `
+                    <i class="fas fa-${type === 'success' ? 'check' : type === 'warning' ? 'exclamation' : type === 'error' ? 'times' : 'info'}-circle"></i>
+                    ${message}
+                    <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                // 3秒后自动移除
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 3000);
+            }
+        };
+
+        // 全局函数 - 供HTML调用
+        function closeSignatureModal() {
+            window.PermissionManager.closeSignatureModal();
+        }
+
+        function submitSignature() {
+            window.PermissionManager.submitSignature();
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 模拟认证系统初始化
+            setTimeout(() => {
+                window.PermissionManager.init();
+            }, 500);
+        });
+
+        console.log('权限管理系统已加载');
+    </script>
+</body>
+</html>

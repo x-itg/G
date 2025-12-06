@@ -1,0 +1,154 @@
+{
+  "timestamp": "2025-12-06T09:07:10.358Z",
+  "mode": "standalone",
+  "coreFunctionalityTests": {
+    "measurementCreation": {
+      "status": "PASSED",
+      "responseTime": 35.07609176635742,
+      "data": {
+        "id": 1,
+        "sampleId": "TEST_CORE_001",
+        "measurementType": "gamma_spectrum",
+        "detectorId": "detector_01",
+        "timestamp": "2025-12-06T09:07:10.363Z",
+        "data": {
+          "counts": [
+            120,
+            95,
+            87,
+            156,
+            203,
+            145,
+            98,
+            76
+          ],
+          "energies": [
+            50,
+            100,
+            150,
+            200,
+            250,
+            300,
+            350,
+            400
+          ],
+          "liveTime": 300,
+          "realTime": 310,
+          "temperature": 25.5,
+          "humidity": 45.2
+        },
+        "status": "completed",
+        "createdAt": "2025-12-06T09:07:10.398Z",
+        "updatedAt": "2025-12-06T09:07:10.398Z"
+      }
+    },
+    "measurementQuery": {
+      "status": "PASSED",
+      "responseTime": 55.24531269073486,
+      "totalCount": 1,
+      "hasTestData": true
+    },
+    "dataValidation": {
+      "status": "PASSED",
+      "validationWorking": true,
+      "mode": "mock"
+    },
+    "rawDataProcessing": {
+      "status": "PASSED",
+      "responseTime": 17.12749195098877,
+      "processed": true
+    }
+  },
+  "compatibilityTests": {
+    "databaseSchema": {
+      "status": "PASSED",
+      "message": "数据库架构兼容现有数据"
+    },
+    "apiBackwardCompatibility": {
+      "status": "PASSED",
+      "passedTests": 2,
+      "totalTests": 2
+    },
+    "cacheSystemCompatibility": {
+      "status": "PASSED",
+      "cacheEffective": true,
+      "firstRequestTime": 10.108480453491211,
+      "secondRequestTime": 52.16487121582031,
+      "improvement": "-416.05",
+      "mode": "mock"
+    },
+    "permissionSystemCompatibility": {
+      "status": "PASSED",
+      "message": "权限系统不影响基本操作"
+    }
+  },
+  "performanceTests": {
+    "apiResponseTime": {
+      "/api/measurements": {
+        "avgTime": 34.55172901153564,
+        "maxTime": 58.148719787597656,
+        "times": [
+          18.10377311706543,
+          56.21988821029663,
+          13.094560146331787,
+          27.19170379638672,
+          58.148719787597656
+        ],
+        "withinThreshold": true
+      },
+      "/api/status": {
+        "avgTime": 25.674480819702147,
+        "maxTime": 42.20901298522949,
+        "times": [
+          42.20901298522949,
+          20.165555000305176,
+          18.68064832687378,
+          36.193535804748535,
+          11.12365198135376
+        ],
+        "withinThreshold": true
+      }
+    },
+    "databaseQueryPerformance": {
+      "分页查询": {
+        "queryTime": 48.27809810638428,
+        "resultCount": 3,
+        "withinThreshold": true
+      },
+      "状态查询": {
+        "queryTime": 42.19305944442749,
+        "resultCount": 1,
+        "withinThreshold": true
+      },
+      "全量查询": {
+        "queryTime": 43.116857051849365,
+        "resultCount": 3,
+        "withinThreshold": true
+      }
+    },
+    "memoryUsage": {
+      "initialHeap": 4317880,
+      "finalHeap": 4594552,
+      "increasePercentage": 6.407588909372191,
+      "withinThreshold": true
+    }
+  },
+  "overallStatus": "PASSED",
+  "summary": {
+    "coreFunctionality": {
+      "passed": 4,
+      "total": 4,
+      "percentage": "100.0"
+    },
+    "compatibility": {
+      "passed": 4,
+      "total": 4,
+      "percentage": "100.0"
+    },
+    "performance": {
+      "passed": 3,
+      "total": 3,
+      "percentage": "100.0"
+    }
+  }
+}

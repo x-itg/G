@@ -1,0 +1,96 @@
+{
+  "title": "CFR21 Part 11 合规性系统测试报告",
+  "testDate": "2025-12-06T08:05:23.859Z",
+  "testDuration": 134,
+  "summary": {
+    "totalTests": 13,
+    "passedTests": 10,
+    "failedTests": 3,
+    "passRate": 77
+  },
+  "testResults": [
+    {
+      "test": "initialization_default",
+      "status": "PASS",
+      "message": "默认初始化成功",
+      "timestamp": "2025-12-06T08:05:23.724Z"
+    },
+    {
+      "test": "initialization_custom",
+      "status": "PASS",
+      "message": "自定义配置初始化成功",
+      "timestamp": "2025-12-06T08:05:23.724Z"
+    },
+    {
+      "test": "directory_creation_test-reports",
+      "status": "PASS",
+      "message": "目录创建成功: ./test-reports/",
+      "timestamp": "2025-12-06T08:05:23.724Z"
+    },
+    {
+      "test": "directory_creation_test-certificates",
+      "status": "FAIL",
+      "message": "目录创建失败: ./test-certificates/",
+      "timestamp": "2025-12-06T08:05:23.724Z"
+    },
+    {
+      "test": "directory_creation_test-logs",
+      "status": "FAIL",
+      "message": "目录创建失败: ./test-logs/",
+      "timestamp": "2025-12-06T08:05:23.724Z"
+    },
+    {
+      "test": "full_compliance_check",
+      "status": "FAIL",
+      "message": "this.identifyAffectedSystems is not a function",
+      "timestamp": "2025-12-06T08:05:23.747Z"
+    },
+    {
+      "test": "dashboard_data",
+      "status": "PASS",
+      "message": "仪表板数据获取成功",
+      "timestamp": "2025-12-06T08:05:23.779Z"
+    },
+    {
+      "test": "dashboard_fields",
+      "status": "PASS",
+      "message": "仪表板字段完整",
+      "timestamp": "2025-12-06T08:05:23.779Z"
+    },
+    {
+      "test": "json_export",
+      "status": "PASS",
+      "message": "JSON导出成功: compliance-reports/compliance-export-1765008323802.json",
+      "timestamp": "2025-12-06T08:05:23.816Z"
+    },
+    {
+      "test": "csv_export",
+      "status": "PASS",
+      "message": "CSV导出成功: compliance-reports/compliance-export-1765008323822.csv",
+      "timestamp": "2025-12-06T08:05:23.837Z"
+    },
+    {
+      "test": "html_export",
+      "status": "PASS",
+      "message": "HTML导出成功: compliance-reports/compliance-export-1765008323843.html",
+      "timestamp": "2025-12-06T08:05:23.858Z"
+    },
+    {
+      "test": "custom_config_timeout",
+      "status": "PASS",
+      "message": "自定义会话超时配置成功",
+      "timestamp": "2025-12-06T08:05:23.858Z"
+    },
+    {
+      "test": "custom_config_2fa",
+      "status": "PASS",
+      "message": "自定义两因子认证配置成功",
+      "timestamp": "2025-12-06T08:05:23.858Z"
+    }
+  ],
+  "systemInfo": {
+    "nodeVersion": "v18.19.0",
+    "platform": "linux",
+    "arch": "x64"
+  }
+}

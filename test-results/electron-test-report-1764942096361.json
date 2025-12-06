@@ -1,0 +1,47 @@
+{
+  "testSummary": {
+    "testStartTime": "2025-12-05T13:41:36.309Z",
+    "testEndTime": "2025-12-05T13:41:36.361Z",
+    "totalDuration": 52,
+    "totalSteps": 3,
+    "successSteps": 0,
+    "errorSteps": 1,
+    "warningSteps": 0
+  },
+  "steps": [
+    {
+      "step": "test_start",
+      "status": "INFO",
+      "message": "开始Electron环境测试",
+      "timestamp": "2025-12-05T13:41:36.311Z",
+      "duration": 2
+    },
+    {
+      "step": "electron_binary",
+      "status": "INFO",
+      "message": "检查Electron二进制文件",
+      "timestamp": "2025-12-05T13:41:36.325Z",
+      "duration": 16
+    },
+    {
+      "step": "test_failed",
+      "status": "ERROR",
+      "message": "Cannot find module 'electron'\nRequire stack:\n- /workspace/radiation-detector/electron-test.js",
+      "timestamp": "2025-12-05T13:41:36.350Z",
+      "duration": 41
+    }
+  ],
+  "errors": [
+    {
+      "type": "test_failure",
+      "message": "Cannot find module 'electron'\nRequire stack:\n- /workspace/radiation-detector/electron-test.js",
+      "timestamp": "2025-12-05T13:41:36.361Z"
+    }
+  ],
+  "recommendations": [
+    "建议运行实际的Electron启动测试",
+    "需要解决所有错误才能正常运行应用",
+    "定期运行测试以确保代码质量",
+    "在生产环境中关闭开发模式"
+  ]
+}

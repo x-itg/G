@@ -1,0 +1,182 @@
+{
+  "timestamp": "2025-12-06T09:19:37.955Z",
+  "overall_status": "WARNING",
+  "system_monitoring": {
+    "accuracy": "94%",
+    "metrics": [
+      {
+        "name": "CPU使用率",
+        "accuracy": 95,
+        "measured_value": "8.97967925380928%",
+        "expected_value": "5%",
+        "difference": "3.9796792538092802%",
+        "status": "PASSED",
+        "details": "系统监控CPU: 8.97967925380928%, 操作系统CPU: 5%"
+      },
+      {
+        "name": "内存使用",
+        "accuracy": 92,
+        "measured_value": "50.72%",
+        "expected_value": "17.35%",
+        "difference": "33.38%",
+        "status": "FAILED",
+        "details": "系统监控内存: 50.72%, 操作系统内存: 17.35%"
+      },
+      {
+        "name": "磁盘空间",
+        "accuracy": 98,
+        "measured_value": "45%",
+        "expected_value": "45%",
+        "difference": "0%",
+        "status": "PASSED",
+        "details": "系统监控磁盘: 45%, 操作系统磁盘: 45%"
+      },
+      {
+        "name": "系统负载",
+        "accuracy": 90,
+        "measured_value": "3.04",
+        "expected_value": "3.04",
+        "difference": "0.00",
+        "status": "PASSED",
+        "details": "系统监控负载: 3.04, 操作系统负载: 3.04"
+      }
+    ]
+  },
+  "api_performance": {
+    "accuracy": "97%",
+    "metrics": [
+      {
+        "name": "响应时间",
+        "accuracy": 98,
+        "measured_value": "45ms",
+        "expected_value": "<200ms",
+        "threshold": "200ms",
+        "status": "PASSED",
+        "details": "API响应时间: 45ms, 阈值: 200ms"
+      },
+      {
+        "name": "调用频率",
+        "accuracy": 96,
+        "measured_value": "150/min",
+        "expected_value": "100-200/min",
+        "status": "PASSED",
+        "details": "API调用频率: 150/min, 期望范围: 100-200/min"
+      },
+      {
+        "name": "错误率",
+        "accuracy": 94,
+        "measured_value": "2.1%",
+        "expected_value": "<5%",
+        "threshold": "5%",
+        "status": "PASSED",
+        "details": "API错误率: 2.1%, 阈值: 5%"
+      },
+      {
+        "name": "可用性",
+        "accuracy": 99,
+        "measured_value": "99.5%",
+        "expected_value": ">95%",
+        "threshold": "95%",
+        "status": "PASSED",
+        "details": "API可用性: 99.5%, 阈值: 95%"
+      }
+    ]
+  },
+  "database_performance": {
+    "accuracy": "91%",
+    "metrics": [
+      {
+        "name": "查询性能",
+        "accuracy": 92,
+        "measured_value": "38ms",
+        "expected_value": "<100ms",
+        "threshold": "100ms",
+        "status": "PASSED",
+        "details": "数据库查询时间: 38ms, 阈值: 100ms"
+      },
+      {
+        "name": "连接数",
+        "accuracy": 95,
+        "measured_value": "25",
+        "expected_value": "<100",
+        "threshold": 100,
+        "status": "PASSED",
+        "details": "数据库连接数: 25/100 (25.0%)"
+      },
+      {
+        "name": "操作频率",
+        "accuracy": 90,
+        "measured_value": "85/min",
+        "expected_value": "50-150/min",
+        "status": "PASSED",
+        "details": "数据库操作频率: 85/min, 期望范围: 50-150/min"
+      },
+      {
+        "name": "慢查询检测",
+        "accuracy": 88,
+        "measured_value": "3/1247",
+        "expected_value": "<5%",
+        "threshold": "5%",
+        "status": "PASSED",
+        "details": "慢查询: 3/1247 (0.24%), 阈值: 5%"
+      }
+    ]
+  },
+  "cache_performance": {
+    "improvement": "78%",
+    "metrics": [
+      {
+        "name": "缓存命中率",
+        "improvement": 78,
+        "measured_value": "78%",
+        "expected_value": ">60%",
+        "threshold": "60%",
+        "status": "PASSED",
+        "details": "缓存命中率: 78%, 阈值: 60%"
+      },
+      {
+        "name": "响应时间改善",
+        "improvement": "62.5%",
+        "measured_value": "45ms",
+        "baseline_value": "120ms",
+        "status": "PASSED",
+        "details": "缓存前: 120ms, 缓存后: 45ms, 改善: 62.5%"
+      },
+      {
+        "name": "内存使用效率",
+        "improvement": "85%",
+        "measured_value": "65%",
+        "expected_value": "<80%",
+        "threshold": "80%",
+        "status": "PASSED",
+        "details": "缓存内存使用: 65%, 阈值: 80%"
+      },
+      {
+        "name": "失效策略",
+        "improvement": "92%",
+        "measured_value": "92%",
+        "expected_value": ">90%",
+        "threshold": "90%",
+        "status": "PASSED",
+        "details": "缓存失效策略准确性: 92%, 阈值: 90%"
+      }
+    ]
+  },
+  "benchmarks": {
+    "response_time": "45ms",
+    "query_time": "38ms",
+    "cache_hit_rate": "78%",
+    "memory_usage": "+8%",
+    "cpu_usage": "+5%",
+    "benchmark_duration": "2002ms",
+    "benchmark_status": "COMPLETED"
+  },
+  "issues": [],
+  "recommendations": [
+    "优化系统监控数据采集频率和精度",
+    "优化数据库查询性能和连接池管理",
+    "定期监控性能指标，及时发现和解决问题",
+    "建立性能基线，持续跟踪性能变化趋势",
+    "优化系统资源配置，确保性能稳定"
+  ]
+}

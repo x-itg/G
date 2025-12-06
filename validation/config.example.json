@@ -1,0 +1,308 @@
+{
+  "permission_system": {
+    "jwt": {
+      "secret": "radiation-detector-production-secret-key-2025",
+      "algorithm": "HS256",
+      "expiresIn": "24h",
+      "refreshExpiresIn": "7d",
+      "issuer": "radiation-detector-system",
+      "audience": "radiation-detection-users"
+    },
+    "signature": {
+      "algorithm": "SHA-256",
+      "expiresIn": "8h",
+      "keyRotationInterval": "30d",
+      "minKeyLength": 32,
+      "requireTimestamp": true,
+      "requireUserId": true,
+      "requireRole": true
+    },
+    "audit": {
+      "logPath": "./logs/permission-audit.log",
+      "logLevel": "info",
+      "maxLogSize": "10MB",
+      "maxLogFiles": 10,
+      "enableFileRotation": true,
+      "enableConsoleOutput": true
+    },
+    "users": {
+      "dataPath": "./data/user_permissions.json",
+      "backupPath": "./data/backups/user_permissions_backup.json",
+      "autoBackup": true,
+      "backupInterval": "1d",
+      "maxBackups": 30
+    },
+    "validation": {
+      "enableFullValidation": true,
+      "enableRealtimeValidation": false,
+      "validationInterval": "1h",
+      "cacheResults": true,
+      "cacheExpiry": "30m",
+      "maxConcurrentValidations": 5
+    }
+  },
+  "security": {
+    "passwordPolicy": {
+      "minLength": 8,
+      "requireUppercase": true,
+      "requireLowercase": true,
+      "requireNumbers": true,
+      "requireSpecialChars": true,
+      "maxAge": "90d",
+      "historyCount": 5
+    },
+    "sessionManagement": {
+      "maxConcurrentSessions": 3,
+      "sessionTimeout": "30m",
+      "absoluteTimeout": "8h",
+      "enableIdleTimeout": true,
+      "enableAbsoluteTimeout": true
+    },
+    "rateLimiting": {
+      "enableRateLimiting": true,
+      "maxRequestsPerMinute": 100,
+      "maxRequestsPerHour": 1000,
+      "blockDuration": "15m",
+      "enableIPWhitelist": false,
+      "whitelist": []
+    },
+    "encryption": {
+      "enableDataEncryption": true,
+      "encryptionAlgorithm": "AES-256-GCM",
+      "keyDerivationIterations": 100000,
+      "saltLength": 32
+    }
+  },
+  "cfr21_part11": {
+    "compliance": {
+      "enableFullCompliance": true,
+      "requireElectronicSignatures": true,
+      "requireAuditTrails": true,
+      "requireAccessControls": true,
+      "requireDataIntegrity": true,
+      "requireSystemValidation": true
+    },
+    "electronicSignatures": {
+      "requireUserIdentification": true,
+      "requirePasswordVerification": true,
+      "requireRoleVerification": true,
+      "requireTimestamp": true,
+      "requireSignatureIntent": true,
+      "requireNonRepudiation": true,
+      "requireAuditTrail": true
+    },
+    "auditTrails": {
+      "enableDetailedAudit": true,
+      "logAllAccess": true,
+      "logAllChanges": true,
+      "logAllSignatures": true,
+      "logFailedAttempts": true,
+      "requireImmutableRecords": true,
+      "requireTimeSynchronization": true
+    },
+    "accessControls": {
+      "requireRoleBasedAccess": true,
+      "requirePermissionBasedAccess": true,
+      "requireDataAccessControls": true,
+      "requireFunctionAccessControls": true,
+      "enablePermissionInheritance": true,
+      "enablePermissionOverride": true
+    }
+  },
+  "permissions": {
+    "roles": {
+      "OPERATOR": {
+        "description": "操作员 - 基础数据操作权限",
+        "permissions": [
+          "read_data",
+          "create_data"
+        ],
+        "restrictions": [
+          "no_modify_data",
+          "no_delete_data",
+          "no_approve_data",
+          "no_user_management",
+          "no_system_config",
+          "no_audit_access"
+        ]
+      },
+      "SUPERVISOR": {
+        "description": "主管 - 数据审核和管理权限",
+        "permissions": [
+          "read_data",
+          "create_data",
+          "modify_data",
+          "approve_data",
+          "audit_logs"
+        ],
+        "restrictions": [
+          "no_delete_data",
+          "no_user_management",
+          "no_system_config"
+        ]
+      },
+      "ADMIN": {
+        "description": "管理员 - 完整系统权限",
+        "permissions": [
+          "read_data",
+          "create_data",
+          "modify_data",
+          "delete_data",
+          "approve_data",
+          "manage_users",
+          "system_config",
+          "audit_logs"
+        ],
+        "restrictions": []
+      }
+    },
+    "permissionMatrix": {
+      "data_operations": {
+        "read_data": ["OPERATOR", "SUPERVISOR", "ADMIN"],
+        "create_data": ["OPERATOR", "SUPERVISOR", "ADMIN"],
+        "modify_data": ["SUPERVISOR", "ADMIN"],
+        "delete_data": ["ADMIN"],
+        "approve_data": ["SUPERVISOR", "ADMIN"]
+      },
+      "system_operations": {
+        "manage_users": ["ADMIN"],
+        "system_config": ["ADMIN"],
+        "audit_logs": ["SUPERVISOR", "ADMIN"]
+      },
+      "security_operations": {
+        "change_passwords": ["ADMIN"],
+        "manage_roles": ["ADMIN"],
+        "view_security_logs": ["ADMIN"],
+        "configure_security": ["ADMIN"]
+      }
+    }
+  },
+  "api": {
+    "server": {
+      "port": 3000,
+      "host": "0.0.0.0",
+      "enableCors": true,
+      "corsOrigins": ["http://localhost:3000", "http://localhost:8080"],
+      "enableCompression": true,
+      "enableHelmet": true,
+      "enableMorgan": true
+    },
+    "endpoints": {
+      "validation": {
+        "basePath": "/api/validation",
+        "enableGetResults": true,
+        "enableRunTests": true,
+        "enableGetReport": true,
+        "enableFullValidation": true,
+        "enableHealthCheck": true
+      },
+      "authentication": {
+        "basePath": "/api/auth",
+        "enableLogin": true,
+        "enableLogout": true,
+        "enableTokenRefresh": true,
+        "enablePasswordChange": true
+      },
+      "permissions": {
+        "basePath": "/api/permissions",
+        "enableGetUserPermissions": true,
+        "enableUpdateUserPermissions": true,
+        "enableGetRolePermissions": true,
+        "enableUpdateRolePermissions": true
+      }
+    },
+    "middleware": {
+      "authentication": {
+        "required": true,
+        "tokenHeader": "Authorization",
+        "tokenPrefix": "Bearer ",
+        "verifyToken": true,
+        "checkExpiration": true
+      },
+      "authorization": {
+        "required": true,
+        "checkRole": true,
+        "checkPermissions": true,
+        "denyOnFailure": true
+      },
+      "logging": {
+        "enableRequestLogging": true,
+        "enableResponseLogging": true,
+        "logLevel": "info",
+        "logHeaders": false,
+        "logBodies": false
+      }
+    }
+  },
+  "monitoring": {
+    "metrics": {
+      "enableMetrics": true,
+      "metricsPath": "/metrics",
+      "collectDefaultMetrics": true,
+      "collectGcMetrics": true,
+      "collectEventLoopMetrics": true,
+      "collectProcessMetrics": true
+    },
+    "healthChecks": {
+      "enableHealthChecks": true,
+      "healthCheckPath": "/health",
+      "checkDatabase": true,
+      "checkFileSystem": true,
+      "checkExternalServices": true
+    },
+    "alerts": {
+      "enableAlerts": true,
+      "alertOnValidationFailure": true,
+      "alertOnPermissionBreach": true,
+      "alertOnSecurityViolation": true,
+      "notificationMethods": ["email", "webhook"],
+      "alertThresholds": {
+        "validationFailureRate": 0.1,
+        "permissionDenialRate": 0.05,
+        "securityViolationRate": 0.01
+      }
+    }
+  },
+  "development": {
+    "debug": {
+      "enableDebugMode": false,
+      "debugLevel": "info",
+      "enableVerboseLogging": false,
+      "enablePerformanceMonitoring": false
+    },
+    "testing": {
+      "enableTestMode": false,
+      "mockExternalServices": true,
+      "skipAuthentication": false,
+      "skipAuthorization": false,
+      "useTestData": true
+    },
+    "development": {
+      "enableHotReload": true,
+      "enableSourceMaps": true,
+      "disableSecurityFeatures": false,
+      "allowInsecureConnections": false
+    }
+  },
+  "production": {
+    "optimization": {
+      "enableMinification": true,
+      "enableCompression": true,
+      "enableCaching": true,
+      "enableCDN": false
+    },
+    "security": {
+      "enableStrictMode": true,
+      "enableHSTS": true,
+      "enableCSP": true,
+      "enableXSSProtection": true,
+      "enableFrameOptions": true
+    },
+    "monitoring": {
+      "enableDetailedLogging": true,
+      "enableErrorTracking": true,
+      "enablePerformanceTracking": true,
+      "enableUptimeMonitoring": true
+    }
+  }
+}

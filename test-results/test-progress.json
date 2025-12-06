@@ -1,0 +1,29 @@
+{
+  "testStartTime": "2025-12-05T13:41:36.309Z",
+  "currentTime": "2025-12-05T13:41:36.350Z",
+  "totalDuration": 41,
+  "steps": [
+    {
+      "step": "test_start",
+      "status": "INFO",
+      "message": "开始Electron环境测试",
+      "timestamp": "2025-12-05T13:41:36.311Z",
+      "duration": 2
+    },
+    {
+      "step": "electron_binary",
+      "status": "INFO",
+      "message": "检查Electron二进制文件",
+      "timestamp": "2025-12-05T13:41:36.325Z",
+      "duration": 16
+    },
+    {
+      "step": "test_failed",
+      "status": "ERROR",
+      "message": "Cannot find module 'electron'\nRequire stack:\n- /workspace/radiation-detector/electron-test.js",
+      "timestamp": "2025-12-05T13:41:36.350Z",
+      "duration": 41
+    }
+  ],
+  "errors": []
+}

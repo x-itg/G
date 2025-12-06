@@ -1,0 +1,13 @@
+{
+  "timestamp": "2025-12-06T09:13:24.144Z",
+  "activeConnections": 0,
+  "totalQueries": 0,
+  "successfulQueries": 0,
+  "failedQueries": 0,
+  "averageResponseTime": 0,
+  "currentQPS": 0,
+  "responseTimeSamples": [],
+  "successRate": 100,
+  "errorRate": 0,
+  "queryStats": {}
+}

@@ -1,0 +1,24 @@
+{
+  "exportDate": "2025-12-06T08:04:51.716Z",
+  "format": "json",
+  "dateRange": null,
+  "dashboardData": {
+    "timestamp": "2025-12-06T08:04:51.716Z",
+    "systemName": "放射化学纯度检测仪",
+    "overallStatus": "UNKNOWN",
+    "lastCheck": null,
+    "complianceScore": 0,
+    "sections": {},
+    "issues": {
+      "critical": 0,
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    },
+    "trends": {
+      "weeklyScore": [],
+      "monthlyIssues": []
+    }
+  },
+  "checkHistory": []
+}

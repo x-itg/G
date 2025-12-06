@@ -1,0 +1,13 @@
+[
+  {
+    "id": "slow-test-1765008916881",
+    "operationId": "READ:users:slowQuery",
+    "operationName": "slowQuery",
+    "tableName": "users",
+    "operationType": "READ",
+    "responseTime": 1200,
+    "status": "SUCCESS",
+    "timestamp": "2025-12-06T08:15:18.083Z",
+    "error": null
+  }
+]

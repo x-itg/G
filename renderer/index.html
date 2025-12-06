@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="format-detection" content="telephone=no,email=no,address=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#667eea">
+    <title>放射化学纯度检测仪</title>
+    
+    <!-- 无障碍支持 -->
+    <meta name="description" content="硅胶板色谱扫描分析系统 - 放射化学纯度检测">
+    <meta name="keywords" content="放射检测,硅胶板,色谱,纯度检测,碘化钠探头">
+    <link rel="canonical" href="#">
+    
+    <!-- 无障碍跳过链接 -->
+    <style>
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 4px;
+            z-index: 10000;
+            transition: top 0.3s;
+            font-weight: bold;
+        }
+        
+        .skip-link:focus {
+            top: 6px;
+        }
+        
+        .sr-only {
+            position: absolute !important;
+            width: 1px !important;
+            height: 1px !important;
+            padding: 0 !important;
+            margin: -1px !important;
+            overflow: hidden !important;
+            clip: rect(0, 0, 0, 0) !important;
+            white-space: nowrap !important;
+            border: 0 !important;
+        }
+    </style>
+    
+    <!-- 样式文件 -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/chart.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/detector-main.css">
+    
+    <!-- 外部库 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+</head>
+<body>
+    <!-- 无障碍跳过链接 -->
+    <a href="#main-content" class="skip-link">跳转到主要内容</a>
+    <a href="#control-panel" class="skip-link">跳转到控制面板</a>
+    
+    <!-- 屏幕阅读器状态区域 -->
+    <div id="sr-status" class="sr-only" role="status" aria-live="polite"></div>
+    <div id="sr-alerts" class="sr-only" role="alert"></div>
+    
+    <!-- 登录界面 -->
+    <div id="login-screen" class="screen" role="main" aria-labelledby="login-title">
+        <div class="login-container">
+            <div class="login-header">
+                <h1 id="login-title">放射化学纯度检测仪</h1>
+                <p class="compliance-badge">硅胶板色谱扫描分析系统</p>
+            </div>
+            
+            <form id="login-form" class="login-form" novalidate>
+                <fieldset>
+                    <legend class="sr-only">用户登录信息</legend>
+                    
+                    <div class="form-group">
+                        <label for="username">
+                            用户名
+                            <span aria-hidden="true">*</span>
+                        </label>
+                        <input type="text" 
+                               id="username" 
+                               name="username" 
+                               required 
+                               aria-required="true"
+                               placeholder="请输入用户名">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">
+                            密码
+                            <span aria-hidden="true">*</span>
+                        </label>
+                        <input type="password" 
+                               id="password" 
+                               name="password" 
+                               required 
+                               aria-required="true"
+                               placeholder="请输入密码">
+                    </div>
+                </fieldset>
+                
+                <button type="submit" class="btn btn-primary">登录</button>
+            </form>
+            
+            <div class="login-footer">
+                <p><strong>默认登录信息：</strong></p>
+                <p>管理员账户: admin / Admin123!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主界面 - 放射化学纯度检测专用 -->
+    <div id="main-screen" class="screen" style="display: none;" role="main" aria-labelledby="main-title">
+        <!-- 简洁顶部栏 -->
+        <div class="top-bar">
+            <div class="top-bar-left">
+                <h2 id="main-title">放射化学纯度检测仪</h2>
+                <span class="app-subtitle">硅胶板色谱扫描分析系统</span>
+            </div>
+            <div class="top-bar-right">
+                <span id="user-info" class="user-info"></span>
+                <button id="logout-btn" class="btn btn-outline-secondary btn-sm">退出</button>
+            </div>
+        </div>
+
+        <!-- 主要内容区域 -->
+        <div class="main-content" id="main-content" role="application" aria-label="放射化学纯度检测界面">
+            
+            <!-- 左侧控制面板 -->
+            <div class="detector-control-panel" id="control-panel" role="navigation" aria-label="检测控制面板">
+                
+                <!-- 设备连接状态 -->
+                <div class="device-status-card">
+                    <h3>设备状态</h3>
+                    <div class="device-indicators">
+                        <div class="indicator">
+                            <span class="indicator-label">碘化钠探头:</span>
+                            <span id="probe-status" class="status-dot disconnected"></span>
+                            <span id="probe-status-text">未连接</span>
+                        </div>
+                        <div class="indicator">
+                            <span class="indicator-label">位置控制:</span>
+                            <span id="position-status" class="status-dot disconnected"></span>
+                            <span id="position-status-text">未就绪</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 检测控制 -->
+                <div class="detection-controls">
+                    <h3>检测控制</h3>
+                    
+                    <!-- 主要检测按钮 -->
+                    <div class="primary-controls">
+                        <button id="connect-btn" class="btn btn-primary control-btn">
+                            <span class="btn-icon">🔌</span>
+                            <span class="btn-text">连接设备</span>
+                        </button>
+                        <button id="start-detection-btn" class="btn btn-success control-btn" disabled>
+                            <span class="btn-icon">▶️</span>
+                            <span class="btn-text">开始扫描</span>
+                        </button>
+                        <button id="stop-detection-btn" class="btn btn-danger control-btn" disabled>
+                            <span class="btn-icon">⏹️</span>
+                            <span class="btn-text">停止扫描</span>
+                        </button>
+                    </div>
+                    
+                    <!-- 辅助控制 -->
+                    <div class="secondary-controls">
+                        <button id="home-btn" class="btn btn-info control-btn" disabled>
+                            <span class="btn-icon">🏠</span>
+                            <span class="btn-text">探头归零</span>
+                        </button>
+                        <button id="reset-btn" class="btn btn-warning control-btn">
+                            <span class="btn-icon">🔄</span>
+                            <span class="btn-text">重置数据</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 检测参数设置 -->
+                <div class="detection-parameters">
+                    <h3>检测参数</h3>
+                    
+                    <div class="parameter-group">
+                        <div class="form-group">
+                            <label for="scan-range">扫描范围 (mm)</label>
+                            <div class="range-input">
+                                <input type="range" id="scan-range" class="form-range" min="0" max="50" value="50" step="0.1">
+                                <span class="range-value">0 - <span id="range-max">50</span> mm</span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="position-step">位置步长 (mm)</label>
+                            <input type="number" id="position-step" class="form-control" value="0.1" min="0.1" max="2" step="0.1">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="integration-time">积分时间 (s)</label>
+                            <input type="number" id="integration-time" class="form-control" value="1" min="0.1" max="10" step="0.1">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="count-rate-max">计数率上限 (cps)</label>
+                            <input type="number" id="count-rate-max" class="form-control" value="5000" min="1000" max="10000" step="100">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 样品信息 -->
+                <div class="sample-info">
+                    <h3>样品信息</h3>
+                    
+                    <div class="form-group">
+                        <label for="sample-name">样品名称</label>
+                        <input type="text" id="sample-name" class="form-control" placeholder="请输入样品名称">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="sample-volume">样品体积 (μL)</label>
+                        <input type="number" id="sample-volume" class="form-control" value="1" min="0.1" step="0.1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="eluent">展开剂</label>
+                        <select id="eluent" class="form-control">
+                            <option value="acetonitrile">乙腈</option>
+                            <option value="methanol">甲醇</option>
+                            <option value="ethanol">乙醇</option>
+                            <option value="water">水</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="detection-mode">检测模式</label>
+                        <select id="detection-mode" class="form-control">
+                            <option value="rf-value">Rf值计算</option>
+                            <option value="purity">放射化学纯度</option>
+                            <option value="both">综合分析</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 实时数据显示 -->
+                <div class="realtime-data">
+                    <h3>实时数据</h3>
+                    
+                    <div class="data-grid">
+                        <div class="data-item">
+                            <span class="data-label">当前位置:</span>
+                            <span id="current-position" class="data-value">0.0</span>
+                            <span class="data-unit">mm</span>
+                        </div>
+                        <div class="data-item">
+                            <span class="data-label">计数率:</span>
+                            <span id="current-counts" class="data-value">0</span>
+                            <span class="data-unit">cps</span>
+                        </div>
+                        <div class="data-item">
+                            <span class="data-label">采集点数:</span>
+                            <span id="total-points" class="data-value">0</span>
+                            <span class="data-unit">点</span>
+                        </div>
+                        <div class="data-item">
+                            <span class="data-label">扫描进度:</span>
+                            <span id="scan-progress" class="data-value">0</span>
+                            <span class="data-unit">%</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 进度条 -->
+                    <div class="progress-container">
+                        <div id="scan-progress-bar" class="progress-bar">
+                            <div class="progress-fill"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 中间辐射分布图表区域 -->
+            <div class="radiation-chart-area" role="region" aria-labelledby="chart-heading" aria-describedby="chart-description">
+                <!-- 图表标题和控制 -->
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <h3 id="chart-heading">辐射强度分布曲线</h3>
+                        <span class="chart-subtitle">硅胶板色谱扫描 - 碘化钠探头检测</span>
+                    </div>
+                    <div class="chart-controls">
+                        <button id="start-scan-btn" class="btn btn-primary">
+                            🔄 重新扫描
+                        </button>
+                        <button id="analyze-btn" class="btn btn-success">
+                            📊 分析曲线
+                        </button>
+                        <button id="clear-chart-btn" class="btn btn-secondary">
+                            🧹 清空图表
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 图表包装器 -->
+                <div class="chart-wrapper">
+                    <canvas id="main-chart" 
+                            role="img"
+                            aria-label="硅胶板辐射强度分布图表，显示位置(0-50mm)与计数率(0-5000cps)的关系"
+                            aria-describedby="chart-description"></canvas>
+                    
+                    <!-- 图表说明 -->
+                    <div id="chart-description" class="sr-only">
+                        该图表显示硅胶板上的辐射强度分布曲线。横轴为位置(0-50毫米)，纵轴为计数率(0-5000counts/s)。
+                        当物质较纯净时，辐射分布会在特定位移位置显示高峰，其他位置辐射较低。
+                        可通过曲线在特定位置区间所占比例计算放射化学纯度。
+                    </div>
+                    
+                    <!-- 图表上的标记点 -->
+                    <div class="chart-markers">
+                        <div id="spot-marker" 
+                             class="chart-marker spot-marker" 
+                             data-position="0"
+                             role="button"
+                             tabindex="0"
+                             aria-label="样品点位置，位置0mm"
+                             title="样品点位置">
+                            <span class="marker-icon">📍</span>
+                            <span class="marker-label">样品点</span>
+                        </div>
+                        
+                        <div id="front-marker" 
+                             class="chart-marker front-marker" 
+                             data-position="50"
+                             role="button"
+                             tabindex="0"
+                             aria-label="色谱前沿，位置50mm"
+                             title="色谱前沿">
+                            <span class="marker-icon">➡️</span>
+                            <span class="marker-label">前沿</span>
+                        </div>
+                        
+                        <div id="peak-marker" 
+                             class="chart-marker peak-marker hidden" 
+                             data-position="25"
+                             role="button"
+                             tabindex="0"
+                             aria-label="检测到的峰值位置"
+                             title="峰值位置">
+                            <span class="marker-icon">🎯</span>
+                            <span class="marker-label">峰值</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 图表底部信息 -->
+                <div class="chart-footer">
+                    <div class="chart-legend">
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #007bff;"></span>
+                            <span>实际测量值</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #28a745;"></span>
+                            <span>拟合曲线</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #dc3545;"></span>
+                            <span>背景基线</span>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">测量范围:</span>
+                            <span class="stat-value">0 - 50 mm</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">计数率上限:</span>
+                            <span class="stat-value">5000 cps</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">数据点数:</span>
+                            <span id="chart-data-points" class="stat-value">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧分析结果面板 -->
+            <div class="analysis-results-panel" role="complementary" aria-labelledby="analysis-heading">
+                
+                <!-- 分析结果 -->
+                <div class="results-card">
+                    <h3 id="analysis-heading">分析结果</h3>
+                    
+                    <div class="analysis-summary">
+                        <div class="summary-item">
+                            <span class="summary-label">样品状态:</span>
+                            <span id="sample-status" class="summary-value">待检测</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">分析时间:</span>
+                            <span id="analysis-time" class="summary-value">--</span>
+                        </div>
+                    </div>
+                    
+                    <div class="detailed-results">
+                        <div class="result-section">
+                            <h4>放射化学纯度</h4>
+                            <div class="result-grid">
+                                <div class="result-item">
+                                    <span class="result-label">样品纯度:</span>
+                                    <span id="purity" class="result-value">0.00%</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">净峰面积:</span>
+                                    <span id="net-peak-area" class="result-value">0</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">总峰面积:</span>
+                                    <span id="total-peak-area" class="result-value">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="result-section">
+                            <h4>Rf值分析</h4>
+                            <div class="result-grid">
+                                <div class="result-item">
+                                    <span class="result-label">Rf值:</span>
+                                    <span id="rf-value" class="result-value">0.00</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">峰位置:</span>
+                                    <span id="peak-position" class="result-value">0.0 mm</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">峰宽度:</span>
+                                    <span id="peak-width" class="result-value">0.0 mm</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="result-section">
+                            <h4>质量指标</h4>
+                            <div class="result-grid">
+                                <div class="result-item">
+                                    <span class="result-label">背景噪声:</span>
+                                    <span id="background-noise" class="result-value">0 cps</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">信噪比:</span>
+                                    <span id="signal-noise-ratio" class="result-value">0</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">数据点数:</span>
+                                    <span id="data-point-count" class="result-value">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 检测日志 -->
+                <div class="detection-log">
+                    <h3>检测日志</h3>
+                    
+                    <div class="log-header">
+                        <div class="log-controls">
+                            <button id="start-log" class="btn btn-sm btn-primary">开始记录</button>
+                            <button id="clear-log" class="btn btn-sm btn-secondary">清空日志</button>
+                        </div>
+                        <div class="log-info">
+                            <span id="log-status">日志已停止</span>
+                        </div>
+                    </div>
+                    
+                    <div id="detection-log" 
+                         class="log-container"
+                         role="log"
+                         aria-live="polite"
+                         aria-label="检测操作日志">
+                        <!-- 日志条目将在这里显示 -->
+                    </div>
+                    
+                    <div class="log-footer">
+                        <div class="log-stats">
+                            <span>总记录: <span id="log-count">0</span></span>
+                            <span>错误: <span id="error-count">0</span></span>
+                            <span>警告: <span id="warning-count">0</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 导出和报告 -->
+                <div class="export-options">
+                    <h3>导出报告</h3>
+                    
+                    <div class="export-buttons">
+                        <button id="export-raw-data" class="btn btn-outline-primary btn-sm" disabled>
+                            📄 导出原始数据
+                        </button>
+                        <button id="export-analysis-report" class="btn btn-success btn-sm" disabled>
+                            📊 导出分析报告
+                        </button>
+                        <button id="export-pdf-report" class="btn btn-info btn-sm" disabled>
+                            📋 生成PDF报告
+                        </button>
+                        <button id="print-report" class="btn btn-secondary btn-sm" disabled>
+                            🖨️ 打印报告
+                        </button>
+                    </div>
+                    
+                    <div class="report-options">
+                        <div class="form-group">
+                            <label for="report-format">报告格式</label>
+                            <select id="report-format" class="form-control">
+                                <option value="summary">简要报告</option>
+                                <option value="detailed">详细报告</option>
+                                <option value="full">完整报告</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="include-raw-data">
+                                <input type="checkbox" id="include-raw-data" checked>
+                                包含原始数据
+                            </label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="include-chart">
+                                <input type="checkbox" id="include-chart" checked>
+                                包含图表
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载指示器 -->
+    <div id="loading-indicator" 
+         class="loading-indicator" 
+         style="display: none;"
+         role="alert"
+         aria-live="polite">
+        <div class="spinner" role="img" aria-label="加载中"></div>
+        <p id="loading-text">处理中...</p>
+    </div>
+
+    <!-- JavaScript 文件 -->
+    <script src="assets/js/error-handler.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/loading-indicator.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/chart.js"></script>
+    <script src="assets/js/serial.js"></script>
+    <script src="assets/js/analysis.js"></script>
+    <script src="assets/js/ui.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/detector-demo.js"></script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+[
+  {
+    "id": "c4c0e6e2-4fd2-481a-9341-db1a444c9368",
+    "signature_id": "a4db0bb1-3b5f-4379-8736-1ef051d9a732",
+    "verification_result": "INVALID",
+    "verified_by": "09506aa6-8e49-468a-9955-4e994bfebb78",
+    "verifier_ip": "127.0.0.1",
+    "verifier_user_agent": "DebugAgent/1.0",
+    "discrepancy_notes": "数字签名验证失败",
+    "compliance_status": "NON_COMPLIANT",
+    "created_at": "2025-12-06T08:04:56.424Z"
+  },
+  {
+    "id": "340c666c-7d58-4278-8f08-8b7cee366e1c",
+    "signature_id": "8b7fd645-70ba-4b5e-962d-8d1015d5f74f",
+    "verification_result": "INVALID",
+    "verified_by": "93b28501-f762-4397-86bc-90ad8075cd80",
+    "verifier_ip": "127.0.0.1",
+    "verifier_user_agent": "TestAgent/1.0",
+    "discrepancy_notes": "数字签名验证失败",
+    "compliance_status": "NON_COMPLIANT",
+    "created_at": "2025-12-06T08:05:28.172Z"
+  }
+]

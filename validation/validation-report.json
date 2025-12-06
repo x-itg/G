@@ -1,0 +1,1428 @@
+{
+  "timestamp": "2025-12-06T09:17:38.388Z",
+  "overall_status": "PASSED_WITH_WARNINGS",
+  "tables": {
+    "users": {
+      "status": "PASSED",
+      "fields": [
+        {
+          "field_name": "id",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true,
+            "primary_key": true
+          }
+        },
+        {
+          "field_name": "username",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true,
+            "max_length": 50,
+            "unique": true
+          }
+        },
+        {
+          "field_name": "password",
+          "status": "FAILED",
+          "issues": [
+            {
+              "type": "MISSING_FIELD",
+              "message": "字段 password 不存在",
+              "severity": "HIGH"
+            }
+          ],
+          "config": {
+            "type": "string",
+            "required": true,
+            "hashed": true
+          }
+        },
+        {
+          "field_name": "full_name",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true,
+            "max_length": 100
+          }
+        },
+        {
+          "field_name": "title",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": false,
+            "max_length": 100
+          }
+        },
+        {
+          "field_name": "department",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": false,
+            "max_length": 100
+          }
+        },
+        {
+          "field_name": "role",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true,
+            "max_length": 50
+          }
+        },
+        {
+          "field_name": "must_change_password",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "boolean",
+            "required": false,
+            "default": false
+          }
+        },
+        {
+          "field_name": "created_at",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true
+          }
+        },
+        {
+          "field_name": "last_login",
+          "status": "FAILED",
+          "issues": [
+            {
+              "type": "MISSING_FIELD",
+              "message": "字段 last_login 不存在",
+              "severity": "HIGH"
+            }
+          ],
+          "config": {
+            "type": "string",
+            "required": false
+          }
+        },
+        {
+          "field_name": "is_active",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "boolean",
+            "required": false,
+            "default": true
+          }
+        }
+      ],
+      "constraints": [],
+      "issues": [
+        {
+          "type": "UNEXPECTED_FIELD",
+          "message": "表 users 包含未定义的字段: password_hash",
+          "severity": "MEDIUM",
+          "table": "users",
+          "field": "password_hash"
+        },
+        {
+          "type": "UNEXPECTED_FIELD",
+          "message": "表 users 包含未定义的字段: password_salt",
+          "severity": "MEDIUM",
+          "table": "users",
+          "field": "password_salt"
+        },
+        {
+          "type": "UNEXPECTED_FIELD",
+          "message": "表 users 包含未定义的字段: password_expiry",
+          "severity": "MEDIUM",
+          "table": "users",
+          "field": "password_expiry"
+        },
+        {
+          "type": "UNEXPECTED_FIELD",
+          "message": "表 users 包含未定义的字段: is_locked",
+          "severity": "MEDIUM",
+          "table": "users",
+          "field": "is_locked"
+        }
+      ],
+      "record_count": 42
+    },
+    "measurements": {
+      "status": "FAILED",
+      "fields": [],
+      "constraints": [],
+      "issues": [
+        {
+          "type": "TABLE_NOT_FOUND",
+          "message": "表 measurements 的数据文件不存在",
+          "severity": "HIGH"
+        }
+      ],
+      "record_count": 0
+    },
+    "system_settings": {
+      "status": "FAILED",
+      "fields": [],
+      "constraints": [],
+      "issues": [
+        {
+          "type": "TABLE_NOT_FOUND",
+          "message": "表 system_settings 的数据文件不存在",
+          "severity": "HIGH"
+        }
+      ],
+      "record_count": 0
+    },
+    "user_permissions": {
+      "status": "PASSED",
+      "fields": [
+        {
+          "field_name": "id",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true,
+            "primary_key": true
+          }
+        },
+        {
+          "field_name": "user_id",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true,
+            "foreign_key": "users.id"
+          }
+        },
+        {
+          "field_name": "permission_level",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "number",
+            "required": true
+          }
+        },
+        {
+          "field_name": "permission_name",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true,
+            "max_length": 100
+          }
+        },
+        {
+          "field_name": "resource",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true,
+            "max_length": 50
+          }
+        },
+        {
+          "field_name": "action",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true,
+            "max_length": 50
+          }
+        },
+        {
+          "field_name": "granted_by",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true,
+            "foreign_key": "users.id"
+          }
+        },
+        {
+          "field_name": "granted_at",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true
+          }
+        },
+        {
+          "field_name": "expires_at",
+          "status": "FAILED",
+          "issues": [
+            {
+              "type": "MISSING_FIELD",
+              "message": "字段 expires_at 不存在",
+              "severity": "HIGH"
+            }
+          ],
+          "config": {
+            "type": "string",
+            "required": false
+          }
+        },
+        {
+          "field_name": "conditions",
+          "status": "FAILED",
+          "issues": [
+            {
+              "type": "INVALID_TYPE",
+              "message": "字段 conditions 类型不匹配。期望: string, 实际: null",
+              "severity": "HIGH"
+            }
+          ],
+          "config": {
+            "type": "string",
+            "required": false
+          }
+        },
+        {
+          "field_name": "is_active",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "boolean",
+            "required": false,
+            "default": true
+          }
+        }
+      ],
+      "constraints": [],
+      "issues": [
+        {
+          "type": "INVALID_TYPE",
+          "message": "字段 conditions 类型不匹配。期望: string, 实际: null",
+          "severity": "HIGH",
+          "table": "user_permissions",
+          "field": "conditions"
+        },
+        {
+          "type": "UNEXPECTED_FIELD",
+          "message": "表 user_permissions 包含未定义的字段: created_at",
+          "severity": "MEDIUM",
+          "table": "user_permissions",
+          "field": "created_at"
+        }
+      ],
+      "record_count": 43
+    },
+    "audit_logs": {
+      "status": "PASSED",
+      "fields": [
+        {
+          "field_name": "id",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true,
+            "primary_key": true
+          }
+        },
+        {
+          "field_name": "user_id",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true,
+            "foreign_key": "users.id"
+          }
+        },
+        {
+          "field_name": "username",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true,
+            "max_length": 50
+          }
+        },
+        {
+          "field_name": "action",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true,
+            "max_length": 100
+          }
+        },
+        {
+          "field_name": "resource",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true,
+            "max_length": 50
+          }
+        },
+        {
+          "field_name": "resource_id",
+          "status": "FAILED",
+          "issues": [
+            {
+              "type": "MISSING_FIELD",
+              "message": "字段 resource_id 不存在",
+              "severity": "HIGH"
+            }
+          ],
+          "config": {
+            "type": "string",
+            "required": false
+          }
+        },
+        {
+          "field_name": "old_values",
+          "status": "FAILED",
+          "issues": [
+            {
+              "type": "INVALID_TYPE",
+              "message": "字段 old_values 类型不匹配。期望: string, 实际: null",
+              "severity": "HIGH"
+            }
+          ],
+          "config": {
+            "type": "string",
+            "required": false
+          }
+        },
+        {
+          "field_name": "new_values",
+          "status": "FAILED",
+          "issues": [
+            {
+              "type": "INVALID_TYPE",
+              "message": "字段 new_values 类型不匹配。期望: string, 实际: null",
+              "severity": "HIGH"
+            }
+          ],
+          "config": {
+            "type": "string",
+            "required": false
+          }
+        },
+        {
+          "field_name": "result",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true,
+            "max_length": 20
+          }
+        },
+        {
+          "field_name": "ip_address",
+          "status": "FAILED",
+          "issues": [
+            {
+              "type": "MISSING_FIELD",
+              "message": "字段 ip_address 不存在",
+              "severity": "HIGH"
+            }
+          ],
+          "config": {
+            "type": "string",
+            "required": false,
+            "max_length": 45
+          }
+        },
+        {
+          "field_name": "user_agent",
+          "status": "FAILED",
+          "issues": [
+            {
+              "type": "MISSING_FIELD",
+              "message": "字段 user_agent 不存在",
+              "severity": "HIGH"
+            }
+          ],
+          "config": {
+            "type": "string",
+            "required": false,
+            "max_length": 500
+          }
+        },
+        {
+          "field_name": "session_id",
+          "status": "FAILED",
+          "issues": [
+            {
+              "type": "MISSING_FIELD",
+              "message": "字段 session_id 不存在",
+              "severity": "HIGH"
+            }
+          ],
+          "config": {
+            "type": "string",
+            "required": false,
+            "max_length": 100
+          }
+        },
+        {
+          "field_name": "timestamp",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true
+          }
+        },
+        {
+          "field_name": "signature_required",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "boolean",
+            "required": false,
+            "default": false
+          }
+        },
+        {
+          "field_name": "electronic_signature_id",
+          "status": "FAILED",
+          "issues": [
+            {
+              "type": "MISSING_FIELD",
+              "message": "字段 electronic_signature_id 不存在",
+              "severity": "HIGH"
+            }
+          ],
+          "config": {
+            "type": "string",
+            "required": false,
+            "foreign_key": "electronic_signatures.id"
+          }
+        },
+        {
+          "field_name": "compliance_code",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": false,
+            "max_length": 50
+          }
+        },
+        {
+          "field_name": "reason",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": false,
+            "max_length": 500
+          }
+        },
+        {
+          "field_name": "details",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": false,
+            "max_length": 1000
+          }
+        }
+      ],
+      "constraints": [],
+      "issues": [
+        {
+          "type": "INVALID_TYPE",
+          "message": "字段 old_values 类型不匹配。期望: string, 实际: null",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "old_values"
+        },
+        {
+          "type": "INVALID_TYPE",
+          "message": "字段 new_values 类型不匹配。期望: string, 实际: null",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "new_values"
+        },
+        {
+          "type": "UNEXPECTED_FIELD",
+          "message": "表 audit_logs 包含未定义的字段: created_at",
+          "severity": "MEDIUM",
+          "table": "audit_logs",
+          "field": "created_at"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 user_id 值 system 在表 users 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "user_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 electronic_signature_id 值 SIG-1765008114121-75DBE3437FE24DA0 在表 electronic_signatures 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "electronic_signature_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 user_id 值 system 在表 users 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "user_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 electronic_signature_id 值 SIG-1765008114503-AFD3D3CE5D920D79 在表 electronic_signatures 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "electronic_signature_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 electronic_signature_id 值 SIG-1765008114643-A5BBB6520E91AA20 在表 electronic_signatures 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "electronic_signature_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 electronic_signature_id 值 SIG-1765008114715-B6AEC81681313582 在表 electronic_signatures 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "electronic_signature_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 electronic_signature_id 值 SIG-1765008114795-A69CE4397DA988E1 在表 electronic_signatures 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "electronic_signature_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 electronic_signature_id 值 SIG-1765008114940-1F35F4F5383D01B7 在表 electronic_signatures 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "electronic_signature_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 electronic_signature_id 值 SIG-1765008182876-36E11BE7705B1B43 在表 electronic_signatures 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "electronic_signature_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 user_id 值 system 在表 users 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "user_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 electronic_signature_id 值 SIG-1765008183258-CE918167871804FA 在表 electronic_signatures 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "electronic_signature_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 electronic_signature_id 值 SIG-1765008183401-A344FBFCF2AB798C 在表 electronic_signatures 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "electronic_signature_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 electronic_signature_id 值 SIG-1765008183477-BCA801FFEFB5C001 在表 electronic_signatures 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "electronic_signature_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 electronic_signature_id 值 SIG-1765008183553-0221A5FF711C3318 在表 electronic_signatures 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "electronic_signature_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 electronic_signature_id 值 SIG-1765008183699-C6DA2194A5B62021 在表 electronic_signatures 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "electronic_signature_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 electronic_signature_id 值 SIG-1765008222575-3CF3CAF180C61BAC 在表 electronic_signatures 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "electronic_signature_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 user_id 值 system 在表 users 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "user_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 electronic_signature_id 值 SIG-1765008222984-374F5BD5E61A9045 在表 electronic_signatures 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "electronic_signature_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 electronic_signature_id 值 SIG-1765008223179-6E8F8E56A1DBAFE6 在表 electronic_signatures 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "electronic_signature_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 electronic_signature_id 值 SIG-1765008223307-9BAE2D533224FBFF 在表 electronic_signatures 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "electronic_signature_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 electronic_signature_id 值 SIG-1765008223432-965D76918F3E139C 在表 electronic_signatures 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "electronic_signature_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 electronic_signature_id 值 SIG-1765008223585-91C09AD4EB7187F6 在表 electronic_signatures 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "electronic_signature_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 electronic_signature_id 值 SIG-1765008244679-57725313CDF3D5E0 在表 electronic_signatures 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "electronic_signature_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 user_id 值 system 在表 users 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "user_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 user_id 值 system 在表 users 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "user_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 user_id 值 system 在表 users 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "user_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 user_id 值 system_monitor 在表 users 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "user_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 user_id 值 system_monitor 在表 users 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "user_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 user_id 值 system_monitor 在表 users 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "user_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 user_id 值 system_monitor 在表 users 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "user_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 user_id 值 system_monitor 在表 users 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "user_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 user_id 值 system_monitor 在表 users 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "user_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 user_id 值 system_monitor 在表 users 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "user_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 user_id 值 system_monitor 在表 users 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "user_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 user_id 值 system_monitor 在表 users 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "user_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 user_id 值 system_monitor 在表 users 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "user_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 user_id 值 system_monitor 在表 users 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "user_id"
+        },
+        {
+          "type": "FOREIGN_KEY_VIOLATION",
+          "message": "表 audit_logs 中的外键 user_id 值 system_monitor 在表 users 中不存在",
+          "severity": "HIGH",
+          "table": "audit_logs",
+          "field": "user_id"
+        }
+      ],
+      "record_count": 49
+    },
+    "performance_metrics": {
+      "status": "PASSED",
+      "fields": [
+        {
+          "field_name": "id",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true,
+            "primary_key": true
+          }
+        },
+        {
+          "field_name": "metric_type",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true,
+            "max_length": 50
+          }
+        },
+        {
+          "field_name": "metric_name",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true,
+            "max_length": 100
+          }
+        },
+        {
+          "field_name": "value",
+          "status": "FAILED",
+          "issues": [
+            {
+              "type": "INVALID_TYPE",
+              "message": "字段 value 类型不匹配。期望: number, 实际: string",
+              "severity": "HIGH"
+            }
+          ],
+          "config": {
+            "type": "number",
+            "required": true
+          }
+        },
+        {
+          "field_name": "unit",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": false,
+            "max_length": 20
+          }
+        },
+        {
+          "field_name": "source",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true,
+            "max_length": 50
+          }
+        },
+        {
+          "field_name": "timestamp",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true
+          }
+        },
+        {
+          "field_name": "alert_level",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": false,
+            "max_length": 20
+          }
+        },
+        {
+          "field_name": "metadata",
+          "status": "FAILED",
+          "issues": [
+            {
+              "type": "INVALID_TYPE",
+              "message": "字段 metadata 类型不匹配。期望: string, 实际: object",
+              "severity": "HIGH"
+            }
+          ],
+          "config": {
+            "type": "string",
+            "required": false
+          }
+        }
+      ],
+      "constraints": [],
+      "issues": [
+        {
+          "type": "INVALID_TYPE",
+          "message": "字段 value 类型不匹配。期望: number, 实际: string",
+          "severity": "HIGH",
+          "table": "performance_metrics",
+          "field": "value"
+        },
+        {
+          "type": "INVALID_TYPE",
+          "message": "字段 metadata 类型不匹配。期望: string, 实际: object",
+          "severity": "HIGH",
+          "table": "performance_metrics",
+          "field": "metadata"
+        },
+        {
+          "type": "UNEXPECTED_FIELD",
+          "message": "表 performance_metrics 包含未定义的字段: created_at",
+          "severity": "MEDIUM",
+          "table": "performance_metrics",
+          "field": "created_at"
+        }
+      ],
+      "record_count": 4827
+    },
+    "electronic_signatures": {
+      "status": "PASSED",
+      "fields": [
+        {
+          "field_name": "id",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true,
+            "primary_key": true
+          }
+        },
+        {
+          "field_name": "user_id",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true,
+            "foreign_key": "users.id"
+          }
+        },
+        {
+          "field_name": "entity_type",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true,
+            "max_length": 50
+          }
+        },
+        {
+          "field_name": "entity_id",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true
+          }
+        },
+        {
+          "field_name": "action",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true,
+            "max_length": 100
+          }
+        },
+        {
+          "field_name": "reason",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true,
+            "max_length": 500
+          }
+        },
+        {
+          "field_name": "comment",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": false,
+            "max_length": 1000
+          }
+        },
+        {
+          "field_name": "user_full_name",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true,
+            "max_length": 100
+          }
+        },
+        {
+          "field_name": "user_title",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": false,
+            "max_length": 100
+          }
+        },
+        {
+          "field_name": "user_department",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": false,
+            "max_length": 100
+          }
+        },
+        {
+          "field_name": "signed_at",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true
+          }
+        },
+        {
+          "field_name": "digital_signature",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": true,
+            "unique": true
+          }
+        },
+        {
+          "field_name": "ip_address",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": false,
+            "max_length": 45
+          }
+        },
+        {
+          "field_name": "user_agent",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "string",
+            "required": false,
+            "max_length": 500
+          }
+        },
+        {
+          "field_name": "second_factor_verified",
+          "status": "PASSED",
+          "issues": [],
+          "config": {
+            "type": "boolean",
+            "required": false,
+            "default": false
+          }
+        }
+      ],
+      "constraints": [],
+      "issues": [
+        {
+          "type": "UNEXPECTED_FIELD",
+          "message": "表 electronic_signatures 包含未定义的字段: created_at",
+          "severity": "MEDIUM",
+          "table": "electronic_signatures",
+          "field": "created_at"
+        },
+        {
+          "type": "UNEXPECTED_FIELD",
+          "message": "表 electronic_signatures 包含未定义的字段: deleted",
+          "severity": "MEDIUM",
+          "table": "electronic_signatures",
+          "field": "deleted"
+        },
+        {
+          "type": "UNEXPECTED_FIELD",
+          "message": "表 electronic_signatures 包含未定义的字段: updated_at",
+          "severity": "MEDIUM",
+          "table": "electronic_signatures",
+          "field": "updated_at"
+        }
+      ],
+      "record_count": 27
+    }
+  },
+  "issues": [
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 6c202710-04fb-4636-8bba-672377951452 引用了不存在的 users.id: system",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "user_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 d33942ba-ec04-48dc-8bba-f595017a0099 引用了不存在的 users.id: system",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "user_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 50963c35-f52a-4b22-b581-028d29cb7471 引用了不存在的 users.id: system",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "user_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 ed456323-93f3-423a-9506-16a85d1335f9 引用了不存在的 users.id: system",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "user_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 15fe9304-7a90-4691-b284-0ced6e924005 引用了不存在的 users.id: system",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "user_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 8049abfb-b086-4e97-ae5c-05a3af9b6378 引用了不存在的 users.id: system",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "user_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 dc292abc-488f-4b00-b72c-2fa1f183e4f5 引用了不存在的 users.id: system",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "user_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 127b3ee5-bb03-413e-8aaa-e05c5c3551c3 引用了不存在的 users.id: system_monitor",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "user_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 f529e84f-bb7a-4a2d-9269-ff56c756e791 引用了不存在的 users.id: system_monitor",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "user_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 cf1be1ef-1b2e-43fc-9233-8fc893e7c01a 引用了不存在的 users.id: system_monitor",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "user_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 448cb41e-2a81-47a5-b953-63a5f35f5225 引用了不存在的 users.id: system_monitor",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "user_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 dca22efd-6d26-42c6-85fd-c07b5cff9be5 引用了不存在的 users.id: system_monitor",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "user_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 57e33385-3343-4358-9215-3353629b4fe8 引用了不存在的 users.id: system_monitor",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "user_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 7d6ed78b-cf54-48ec-a5fd-934131bc9770 引用了不存在的 users.id: system_monitor",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "user_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 f2f94556-ca25-44e7-ad33-4db647b08c80 引用了不存在的 users.id: system_monitor",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "user_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 99e098b3-debe-4e97-b731-586879f9e138 引用了不存在的 users.id: system_monitor",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "user_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 cbe6c1ba-466e-41cb-9b4e-68ed4792062c 引用了不存在的 users.id: system_monitor",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "user_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 fd15fca0-9a99-48e5-b9c3-6c4cf834d6bb 引用了不存在的 users.id: system_monitor",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "user_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 1cdc0c0a-085b-4d03-a2a9-f8a107adcbcb 引用了不存在的 users.id: system_monitor",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "user_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 f1c914c9-8bed-4b12-bc2c-61f0408c5722 引用了不存在的 electronic_signatures.id: SIG-1765008114121-75DBE3437FE24DA0",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "electronic_signature_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 89cb957b-fa10-4bc9-acf4-6a0895727943 引用了不存在的 electronic_signatures.id: SIG-1765008114503-AFD3D3CE5D920D79",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "electronic_signature_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 5436e392-06c1-4095-b11c-925deff5d664 引用了不存在的 electronic_signatures.id: SIG-1765008114643-A5BBB6520E91AA20",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "electronic_signature_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 db45db76-b29f-40cf-b280-99b79caf2033 引用了不存在的 electronic_signatures.id: SIG-1765008114715-B6AEC81681313582",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "electronic_signature_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 466c604e-2d62-4d7b-b2e8-cd3749a84ff9 引用了不存在的 electronic_signatures.id: SIG-1765008114795-A69CE4397DA988E1",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "electronic_signature_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 ef3d15fd-e1fc-4693-95ce-f56eba60eed9 引用了不存在的 electronic_signatures.id: SIG-1765008114940-1F35F4F5383D01B7",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "electronic_signature_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 23d9fbcb-299b-4221-a025-0fdc11347285 引用了不存在的 electronic_signatures.id: SIG-1765008182876-36E11BE7705B1B43",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "electronic_signature_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 47295d9a-b067-49ed-8d0c-393233624192 引用了不存在的 electronic_signatures.id: SIG-1765008183258-CE918167871804FA",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "electronic_signature_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 f5489c8b-5be9-4182-95ab-5e12388509e9 引用了不存在的 electronic_signatures.id: SIG-1765008183401-A344FBFCF2AB798C",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "electronic_signature_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 31d29965-2988-4d4f-b796-8b15d3c4e6ca 引用了不存在的 electronic_signatures.id: SIG-1765008183477-BCA801FFEFB5C001",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "electronic_signature_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 065c94f7-0786-4d16-9131-051816299a9b 引用了不存在的 electronic_signatures.id: SIG-1765008183553-0221A5FF711C3318",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "electronic_signature_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 0c202236-390d-4a79-b6b4-bf72d60678ee 引用了不存在的 electronic_signatures.id: SIG-1765008183699-C6DA2194A5B62021",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "electronic_signature_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 f1de4b8e-1ac9-453c-bf61-6b0cfbe9a88f 引用了不存在的 electronic_signatures.id: SIG-1765008222575-3CF3CAF180C61BAC",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "electronic_signature_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 c75fb26f-3dc2-4885-a724-429bff13fda3 引用了不存在的 electronic_signatures.id: SIG-1765008222984-374F5BD5E61A9045",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "electronic_signature_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 6e9a7986-cc9e-4ef5-bdc5-0a4f41461bac 引用了不存在的 electronic_signatures.id: SIG-1765008223179-6E8F8E56A1DBAFE6",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "electronic_signature_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 e273834b-67ef-4f29-8910-538b5cf9b903 引用了不存在的 electronic_signatures.id: SIG-1765008223307-9BAE2D533224FBFF",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "electronic_signature_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 dd900825-0c1f-4935-b6e6-a0744c4f7b01 引用了不存在的 electronic_signatures.id: SIG-1765008223432-965D76918F3E139C",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "electronic_signature_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 46df4fee-f9e0-48a2-a5bc-30daf900a4eb 引用了不存在的 electronic_signatures.id: SIG-1765008223585-91C09AD4EB7187F6",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "electronic_signature_id"
+    },
+    {
+      "type": "ORPHANED_RECORD",
+      "message": "表 audit_logs 中的记录 b4e10d16-5180-4f3f-8b9c-7c614d422527 引用了不存在的 electronic_signatures.id: SIG-1765008244679-57725313CDF3D5E0",
+      "severity": "MEDIUM",
+      "table": "audit_logs",
+      "field": "electronic_signature_id"
+    }
+  ],
+  "recommendations": [
+    {
+      "priority": "MEDIUM",
+      "category": "DATA_QUALITY",
+      "message": "发现 38 个中优先级问题，建议优化",
+      "action": "检查并修复数据质量问题"
+    }
+  ]
+}

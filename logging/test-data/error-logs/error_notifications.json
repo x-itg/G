@@ -1,0 +1,122 @@
+[
+  {
+    "id": "ce96b430-4fb8-4cc1-b692-4daa643a5ad3",
+    "error_id": "087d9577-bc96-4f3f-a726-34328b36433e",
+    "timestamp": "2025-12-06T08:38:35.168Z",
+    "level": "ALERT",
+    "reason": "错误率过高: 11/小时 (阈值: 10)",
+    "error_message": "数据库连接超时错误",
+    "error_code": "DB_TIMEOUT",
+    "source": "database",
+    "occurrence_count": 1,
+    "status": "SENT",
+    "channels": [
+      "console",
+      "file"
+    ],
+    "metadata": {
+      "alert_type": "threshold_exceeded",
+      "threshold_breached": "错误率过高: 11/小时 (阈值: 10)"
+    }
+  },
+  {
+    "id": "d86bbd76-68ea-4fd1-9bd5-15ba1ef33ab4",
+    "error_id": "d3e07ffe-b07b-4359-9e32-b5f592360e5e",
+    "timestamp": "2025-12-06T08:38:35.201Z",
+    "level": "ALERT",
+    "reason": "错误率过高: 12/小时 (阈值: 10)",
+    "error_message": "API响应时间过长警告",
+    "error_code": "API_SLOW",
+    "source": "api",
+    "occurrence_count": 1,
+    "status": "SENT",
+    "channels": [
+      "console",
+      "file"
+    ],
+    "metadata": {
+      "alert_type": "threshold_exceeded",
+      "threshold_breached": "错误率过高: 12/小时 (阈值: 10)"
+    }
+  },
+  {
+    "id": "5ad5d2f8-fc66-4ebd-90d6-0e7ad48986a5",
+    "error_id": "ac2bd166-f017-4c13-9eae-d009c29dbb46",
+    "timestamp": "2025-12-06T08:38:35.237Z",
+    "level": "ALERT",
+    "reason": "错误率过高: 13/小时 (阈值: 10)",
+    "error_message": "需要解决的测试错误",
+    "error_code": "RESOLVABLE_ERROR",
+    "source": "test",
+    "occurrence_count": 1,
+    "status": "SENT",
+    "channels": [
+      "console",
+      "file"
+    ],
+    "metadata": {
+      "alert_type": "threshold_exceeded",
+      "threshold_breached": "错误率过高: 13/小时 (阈值: 10)"
+    }
+  },
+  {
+    "id": "122a0225-bf5f-46a9-aa17-f28db03d4e9a",
+    "error_id": "3731319d-04db-4b2e-9325-0cc500d75675",
+    "timestamp": "2025-12-06T08:38:35.290Z",
+    "level": "ALERT",
+    "reason": "错误率过高: 14/小时 (阈值: 10)",
+    "error_message": "错误已解决: 需要解决的测试错误",
+    "error_code": "ERROR_RESOLVED",
+    "source": "resolution",
+    "occurrence_count": 1,
+    "status": "SENT",
+    "channels": [
+      "console",
+      "file"
+    ],
+    "metadata": {
+      "alert_type": "threshold_exceeded",
+      "threshold_breached": "错误率过高: 14/小时 (阈值: 10)"
+    }
+  },
+  {
+    "id": "b5cd8456-84b9-4b30-b07f-74b87ffcd3fa",
+    "error_id": "c4cf025f-1a08-4e33-9e9d-c45f4bad59d6",
+    "timestamp": "2025-12-06T08:38:35.322Z",
+    "level": "ALERT",
+    "reason": "错误率过高: 15/小时 (阈值: 10)",
+    "error_message": "连接数据库失败",
+    "error_code": "DB_CONNECTION_FAILED",
+    "source": "database",
+    "occurrence_count": 1,
+    "status": "SENT",
+    "channels": [
+      "console",
+      "file"
+    ],
+    "metadata": {
+      "alert_type": "threshold_exceeded",
+      "threshold_breached": "错误率过高: 15/小时 (阈值: 10)"
+    }
+  },
+  {
+    "id": "25fcbc28-2d03-43b4-af76-4993f3a022be",
+    "error_id": "42556b5a-2854-4c98-8dc9-cf5d9da9cbe9",
+    "timestamp": "2025-12-06T08:38:35.398Z",
+    "level": "ALERT",
+    "reason": "错误率过高: 16/小时 (阈值: 10)",
+    "error_message": "基本测试错误",
+    "error_code": "BASIC_TEST_ERROR",
+    "source": "test",
+    "occurrence_count": 1,
+    "status": "SENT",
+    "channels": [
+      "console",
+      "file"
+    ],
+    "metadata": {
+      "alert_type": "threshold_exceeded",
+      "threshold_breached": "错误率过高: 16/小时 (阈值: 10)"
+    }
+  }
+]

@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>加载状态指示系统演示</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .demo-container {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .demo-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #ecf0f1;
+            border-radius: 6px;
+            background: #fafafa;
+        }
+        
+        .demo-section h3 {
+            color: #34495e;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        
+        .demo-description {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .demo-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            background: #3498db;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        
+        .demo-button:hover {
+            background: #2980b9;
+        }
+        
+        .demo-button.secondary {
+            background: #95a5a6;
+        }
+        
+        .demo-button.secondary:hover {
+            background: #7f8c8d;
+        }
+        
+        .demo-button.success {
+            background: #27ae60;
+        }
+        
+        .demo-button.success:hover {
+            background: #219a52;
+        }
+        
+        .demo-button.warning {
+            background: #f39c12;
+        }
+        
+        .demo-button.warning:hover {
+            background: #e67e22;
+        }
+        
+        .demo-button.danger {
+            background: #e74c3c;
+        }
+        
+        .demo-button.danger:hover {
+            background: #c0392b;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 20px;
+            border-radius: 6px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .feature-card h4 {
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        
+        .feature-card ul {
+            color: #7f8c8d;
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .feature-card li {
+            margin-bottom: 5px;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-ready {
+            background: #cce7ff;
+            color: #004085;
+        }
+        
+        code {
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 13px;
+            color: #e83e8c;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h1>🚀 加载状态指示系统演示</h1>
+        
+        <div class="demo-section">
+            <h3>系统状态</h3>
+            <div class="demo-description">
+                检查加载指示器系统的当前状态和可用功能。
+            </div>
+            <div class="button-group">
+                <button class="demo-button" onclick="checkSystemStatus()">检查系统状态</button>
+                <button class="demo-button secondary" onclick="showActiveLoaders()">显示活动加载器</button>
+                <button class="demo-button warning" onclick="forceHideAll()">强制隐藏所有</button>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h3>基本加载指示器</h3>
+            <div class="demo-description">
+                演示不同类型的加载指示器，包括简单加载、带消息加载和带进度加载。
+            </div>
+            <div class="button-group">
+                <button class="demo-button" onclick="demoSimpleLoading()">简单加载</button>
+                <button class="demo-button" onclick="demoMessageLoading()">带消息加载</button>
+                <button class="demo-button" onclick="demoProgressLoading()">带进度加载</button>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h3>操作特定加载器</h3>
+            <div class="demo-description">
+                演示右上角的操作特定加载器卡片，适用于特定操作的反馈。
+            </div>
+            <div class="button-group">
+                <button class="demo-button" onclick="demoOperationLoading()">设备连接示例</button>
+                <button class="demo-button" onclick="demoFileOperation()">文件操作示例</button>
+                <button class="demo-button" onclick="demoAnalysisOperation()">数据分析示例</button>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h3>包装的异步操作</h3>
+            <div class="demo-description">
+                演示如何包装现有的异步操作，自动显示和隐藏加载指示器。
+            </div>
+            <div class="button-group">
+                <button class="demo-button" onclick="demoWrappedOperation()">包装异步操作</button>
+                <button class="demo-button" onclick="demoHttpRequest()">HTTP请求示例</button>
+                <button class="demo-button" onclick="demoErrorHandling()">错误处理示例</button>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h3>高级功能</h3>
+            <div class="demo-description">
+                演示高级功能，包括操作取消、多加载器和性能监控。
+            </div>
+            <div class="button-group">
+                <button class="demo-button" onclick="demoCancellation()">可取消操作</button>
+                <button class="demo-button" onclick="demoMultipleLoaders()">多个加载器</button>
+                <button class="demo-button" onclick="demoPerformance()">性能监控</button>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h3>模块集成演示</h3>
+            <div class="demo-description">
+                演示已集成加载指示器的各个模块的实际操作。
+            </div>
+            <div class="button-group">
+                <button class="demo-button" onclick="demoDeviceConnection()">设备连接</button>
+                <button class="demo-button" onclick="demoDataAnalysis()">数据分析</button>
+                <button class="demo-button" onclick="demoFileOperations()">文件操作</button>
+                <button class="demo-button" onclick="demoReportGeneration()">报告生成</button>
+            </div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <h4>✨ 核心特性</h4>
+                <ul>
+                    <li>全局和操作特定加载器</li>
+                    <li>实时进度显示</li>
+                    <li>操作取消功能</li>
+                    <li>多种动画效果</li>
+                    <li>响应式设计</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card">
+                <h4>🎯 已集成模块</h4>
+                <ul>
+                    <li>AnalysisModule (数据分析)</li>
+                    <li>DeviceManager (设备管理)</li>
+                    <li>FileManager (文件管理)</li>
+                    <li>DataProcessing (数据处理)</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card">
+                <h4>🔧 API 方法</h4>
+                <ul>
+                    <li><code>show()</code> - 显示加载器</li>
+                    <li><code>hide()</code> - 隐藏加载器</li>
+                    <li><code>updateProgress()</code> - 更新进度</li>
+                    <li><code>wrap()</code> - 包装异步操作</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card">
+                <h4>⌨️ 快捷键</h4>
+                <ul>
+                    <li><code>ESC</code> - 取消所有操作</li>
+                    <li>键盘导航支持</li>
+                    <li>屏幕阅读器兼容</li>
+                    <li>焦点管理</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入必要的脚本文件 -->
+    <script src="utils.js"></script>
+    <script src="auth.js"></script>
+    <script src="ui.js"></script>
+    <script src="loading-indicator.js"></script>
+    <script src="loading-examples.js"></script>
+    
+    <script>
+        // 系统状态检查
+        function checkSystemStatus() {
+            if (window.LoadingIndicator) {
+                const info = window.LoadingIndicator.getSystemInfo();
+                const status = window.LoadingIndicator.isInitialized ? 
+                    '<span class="status-indicator status-active">已初始化</span>' : 
+                    '<span class="status-indicator status-ready">未初始化</span>';
+                
+                alert(`加载指示器系统状态:\n\n` +
+                      `状态: ${status}\n` +
+                      `版本: ${info.version}\n` +
+                      `活动加载器: ${info.activeLoaders}\n` +
+                      `功能: ${info.features.length} 个`);
+            } else {
+                alert('加载指示器系统未加载！');
+            }
+        }
+        
+        // 显示活动加载器
+        function showActiveLoaders() {
+            if (window.LoadingIndicator && window.LoadingIndicator.hasActiveLoaders()) {
+                const loaders = window.LoadingIndicator.getActiveLoaders();
+                const loaderInfo = loaders.map(l => 
+                    `ID: ${l.id}\n消息: ${l.message}\n进度: ${l.progress}%\n可取消: ${l.hasCancel ? '是' : '否'}`
+                ).join('\n\n');
+                alert(`当前活动加载器:\n\n${loaderInfo}`);
+            } else {
+                alert('当前没有活动的加载器');
+            }
+        }
+        
+        // 强制隐藏所有加载器
+        function forceHideAll() {
+            if (window.LoadingIndicator) {
+                window.LoadingIndicator.cancelAllOperations();
+                alert('所有加载器已隐藏');
+            } else {
+                alert('加载指示器系统不可用');
+            }
+        }
+        
+        // 演示简单加载
+        function demoSimpleLoading() {
+            window.LoadingIndicator.showSimple();
+            setTimeout(() => window.LoadingIndicator.hide(), 2000);
+        }
+        
+        // 演示带消息加载
+        function demoMessageLoading() {
+            window.LoadingIndicator.show({
+                message: '正在加载系统配置...',
+                subMessage: '请稍候',
+                showProgress: false
+            });
+            setTimeout(() => window.LoadingIndicator.hide(), 3000);
+        }
+        
+        // 演示带进度加载
+        function demoProgressLoading() {
+            const loaderId = window.LoadingIndicator.show({
+                message: '正在处理数据...',
+                showProgress: true,
+                enableCancel: true
+            });
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                window.LoadingIndicator.updateProgress(loaderId, progress);
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => window.LoadingIndicator.removeLoader(loaderId), 500);
+                }
+            }, 200);
+        }
+        
+        // 演示操作加载器
+        function demoOperationLoading() {
+            const loaderId = window.LoadingIndicator.showOperation({
+                title: '设备连接',
+                message: '正在连接到检测设备...',
+                enableCancel: true
+            });
+            
+            const steps = [
+                '正在扫描设备端口...',
+                '正在建立连接...',
+                '正在验证设备...',
+                '设备连接成功！'
+            ];
+            
+            let step = 0;
+            const interval = setInterval(() => {
+                if (step < steps.length) {
+                    window.LoadingIndicator.updateMessage(loaderId, steps[step]);
+                    step++;
+                } else {
+                    clearInterval(interval);
+                    setTimeout(() => window.LoadingIndicator.removeLoader(loaderId), 1000);
+                }
+            }, 1000);
+        }
+        
+        // 演示文件操作
+        function demoFileOperation() {
+            const loaderId = window.LoadingIndicator.showOperation({
+                title: '文件处理',
+                message: '正在分析文件...',
+                showProgress: true,
+                enableCancel: true
+            });
+            
+            const progress = [20, 45, 70, 90, 100];
+            const messages = [
+                '正在读取文件头信息...',
+                '正在解析数据结构...',
+                '正在验证数据完整性...',
+                '正在生成处理结果...',
+                '文件处理完成！'
+            ];
+            
+            let i = 0;
+            const interval = setInterval(() => {
+                if (i < progress.length) {
+                    window.LoadingIndicator.updateProgress(loaderId, progress[i], messages[i]);
+                    i++;
+                } else {
+                    clearInterval(interval);
+                    setTimeout(() => window.LoadingIndicator.removeLoader(loaderId), 800);
+                }
+            }, 800);
+        }
+        
+        // 演示分析操作
+        function demoAnalysisOperation() {
+            const loaderId = window.LoadingIndicator.show({
+                message: '正在进行数据分析',
+                subMessage: '这是一个复杂的分析过程',
+                showProgress: true,
+                enableCancel: true
+            });
+            
+            const analysisSteps = [
+                { progress: 10, message: '正在执行数据预处理...' },
+                { progress: 25, message: '正在进行峰值检测...' },
+                { progress: 50, message: '正在计算积分结果...' },
+                { progress: 75, message: '正在生成分析报告...' },
+                { progress: 95, message: '正在保存结果...' },
+                { progress: 100, message: '数据分析完成！' }
+            ];
+            
+            let step = 0;
+            const interval = setInterval(() => {
+                if (step < analysisSteps.length) {
+                    const { progress, message } = analysisSteps[step];
+                    window.LoadingIndicator.updateProgress(loaderId, progress, message);
+                    step++;
+                } else {
+                    clearInterval(interval);
+                    setTimeout(() => window.LoadingIndicator.removeLoader(loaderId), 1000);
+                }
+            }, 1200);
+        }
+        
+        // 演示包装的异步操作
+        function demoWrappedOperation() {
+            const wrappedOperation = window.LoadingIndicator.wrap(async () => {
+                // 模拟多步骤操作
+                const steps = ['加载配置', '处理数据', '生成结果', '完成'];
+                
+                for (let i = 0; i < steps.length; i++) {
+                    await new Promise(resolve => setTimeout(resolve, 800));
+                    console.log(`步骤 ${i + 1}: ${steps[i]}`);
+                }
+                
+                return '操作完成！';
+            }, {
+                message: '执行复杂操作',
+                showProgress: true,
+                enableCancel: true
+            });
+            
+            wrappedOperation().then(result => {
+                console.log('操作结果:', result);
+            }).catch(error => {
+                console.error('操作失败:', error);
+            });
+        }
+        
+        // 演示HTTP请求
+        function demoHttpRequest() {
+            const wrappedFetch = window.LoadingIndicator.wrapFetch({
+                message: '正在请求数据...',
+                showProgress: false,
+                enableCancel: false
+            });
+            
+            // 模拟API调用
+            setTimeout(() => {
+                console.log('模拟API调用完成');
+            }, 2000);
+        }
+        
+        // 演示错误处理
+        function demoErrorHandling() {
+            const errorOperation = window.LoadingIndicator.wrap(async () => {
+                // 随机决定是否失败
+                if (Math.random() < 0.3) {
+                    throw new Error('随机错误：操作失败');
+                }
+                
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                return '操作成功！';
+            }, {
+                message: '执行可能失败的操作',
+                showProgress: true,
+                enableCancel: true
+            });
+            
+            errorOperation().then(result => {
+                console.log('成功:', result);
+            }).catch(error => {
+                console.error('捕获错误:', error.message);
+                alert(`操作失败: ${error.message}`);
+            });
+        }
+        
+        // 演示可取消操作
+        function demoCancellation() {
+            const loaderId = window.LoadingIndicator.show({
+                message: '执行长时间操作...',
+                showProgress: true,
+                enableCancel: true,
+                onCancel: () => {
+                    alert('操作已被用户取消！');
+                }
+            });
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 2;
+                window.LoadingIndicator.updateProgress(loaderId, progress);
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    window.LoadingIndicator.removeLoader(loaderId);
+                }
+            }, 100);
+        }
+        
+        // 演示多个加载器
+        function demoMultipleLoaders() {
+            const globalLoaderId = window.LoadingIndicator.show({
+                message: '系统初始化中...',
+                showProgress: false,
+                enableCancel: false
+            });
+            
+            const operationLoaderId = window.LoadingIndicator.showOperation({
+                title: '数据处理',
+                message: '正在处理大量数据...',
+                showProgress: true,
+                enableCancel: true
+            });
+            
+            setTimeout(() => {
+                window.LoadingIndicator.updateMessage(operationLoaderId, '即将完成...');
+            }, 2000);
+            
+            setTimeout(() => {
+                window.LoadingIndicator.removeLoader(operationLoaderId);
+                window.LoadingIndicator.removeLoader(globalLoaderId);
+            }, 4000);
+        }
+        
+        // 演示性能监控
+        function demoPerformance() {
+            const startTime = performance.now();
+            
+            const operation = window.LoadingIndicator.wrap(async () => {
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                return '操作完成';
+            }, {
+                message: '性能测试操作',
+                showProgress: true
+            });
+            
+            operation().then(result => {
+                const endTime = performance.now();
+                const duration = endTime - startTime;
+                alert(`操作完成，耗时: ${duration.toFixed(2)}ms\n结果: ${result}`);
+            });
+        }
+        
+        // 模拟模块集成演示
+        function demoDeviceConnection() {
+            if (window.DeviceManager) {
+                alert('模拟设备连接操作...\n\n在实际应用中，这会调用:\nwindow.DeviceManager.connectDevice(deviceId)');
+            } else {
+                alert('DeviceManager 模块未加载');
+            }
+        }
+        
+        function demoDataAnalysis() {
+            if (window.AnalysisModule) {
+                alert('模拟数据分析操作...\n\n在实际应用中，这会调用:\nwindow.AnalysisModule.performAnalysis()');
+            } else {
+                alert('AnalysisModule 模块未加载');
+            }
+        }
+        
+        function demoFileOperations() {
+            if (window.FileManager) {
+                alert('模拟文件操作...\n\n在实际应用中，这会调用:\nwindow.FileManager.handleCreateFile()');
+            } else {
+                alert('FileManager 模块未加载');
+            }
+        }
+        
+        function demoReportGeneration() {
+            if (window.FileManager) {
+                alert('模拟报告生成...\n\n在实际应用中，这会调用:\nwindow.FileManager.generateReport(analysisId)');
+            } else {
+                alert('FileManager 模块未加载');
+            }
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎮 加载指示器演示页面已加载');
+            console.log('💡 使用上方的按钮来体验各种加载指示器功能');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+{
+  "passed": 21,
+  "failed": 0,
+  "total": 21,
+  "details": [
+    {
+      "name": "SystemSettingsService - 获取设置",
+      "passed": true,
+      "details": "成功获取系统设置",
+      "timestamp": "2025-12-04T14:31:34.791Z"
+    },
+    {
+      "name": "SystemSettingsService - 更新设置",
+      "passed": true,
+      "details": "成功更新系统设置",
+      "timestamp": "2025-12-04T14:31:34.819Z"
+    },
+    {
+      "name": "SystemSettingsService - 获取硬件配置",
+      "passed": true,
+      "details": "成功获取硬件配置",
+      "timestamp": "2025-12-04T14:31:34.823Z"
+    },
+    {
+      "name": "SystemSettingsService - 切换硬件模式",
+      "passed": true,
+      "details": "成功切换到模拟模式",
+      "timestamp": "2025-12-04T14:31:34.838Z"
+    },
+    {
+      "name": "SystemSettingsService - 获取用户偏好",
+      "passed": true,
+      "details": "成功获取用户偏好",
+      "timestamp": "2025-12-04T14:31:34.841Z"
+    },
+    {
+      "name": "SystemSettingsService - 更新用户偏好",
+      "passed": true,
+      "details": "成功更新用户偏好",
+      "timestamp": "2025-12-04T14:31:34.852Z"
+    },
+    {
+      "name": "SystemSettingsService - 导出配置",
+      "passed": true,
+      "details": "成功导出配置",
+      "timestamp": "2025-12-04T14:31:34.883Z"
+    },
+    {
+      "name": "SystemSettingsService - 重置设置",
+      "passed": true,
+      "details": "成功重置设置",
+      "timestamp": "2025-12-04T14:31:34.924Z"
+    },
+    {
+      "name": "HardwareService - 加载设置",
+      "passed": true,
+      "details": "成功加载硬件设置",
+      "timestamp": "2025-12-04T14:31:34.933Z"
+    },
+    {
+      "name": "HardwareService - 初始化模拟设备",
+      "passed": true,
+      "details": "成功初始化模拟设备",
+      "timestamp": "2025-12-04T14:31:34.935Z"
+    },
+    {
+      "name": "HardwareService - 获取硬件状态",
+      "passed": true,
+      "details": "成功获取硬件状态",
+      "timestamp": "2025-12-04T14:31:34.935Z"
+    },
+    {
+      "name": "HardwareService - 生成模拟数据",
+      "passed": true,
+      "details": "成功生成模拟谱线数据",
+      "timestamp": "2025-12-04T14:31:34.941Z"
+    },
+    {
+      "name": "HardwareService - 获取当前谱线",
+      "passed": true,
+      "details": "成功获取当前谱线数据",
+      "timestamp": "2025-12-04T14:31:34.941Z"
+    },
+    {
+      "name": "HardwareService - 获取历史数据",
+      "passed": true,
+      "details": "成功获取历史数据",
+      "timestamp": "2025-12-04T14:31:34.941Z"
+    },
+    {
+      "name": "HardwareService - 获取模拟设备",
+      "passed": true,
+      "details": "成功获取模拟设备列表",
+      "timestamp": "2025-12-04T14:31:34.941Z"
+    },
+    {
+      "name": "HardwareService - 配置模拟设备",
+      "passed": true,
+      "details": "成功配置模拟设备",
+      "timestamp": "2025-12-04T14:31:34.941Z"
+    },
+    {
+      "name": "HardwareService - 停止采集",
+      "passed": true,
+      "details": "停止采集操作成功",
+      "timestamp": "2025-12-04T14:31:34.941Z"
+    },
+    {
+      "name": "HardwareService - 断开连接",
+      "passed": true,
+      "details": "成功断开硬件连接",
+      "timestamp": "2025-12-04T14:31:34.941Z"
+    },
+    {
+      "name": "集成测试 - 模式切换+设备初始化",
+      "passed": true,
+      "details": "模式切换和设备初始化集成成功",
+      "timestamp": "2025-12-04T14:31:34.964Z"
+    },
+    {
+      "name": "集成测试 - 设置更新+配置加载",
+      "passed": true,
+      "details": "设置更新和配置加载集成成功",
+      "timestamp": "2025-12-04T14:31:34.997Z"
+    },
+    {
+      "name": "集成测试 - 模拟数据+谱线获取",
+      "passed": true,
+      "details": "模拟数据生成和谱线获取集成成功",
+      "timestamp": "2025-12-04T14:31:34.998Z"
+    }
+  ]
+}

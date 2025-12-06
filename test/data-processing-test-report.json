@@ -1,0 +1,143 @@
+{
+  "testSuite": "数据采集和处理系统测试",
+  "timestamp": "2025-12-04T14:32:57.116Z",
+  "results": {
+    "passed": 21,
+    "failed": 0,
+    "total": 21,
+    "details": [
+      {
+        "test": "DataProcessing - 初始化",
+        "passed": true,
+        "details": "服务初始化成功",
+        "timestamp": "2025-12-04T14:32:57.100Z"
+      },
+      {
+        "test": "DataProcessing - 获取谱线",
+        "passed": true,
+        "details": "成功获取当前谱线",
+        "timestamp": "2025-12-04T14:32:57.100Z"
+      },
+      {
+        "test": "DataProcessing - 获取状态",
+        "passed": true,
+        "details": "成功获取分析状态",
+        "timestamp": "2025-12-04T14:32:57.100Z"
+      },
+      {
+        "test": "DataProcessing - 获取统计",
+        "passed": true,
+        "details": "成功获取处理统计",
+        "timestamp": "2025-12-04T14:32:57.100Z"
+      },
+      {
+        "test": "Filter - 移动平均",
+        "passed": true,
+        "details": "移动平均滤波器工作正常",
+        "timestamp": "2025-12-04T14:32:57.101Z"
+      },
+      {
+        "test": "Filter - Savitzky-Golay",
+        "passed": true,
+        "details": "Savitzky-Golay滤波器工作正常",
+        "timestamp": "2025-12-04T14:32:57.101Z"
+      },
+      {
+        "test": "Filter - 中值滤波",
+        "passed": true,
+        "details": "中值滤波器工作正常",
+        "timestamp": "2025-12-04T14:32:57.101Z"
+      },
+      {
+        "test": "Filter - 卡尔曼滤波",
+        "passed": true,
+        "details": "卡尔曼滤波器工作正常",
+        "timestamp": "2025-12-04T14:32:57.101Z"
+      },
+      {
+        "test": "Filter - 基线校正",
+        "passed": true,
+        "details": "基线校正功能正常",
+        "timestamp": "2025-12-04T14:32:57.101Z"
+      },
+      {
+        "test": "Filter - 归一化",
+        "passed": true,
+        "details": "归一化功能正常",
+        "timestamp": "2025-12-04T14:32:57.101Z"
+      },
+      {
+        "test": "Analysis - 导数计算",
+        "passed": true,
+        "details": "导数计算功能正常",
+        "timestamp": "2025-12-04T14:32:57.101Z"
+      },
+      {
+        "test": "Analysis - 噪声检测",
+        "passed": true,
+        "details": "噪声水平检测功能正常",
+        "timestamp": "2025-12-04T14:32:57.101Z"
+      },
+      {
+        "test": "Analysis - 峰宽度计算",
+        "passed": true,
+        "details": "峰宽度计算功能正常",
+        "timestamp": "2025-12-04T14:32:57.102Z"
+      },
+      {
+        "test": "Peak - 峰检测",
+        "passed": true,
+        "details": "成功检测到3个峰",
+        "timestamp": "2025-12-04T14:32:57.114Z"
+      },
+      {
+        "test": "Peak - 高斯拟合",
+        "passed": true,
+        "details": "高斯拟合功能正常",
+        "timestamp": "2025-12-04T14:32:57.114Z"
+      },
+      {
+        "test": "Peak - 面积计算",
+        "passed": true,
+        "details": "峰面积计算功能正常",
+        "timestamp": "2025-12-04T14:32:57.114Z"
+      },
+      {
+        "test": "Peak - 通道转能量",
+        "passed": true,
+        "details": "通道转能量功能正常",
+        "timestamp": "2025-12-04T14:32:57.114Z"
+      },
+      {
+        "test": "Quantitative - 核素识别",
+        "passed": true,
+        "details": "成功识别核素: [object Object]",
+        "timestamp": "2025-12-04T14:32:57.114Z"
+      },
+      {
+        "test": "Quantitative - 置信度计算",
+        "passed": true,
+        "details": "核素置信度计算功能正常",
+        "timestamp": "2025-12-04T14:32:57.114Z"
+      },
+      {
+        "test": "Quantitative - 活度计算",
+        "passed": true,
+        "details": "活度计算正常: 66766.82 Bq",
+        "timestamp": "2025-12-04T14:32:57.114Z"
+      },
+      {
+        "test": "Quantitative - 完整分析流程",
+        "passed": true,
+        "details": "完整分析流程正常",
+        "timestamp": "2025-12-04T14:32:57.116Z"
+      }
+    ]
+  },
+  "summary": {
+    "total": 21,
+    "passed": 21,
+    "failed": 0,
+    "passRate": "100.0"
+  }
+}

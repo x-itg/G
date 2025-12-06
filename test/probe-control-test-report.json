@@ -1,0 +1,131 @@
+{
+  "testSuite": "探头控制系统测试",
+  "timestamp": "2025-12-04T14:33:21.450Z",
+  "results": {
+    "passed": 19,
+    "failed": 0,
+    "total": 19,
+    "details": [
+      {
+        "test": "ProbeControl - 初始化",
+        "passed": true,
+        "details": "服务初始化成功",
+        "timestamp": "2025-12-04T14:33:06.220Z"
+      },
+      {
+        "test": "ProbeControl - 获取位置",
+        "passed": true,
+        "details": "成功获取当前位置",
+        "timestamp": "2025-12-04T14:33:06.220Z"
+      },
+      {
+        "test": "ProbeControl - 获取状态",
+        "passed": true,
+        "details": "成功获取运动状态",
+        "timestamp": "2025-12-04T14:33:06.220Z"
+      },
+      {
+        "test": "ProbeControl - 获取配置",
+        "passed": true,
+        "details": "成功获取系统配置",
+        "timestamp": "2025-12-04T14:33:06.220Z"
+      },
+      {
+        "test": "Position - 有效位置移动",
+        "passed": true,
+        "details": "成功移动到有效位置",
+        "timestamp": "2025-12-04T14:33:13.629Z"
+      },
+      {
+        "test": "Position - 边界检查",
+        "passed": true,
+        "details": "正确拒绝超边界位置",
+        "timestamp": "2025-12-04T14:33:13.630Z"
+      },
+      {
+        "test": "Position - 边界状态",
+        "passed": true,
+        "details": "正确获取边界状态信息",
+        "timestamp": "2025-12-04T14:33:13.630Z"
+      },
+      {
+        "test": "Position - 调整建议",
+        "passed": true,
+        "details": "正确生成位置调整建议",
+        "timestamp": "2025-12-04T14:33:13.630Z"
+      },
+      {
+        "test": "Motion - 暂停",
+        "passed": true,
+        "details": "暂停功能正常",
+        "timestamp": "2025-12-04T14:33:13.630Z"
+      },
+      {
+        "test": "Motion - 恢复",
+        "passed": true,
+        "details": "恢复功能正常",
+        "timestamp": "2025-12-04T14:33:13.631Z"
+      },
+      {
+        "test": "Motion - 取消",
+        "passed": true,
+        "details": "取消功能正常",
+        "timestamp": "2025-12-04T14:33:13.631Z"
+      },
+      {
+        "test": "Motion - 重置",
+        "passed": true,
+        "details": "位置重置成功",
+        "timestamp": "2025-12-04T14:33:21.046Z"
+      },
+      {
+        "test": "Safety - 紧急停止",
+        "passed": true,
+        "details": "紧急停止功能正常",
+        "timestamp": "2025-12-04T14:33:21.047Z"
+      },
+      {
+        "test": "Safety - 运动中暂停",
+        "passed": true,
+        "details": "运动中暂停和恢复成功",
+        "timestamp": "2025-12-04T14:33:21.248Z"
+      },
+      {
+        "test": "Safety - 操作历史",
+        "passed": true,
+        "details": "操作历史记录功能正常",
+        "timestamp": "2025-12-04T14:33:21.449Z"
+      },
+      {
+        "test": "Config - 更新配置",
+        "passed": true,
+        "details": "配置更新成功",
+        "timestamp": "2025-12-04T14:33:21.449Z"
+      },
+      {
+        "test": "Config - 配置验证",
+        "passed": true,
+        "details": "正确拒绝无效配置",
+        "timestamp": "2025-12-04T14:33:21.450Z"
+      },
+      {
+        "test": "Config - 负数边界验证",
+        "passed": true,
+        "details": "正确拒绝负数边界配置",
+        "timestamp": "2025-12-04T14:33:21.450Z"
+      },
+      {
+        "test": "Config - 断开连接",
+        "passed": true,
+        "details": "断开连接成功",
+        "timestamp": "2025-12-04T14:33:21.450Z"
+      }
+    ]
+  },
+  "summary": {
+    "total": 19,
+    "passed": 19,
+    "failed": 0,
+    "passRate": "100.0"
+  }
+}

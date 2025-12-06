@@ -1,0 +1,105 @@
+{
+  "name": "radiation-detector",
+  "version": "1.0.0",
+  "description": "CFR 21 Part 11 Compliant Radiation Detection Software",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "web": "node verification-server.js",
+    "dev": "electron . --dev",
+    "build": "npm run build-main && npm run build-renderer",
+    "build-main": "electron-builder",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "test": "jest",
+    "validate": "node scripts/part11-validation.js",
+    "serve": "npm run web",
+    "electron-test": "node electron-test.js",
+    "start-dev": "node start-dual-services.js",
+    "start-api": "node api-server.js",
+    "start-frontend": "node -e \"const http=require('http'),fs=require('fs'),path=require('path');const server=http.createServer((req,res)=>{let filePath=path.join(__dirname,'renderer',req.url==='/'?'index.html':req.url);const ext=path.extname(filePath);const contentTypes={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.png':'image/png','.jpg':'image/jpg'};const contentType=contentTypes[ext]||'text/plain';fs.readFile(filePath,(error,content)=>{if(error){if(error.code==='ENOENT'){res.writeHead(404);res.end('文件未找到');}else{res.writeHead(500);res.end('服务器错误: '+error.code);}}else{res.writeHead(200,{'Content-Type':contentType});res.end(content,'utf-8');}});});server.listen(3001,()=>console.log('前端服务运行在端口3001'));\"",
+    "stop-all": "pkill -f electron && pkill -f node",
+    "check-ports": "node port-manager.js",
+    "resolve-ports": "node port-manager.js && echo '端口冲突已解决'",
+    "install-deps": "npm install",
+    "clean-install": "rm -rf node_modules package-lock.json && npm install",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint-fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
+  },
+  "keywords": [
+    "radiation",
+    "detector",
+    "CFR21",
+    "chromatography",
+    "medical"
+  ],
+  "author": "MiniMax Agent",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@types/jest": "^29.5.8",
+    "electron": "^28.3.3",
+    "electron-builder": "^24.6.4",
+    "jest": "^29.7.0"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^9.2.2",
+    "chart.js": "^4.4.0",
+    "chartjs-adapter-date-fns": "^3.0.0",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "date-fns": "^2.30.0",
+    "dotenv": "^16.3.1",
+    "electron-store": "^8.1.0",
+    "express": "^4.18.2",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.4",
+    "rate-limiter-flexible": "^3.0.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "sequelize": "^6.35.0",
+    "serialport": "^12.0.0",
+    "uuid": "^9.0.1"
+  },
+  "build": {
+    "appId": "com.company.radiation-detector",
+    "productName": "Radiation Detector CFR21",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "package.json",
+      "database/**/*",
+      "models/**/*",
+      "services/**/*",
+      "utils/**/*",
+      "renderer/**/*",
+      "node_modules/**/*"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "assets/icon.icns"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "assets/icon.png"
+    }
+  },
+  "cfr21-compliance": {
+    "version": "1.0.0",
+    "electronicSignatures": true,
+    "auditTrail": true,
+    "threeLevelAccess": true,
+    "dataIntegrity": true,
+    "recordRetention": true,
+    "systemValidation": true
+  }
+}

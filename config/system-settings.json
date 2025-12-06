@@ -1,0 +1,108 @@
+{
+  "system": {
+    "language": "en-US",
+    "debugMode": true,
+    "lastUpdate": "2025-12-04T14:31:34.969Z"
+  },
+  "communication": {
+    "hardwareMode": "simulated",
+    "serialPorts": {
+      "comPort2": "COM2",
+      "comPort3": "COM3",
+      "baudRate": 9600,
+      "dataBits": 8,
+      "stopBits": 1,
+      "parity": "none",
+      "flowControl": "none"
+    },
+    "simulatedDevice": {
+      "enabled": true,
+      "deviceType": "hpge_detector",
+      "samplingRate": 1000,
+      "dataMode": "continuous",
+      "noiseLevel": 0.01,
+      "backgroundLevel": 100,
+      "peakChannels": [
+        512,
+        1024,
+        2048
+      ],
+      "peakIntensities": [
+        1000,
+        2000,
+        1500
+      ],
+      "spectralRange": [
+        0,
+        4095
+      ],
+      "countRate": 1000
+    },
+    "timeout": 10000,
+    "retryAttempts": 5,
+    "bufferSize": 8192
+  },
+  "acquisition": {
+    "sampleTime": 30000,
+    "liveTime": true,
+    "realTime": true,
+    "autoStop": false,
+    "peakSearch": true,
+    "nuclideLibrary": "IAEAstandards",
+    "energyCalibration": {
+      "enabled": true,
+      "points": [
+        {
+          "channel": 0,
+          "energy": 0
+        },
+        {
+          "channel": 1024,
+          "energy": 122
+        },
+        {
+          "channel": 2048,
+          "energy": 662
+        }
+      ]
+    },
+    "efficiencyCalibration": {
+      "enabled": true,
+      "geometry": "planar",
+      "sourceDistance": 100
+    }
+  },
+  "analysis": {
+    "autoIdentify": true,
+    "minimumPeakArea": 100,
+    "peakIdentificationThreshold": 3,
+    "backgroundSubtraction": "Polynomial",
+    "smoothing": false,
+    "smoothingFactor": 3,
+    "deadTimeCorrection": true,
+    "pulsePileupRejection": true
+  },
+  "display": {},
+  "export": {
+    "defaultFormat": "csv",
+    "includeMetadata": true,
+    "includeCalibration": true,
+    "includeQualityData": true,
+    "compression": false,
+    "encryption": false,
+    "signatureRequired": false
+  },
+  "security": {
+    "passwordPolicy": {
+      "minLength": 8,
+      "requireUppercase": true,
+      "requireLowercase": true,
+      "requireNumbers": true,
+      "requireSpecialChars": true
+    },
+    "sessionTimeout": 3600000,
+    "maxLoginAttempts": 5,
+    "lockoutDuration": 300000,
+    "requireReauthForExport": false
+  }
+}

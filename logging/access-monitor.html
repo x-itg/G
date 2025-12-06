@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>访问日志监控系统</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #4a90e2;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card h3 {
+            color: #333;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #4a90e2;
+            margin-bottom: 5px;
+        }
+
+        .stat-unit {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-title {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .chart-section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .table-title {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f8f9fa;
+            color: #333;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .refresh-btn {
+            background: #4a90e2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .refresh-btn:hover {
+            background: #357abd;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+
+        @media (max-width: 768px) {
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 访问日志监控系统</h1>
+            <p>放射化学纯度检测仪 - 访问统计与分析</p>
+        </div>
+
+        <div class="content">
+            <button class="refresh-btn" onclick="refreshData()">🔄 刷新数据</button>
+            
+            <!-- 实时统计卡片 -->
+            <div class="stats-grid" id="statsGrid">
+                <div class="loading">加载统计数据中...</div>
+            </div>
+
+            <!-- 图表区域 -->
+            <div class="chart-grid">
+                <div class="chart-section">
+                    <div class="chart-title">📈 访问趋势</div>
+                    <canvas id="trendsChart"></canvas>
+                </div>
+                <div class="chart-section">
+                    <div class="chart-title">🔥 热门页面</div>
+                    <canvas id="popularChart"></canvas>
+                </div>
+            </div>
+
+            <!-- 热门页面表格 -->
+            <div class="table-container">
+                <div class="table-title">🏆 热门页面排行榜</div>
+                <table id="popularTable">
+                    <thead>
+                        <tr>
+                            <th>排名</th>
+                            <th>页面路径</th>
+                            <th>访问次数</th>
+                            <th>唯一访客</th>
+                            <th>平均响应时间</th>
+                            <th>成功率</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="6" class="loading">加载中...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 用户统计表格 -->
+            <div class="table-container">
+                <div class="table-title">👥 用户访问统计</div>
+                <table id="usersTable">
+                    <thead>
+                        <tr>
+                            <th>排名</th>
+                            <th>用户名</th>
+                            <th>总访问次数</th>
+                            <th>活跃天数</th>
+                            <th>平均响应时间</th>
+                            <th>最后访问</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="6" class="loading">加载中...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let trendsChart, popularChart;
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            refreshData();
+        });
+
+        // 刷新所有数据
+        async function refreshData() {
+            try {
+                await Promise.all([
+                    loadRealtimeStats(),
+                    loadPopularPages(),
+                    loadUserStats(),
+                    loadTrends()
+                ]);
+                showSuccess('数据刷新成功');
+            } catch (error) {
+                showError('数据刷新失败: ' + error.message);
+            }
+        }
+
+        // 加载实时统计
+        async function loadRealtimeStats() {
+            try {
+                const response = await fetch('/api/logging/access/realtime');
+                const result = await response.json();
+                
+                if (result.success) {
+                    const stats = result.data.today;
+                    const activeUsers = result.data.active_users;
+                    
+                    document.getElementById('statsGrid').innerHTML = `
+                        <div class="stat-card">
+                            <h3>今日请求数</h3>
+                            <div class="stat-value">${stats.total_requests}</div>
+                            <div class="stat-unit">总请求</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>唯一访客</h3>
+                            <div class="stat-value">${stats.unique_users}</div>
+                            <div class="stat-unit">用户数</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>成功率</h3>
+                            <div class="stat-value">${stats.success_requests}</div>
+                            <div class="stat-unit">成功请求</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>错误率</h3>
+                            <div class="stat-value">${stats.error_rate.toFixed(1)}%</div>
+                            <div class="stat-unit">错误率</div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                throw new Error('实时统计加载失败');
+            }
+        }
+
+        // 加载热门页面
+        async function loadPopularPages() {
+            try {
+                const response = await fetch('/api/logging/access/popular?limit=10');
+                const result = await response.json();
+                
+                if (result.success) {
+                    const popularPages = result.data;
+                    
+                    // 更新热门页面表格
+                    const tbody = document.querySelector('#popularTable tbody');
+                    tbody.innerHTML = popularPages.map((page, index) => `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${page.url}</td>
+                            <td>${page.visits}</td>
+                            <td>${page.unique_visitors}</td>
+                            <td>${page.avg_response_time.toFixed(2)}ms</td>
+                            <td>${page.success_rate.toFixed(1)}%</td>
+                        </tr>
+                    `).join('');
+                    
+                    // 更新热门页面图表
+                    updatePopularChart(popularPages.slice(0, 5));
+                }
+            } catch (error) {
+                throw new Error('热门页面加载失败');
+            }
+        }
+
+        // 加载用户统计
+        async function loadUserStats() {
+            try {
+                const response = await fetch('/api/logging/access/users?limit=10');
+                const result = await response.json();
+                
+                if (result.success) {
+                    const users = result.data;
+                    
+                    const tbody = document.querySelector('#usersTable tbody');
+                    tbody.innerHTML = users.map((user, index) => `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${user.username}</td>
+                            <td>${user.total_visits}</td>
+                            <td>${user.active_days}</td>
+                            <td>${user.avg_response_time.toFixed(2)}ms</td>
+                            <td>${new Date(user.last_visit).toLocaleString()}</td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (error) {
+                throw new Error('用户统计加载失败');
+            }
+        }
+
+        // 加载访问趋势
+        async function loadTrends() {
+            try {
+                const response = await fetch('/api/logging/access/trends?days=7&metric=requests');
+                const result = await response.json();
+                
+                if (result.success) {
+                    updateTrendsChart(result.data);
+                }
+            } catch (error) {
+                throw new Error('访问趋势加载失败');
+            }
+        }
+
+        // 更新趋势图表
+        function updateTrendsChart(data) {
+            const ctx = document.getElementById('trendsChart').getContext('2d');
+            
+            if (trendsChart) {
+                trendsChart.destroy();
+            }
+            
+            const labels = data.map(item => item.date);
+            const requests = data.map(item => item.total_requests);
+            const errors = data.map(item => item.error_requests);
+            
+            trendsChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: '总请求数',
+                            data: requests,
+                            borderColor: '#4a90e2',
+                            backgroundColor: 'rgba(74, 144, 226, 0.1)',
+                            tension: 0.4
+                        },
+                        {
+                            label: '错误请求',
+                            data: errors,
+                            borderColor: '#e74c3c',
+                            backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // 更新热门页面图表
+        function updatePopularChart(data) {
+            const ctx = document.getElementById('popularChart').getContext('2d');
+            
+            if (popularChart) {
+                popularChart.destroy();
+            }
+            
+            const labels = data.map(item => item.url.length > 20 ? item.url.substring(0, 20) + '...' : item.url);
+            const visits = data.map(item => item.visits);
+            
+            popularChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: visits,
+                        backgroundColor: [
+                            '#4a90e2',
+                            '#50c878',
+                            '#ff6b6b',
+                            '#feca57',
+                            '#ff9ff3'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // 显示成功消息
+        function showSuccess(message) {
+            showMessage(message, 'success');
+        }
+
+        // 显示错误消息
+        function showError(message) {
+            showMessage(message, 'error');
+        }
+
+        // 显示消息
+        function showMessage(message, type) {
+            // 移除现有消息
+            const existingMessage = document.querySelector('.message');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.textContent = message;
+            
+            const content = document.querySelector('.content');
+            content.insertBefore(messageDiv, content.firstChild);
+            
+            // 3秒后自动移除
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 3000);
+        }
+
+        // 自动刷新数据（每30秒）
+        setInterval(() => {
+            loadRealtimeStats();
+        }, 30000);
+    </script>
+</body>
+</html>

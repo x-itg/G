@@ -1,0 +1,83 @@
+# 依赖目录
+node_modules/
+
+# 构建输出
+dist/
+build/
+*.log
+logs/
+
+# 运行时数据
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# 环境变量文件
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE 文件
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS 生成的文件
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Electron 相关
+app-builds/
+release-builds/
+
+# 数据库文件（如果是开发环境）
+*.db
+*.sqlite
+*.sqlite3
+
+# 临时文件
+temp/
+tmp/
+*.tmp
+
+# 缓存目录
+.npm
+.cache
+.yarn
+
+# 安装包
+*.tgz
+*.tar.gz
+
+# 覆盖率报告
+coverage/
+.nyc_output
+
+# 调试文件
+*.pdb
+*.idb
+
+# 系统文件
+*.sys
+*.dll
+
+# 备份文件
+*.bak
+*.backup
+
+# 测试相关
+junit.xml
+
+# 包管理器锁定文件（可选，根据团队规范决定）
+# package-lock.json
+# yarn.lock

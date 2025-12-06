@@ -1,0 +1,87 @@
+{
+  "testSuite": "审计追踪完整性验证测试",
+  "timestamp": "2025-12-06T09:05:54.816Z",
+  "duration": 14,
+  "summary": {
+    "total": 10,
+    "passed": 5,
+    "failed": 5,
+    "warnings": 0,
+    "passRate": "50.00%"
+  },
+  "details": [
+    {
+      "name": "用户操作记录验证",
+      "passed": true,
+      "message": "所有用户操作均正确记录",
+      "timestamp": "2025-12-06T09:05:54.811Z"
+    },
+    {
+      "name": "审计日志完整性验证",
+      "passed": false,
+      "message": "时间戳不连续: 8939d29e-7dbc-47a9-b214-992089f9d8b3",
+      "timestamp": "2025-12-06T09:05:54.812Z"
+    },
+    {
+      "name": "查询和搜索功能验证",
+      "passed": false,
+      "message": "分页查询结果数量不正确",
+      "timestamp": "2025-12-06T09:05:54.812Z"
+    },
+    {
+      "name": "CFR 21 Part 11 合规性验证",
+      "passed": false,
+      "message": "哈希链验证失败: 事件 b9e39de3-0cbd-4f4a-927d-2ec90f93551f 的前一个哈希不匹配, 事件 b9e39de3-0cbd-4f4a-927d-2ec90f93551f 的哈希值不匹配, 事件 8939d29e-7dbc-47a9-b214-992089f9d8b3 的前一个哈希不匹配, 事件 8939d29e-7dbc-47a9-b214-992089f9d8b3 的哈希值不匹配, 事件 bf1fb500-e164-426e-9221-82de2c2ec235 的前一个哈希不匹配, 事件 bf1fb500-e164-426e-9221-82de2c2ec235 的哈希值不匹配, 事件 54383c4c-3a47-4076-a56e-668dc9b8d399 的前一个哈希不匹配, 事件 54383c4c-3a47-4076-a56e-668dc9b8d399 的哈希值不匹配, 事件 7e78c937-b447-47e2-aa40-809c8d9e8bdc 的前一个哈希不匹配, 事件 7e78c937-b447-47e2-aa40-809c8d9e8bdc 的哈希值不匹配, 事件 6fbfab6c-6cdf-45bf-8f55-78254ed5af83 的前一个哈希不匹配, 事件 6fbfab6c-6cdf-45bf-8f55-78254ed5af83 的哈希值不匹配, 事件 1c0a440f-aafe-45fc-b56b-363da924811d 的前一个哈希不匹配, 事件 1c0a440f-aafe-45fc-b56b-363da924811d 的哈希值不匹配, 事件 f216e4fd-a23d-4e55-9233-ea83249df179 的前一个哈希不匹配, 事件 f216e4fd-a23d-4e55-9233-ea83249df179 的哈希值不匹配",
+      "timestamp": "2025-12-06T09:05:54.812Z"
+    },
+    {
+      "name": "哈希链完整性验证",
+      "passed": false,
+      "message": "哈希链不完整: 事件 b9e39de3-0cbd-4f4a-927d-2ec90f93551f 的前一个哈希不匹配, 事件 b9e39de3-0cbd-4f4a-927d-2ec90f93551f 的哈希值不匹配, 事件 8939d29e-7dbc-47a9-b214-992089f9d8b3 的前一个哈希不匹配, 事件 8939d29e-7dbc-47a9-b214-992089f9d8b3 的哈希值不匹配, 事件 bf1fb500-e164-426e-9221-82de2c2ec235 的前一个哈希不匹配, 事件 bf1fb500-e164-426e-9221-82de2c2ec235 的哈希值不匹配, 事件 54383c4c-3a47-4076-a56e-668dc9b8d399 的前一个哈希不匹配, 事件 54383c4c-3a47-4076-a56e-668dc9b8d399 的哈希值不匹配, 事件 7e78c937-b447-47e2-aa40-809c8d9e8bdc 的前一个哈希不匹配, 事件 7e78c937-b447-47e2-aa40-809c8d9e8bdc 的哈希值不匹配, 事件 6fbfab6c-6cdf-45bf-8f55-78254ed5af83 的前一个哈希不匹配, 事件 6fbfab6c-6cdf-45bf-8f55-78254ed5af83 的哈希值不匹配, 事件 1c0a440f-aafe-45fc-b56b-363da924811d 的前一个哈希不匹配, 事件 1c0a440f-aafe-45fc-b56b-363da924811d 的哈希值不匹配, 事件 f216e4fd-a23d-4e55-9233-ea83249df179 的前一个哈希不匹配, 事件 f216e4fd-a23d-4e55-9233-ea83249df179 的哈希值不匹配",
+      "timestamp": "2025-12-06T09:05:54.813Z"
+    },
+    {
+      "name": "时间戳准确性验证",
+      "passed": false,
+      "message": "时间戳顺序错误: 8939d29e-7dbc-47a9-b214-992089f9d8b3",
+      "timestamp": "2025-12-06T09:05:54.813Z"
+    },
+    {
+      "name": "性能验证",
+      "passed": true,
+      "message": "系统性能符合要求",
+      "timestamp": "2025-12-06T09:05:54.815Z"
+    },
+    {
+      "name": "API接口验证",
+      "passed": true,
+      "message": "所有API接口正常工作",
+      "timestamp": "2025-12-06T09:05:54.815Z"
+    },
+    {
+      "name": "数据一致性验证",
+      "passed": true,
+      "message": "数据一致性检查通过",
+      "timestamp": "2025-12-06T09:05:54.816Z"
+    },
+    {
+      "name": "安全性验证",
+      "passed": true,
+      "message": "安全性检查通过",
+      "timestamp": "2025-12-06T09:05:54.816Z"
+    }
+  ],
+  "compliance": {
+    "cfr21Part11": false,
+    "hashChainIntegrity": true,
+    "timestampAccuracy": true,
+    "tamperResistance": true
+  },
+  "recommendations": [
+    "修复失败的测试项以确保合规性",
+    "定期运行审计追踪完整性验证测试",
+    "监控审计日志存储空间使用情况",
+    "定期备份审计日志数据",
+    "确保系统时间同步准确"
+  ]
+}

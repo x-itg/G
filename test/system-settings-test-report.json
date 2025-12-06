@@ -1,0 +1,103 @@
+{
+  "passed": 0,
+  "failed": 16,
+  "total": 16,
+  "details": [
+    {
+      "name": "用户登录",
+      "passed": false,
+      "details": "登录异常: connect ECONNREFUSED ::1:3000",
+      "timestamp": "2025-12-04T12:07:20.566Z"
+    },
+    {
+      "name": "获取系统设置",
+      "passed": false,
+      "details": "获取异常: connect ECONNREFUSED ::1:3000",
+      "timestamp": "2025-12-04T12:07:20.568Z"
+    },
+    {
+      "name": "更新系统设置",
+      "passed": false,
+      "details": "更新异常: connect ECONNREFUSED ::1:3000",
+      "timestamp": "2025-12-04T12:07:20.569Z"
+    },
+    {
+      "name": "重置系统设置",
+      "passed": false,
+      "details": "重置异常: connect ECONNREFUSED ::1:3000",
+      "timestamp": "2025-12-04T12:07:20.569Z"
+    },
+    {
+      "name": "获取硬件配置",
+      "passed": false,
+      "details": "获取异常: connect ECONNREFUSED ::1:3000",
+      "timestamp": "2025-12-04T12:07:20.570Z"
+    },
+    {
+      "name": "更新硬件配置",
+      "passed": false,
+      "details": "更新异常: connect ECONNREFUSED ::1:3000",
+      "timestamp": "2025-12-04T12:07:20.571Z"
+    },
+    {
+      "name": "切换硬件模式",
+      "passed": false,
+      "details": "切换异常: connect ECONNREFUSED ::1:3000",
+      "timestamp": "2025-12-04T12:07:20.572Z"
+    },
+    {
+      "name": "初始化硬件通讯",
+      "passed": false,
+      "details": "初始化异常: connect ECONNREFUSED ::1:3000",
+      "timestamp": "2025-12-04T12:07:20.573Z"
+    },
+    {
+      "name": "获取硬件状态",
+      "passed": false,
+      "details": "获取异常: connect ECONNREFUSED ::1:3000",
+      "timestamp": "2025-12-04T12:07:20.573Z"
+    },
+    {
+      "name": "开始数据采集",
+      "passed": false,
+      "details": "采集开始异常: connect ECONNREFUSED ::1:3000",
+      "timestamp": "2025-12-04T12:07:20.574Z"
+    },
+    {
+      "name": "获取当前谱线",
+      "passed": false,
+      "details": "获取异常: connect ECONNREFUSED ::1:3000",
+      "timestamp": "2025-12-04T12:07:23.579Z"
+    },
+    {
+      "name": "获取模拟设备",
+      "passed": false,
+      "details": "获取异常: connect ECONNREFUSED ::1:3000",
+      "timestamp": "2025-12-04T12:07:23.579Z"
+    },
+    {
+      "name": "获取用户偏好",
+      "passed": false,
+      "details": "获取异常: connect ECONNREFUSED ::1:3000",
+      "timestamp": "2025-12-04T12:07:23.580Z"
+    },
+    {
+      "name": "更新用户偏好",
+      "passed": false,
+      "details": "更新异常: connect ECONNREFUSED ::1:3000",
+      "timestamp": "2025-12-04T12:07:23.581Z"
+    },
+    {
+      "name": "导出系统配置",
+      "passed": false,
+      "details": "导出异常: connect ECONNREFUSED ::1:3000",
+      "timestamp": "2025-12-04T12:07:23.582Z"
+    },
+    {
+      "name": "会话验证",
+      "passed": false,
+      "details": "会话验证异常: connect ECONNREFUSED ::1:3000",
+      "timestamp": "2025-12-04T12:07:23.582Z"
+    }
+  ]
+}

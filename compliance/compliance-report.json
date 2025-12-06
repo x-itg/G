@@ -1,0 +1,102 @@
+{
+  "title": "CFR21 Part 11 法规合规性检查报告",
+  "systemName": "放射化学纯度检测仪",
+  "reportDate": "2025-12-06T08:05:23.780Z",
+  "reportVersion": "1.0",
+  "overall": {
+    "timestamp": "2025-12-06T08:05:23.780Z",
+    "startTime": 1765008323780,
+    "sections": {
+      "11.10": {
+        "section": "11.10 - System Validation and Qualification",
+        "timestamp": "2025-12-06T08:05:23.780Z",
+        "passed": [],
+        "failed": [
+          "缺少验证文档或文档不完整",
+          "缺少系统测试结果文档"
+        ],
+        "warnings": [
+          "用户验收测试状态未知"
+        ],
+        "score": 0
+      },
+      "11.30": {
+        "section": "11.30 - System Access Controls",
+        "timestamp": "2025-12-06T08:05:23.780Z",
+        "passed": [
+          "会话管理已正确配置",
+          "密码策略已正确配置",
+          "登录失败限制已设置"
+        ],
+        "failed": [
+          "缺少用户身份验证机制",
+          "缺少基于角色的访问控制"
+        ],
+        "warnings": [],
+        "score": 60
+      },
+      "11.50": {
+        "section": "11.50 - Audit Trail",
+        "timestamp": "2025-12-06T08:05:23.780Z",
+        "passed": [
+          "审计日志具备不可修改性",
+          "时间戳准确性验证通过",
+          "用户标识要求已满足"
+        ],
+        "failed": [
+          "缺少用户操作追踪机制",
+          "缺少数据变更追踪机制",
+          "缺少系统事件追踪机制"
+        ],
+        "warnings": [],
+        "score": 50
+      },
+      "11.70": {
+        "section": "11.70 - Alternative Procedures",
+        "timestamp": "2025-12-06T08:05:23.780Z",
+        "passed": [
+          "书面批准程序已建立",
+          "替代程序文档化完整",
+          "时间限制要求已设置"
+        ],
+        "failed": [],
+        "warnings": [],
+        "score": 100
+      },
+      "11.100": {
+        "section": "11.100 - Electronic Signatures",
+        "timestamp": "2025-12-06T08:05:23.780Z",
+        "passed": [
+          "唯一用户标识已实施",
+          "密码确认要求已实施"
+        ],
+        "failed": [],
+        "warnings": [
+          "两因子认证未启用（可选）",
+          "生物识别数据验证未启用（可选）"
+        ],
+        "score": 50
+      },
+      "11.200": {
+        "section": "11.200 - Electronic Signature Components and Controls",
+        "timestamp": "2025-12-06T08:05:23.780Z",
+        "passed": [
+          "签名含义定义完整",
+          "打印姓名要求已满足",
+          "日期时间要求已满足",
+          "签名含义声明已实施"
+        ],
+        "failed": [],
+        "warnings": [],
+        "score": 100
+      }
+    },
+    "overallScore": 60,
+    "complianceStatus": "PARTIALLY_COMPLIANT",
+    "totalIssues": 7,
+    "criticalIssues": 7,
+    "warnings": 3,
+    "endTime": 1765008323780,
+    "duration": 0
+  }
+}

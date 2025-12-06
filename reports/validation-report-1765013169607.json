@@ -1,0 +1,83 @@
+{
+  "timestamp": "2025-12-06T09:26:09.598Z",
+  "validation_id": "30662fce-d750-454a-8d48-0fa95e638889",
+  "overall_status": "PASSED",
+  "pass_rate": "100.00%",
+  "execution_time": "0ms",
+  "total_modules": 1,
+  "passed_modules": 1,
+  "failed_modules": 0,
+  "auto_fixed_modules": 0,
+  "warning_modules": 0,
+  "validation_modules": {
+    "system_health": {
+      "status": "PASSED",
+      "details": {
+        "checks": [
+          {
+            "type": "memory_usage",
+            "value": 4.779457092285156,
+            "status": "passed"
+          },
+          {
+            "type": "disk_space",
+            "free": 1073741824,
+            "total": 10737418240,
+            "status": "passed"
+          },
+          {
+            "type": "service_status",
+            "service": "database",
+            "status": "passed"
+          },
+          {
+            "type": "service_status",
+            "service": "cache",
+            "status": "passed"
+          },
+          {
+            "type": "service_status",
+            "service": "monitoring",
+            "status": "passed"
+          }
+        ],
+        "errors": [],
+        "warnings": []
+      },
+      "error": null,
+      "executionTime": 0,
+      "timestamp": "2025-12-06T09:26:09.597Z"
+    }
+  },
+  "auto_fixes_applied": [],
+  "recommendations": [],
+  "next_steps": [
+    "定期执行综合验证以确保持续合规",
+    "监控关键指标并设置告警",
+    "更新验证配置以适应系统变化"
+  ],
+  "system_info": {
+    "node_version": "v18.19.0",
+    "platform": "linux",
+    "arch": "x64",
+    "memory_usage": {
+      "rss": 51503104,
+      "heapTotal": 8155136,
+      "heapUsed": 5027768,
+      "external": 1750135,
+      "arrayBuffers": 73767
+    },
+    "cpu_usage": {
+      "user": 70351,
+      "system": 12968
+    },
+    "uptime": 0.080163938,
+    "timestamp": "2025-12-06T09:26:09.598Z"
+  },
+  "compliance_status": {
+    "cfr21_part11": false,
+    "permission_system": false,
+    "audit_trail": false,
+    "overall_compliant": false
+  }
+}

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript错误修复验证</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .error { color: red; }
+        .success { color: green; }
+        .warning { color: orange; }
+        #console-output {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 JavaScript错误修复验证</h1>
+    
+    <div class="test-container">
+        <h2>测试结果</h2>
+        <div id="test-results">
+            <p>正在运行测试...</p>
+        </div>
+        
+        <div id="console-output">
+            <h3>控制台输出:</h3>
+            <div id="console-log"></div>
+        </div>
+    </div>
+
+    <!-- 加载实际模块 -->
+    <script src="renderer/assets/js/utils.js"></script>
+    <script src="renderer/assets/js/auth.js"></script>
+    <script src="renderer/assets/js/ui.js"></script>
+    <script src="renderer/assets/js/serial.js"></script>
+    <script src="renderer/assets/js/system-settings.js"></script>
+    <script src="renderer/assets/js/chart.js"></script>
+    <script src="renderer/assets/js/accessibility.js"></script>
+
+    <script>
+        // 重写console.log来捕获输出
+        const originalLog = console.log;
+        const originalError = console.error;
+        const consoleOutput = document.getElementById('console-log');
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            const div = document.createElement('div');
+            div.textContent = args.join(' ');
+            consoleOutput.appendChild(div);
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            const div = document.createElement('div');
+            div.textContent = 'ERROR: ' + args.join(' ');
+            div.className = 'error';
+            consoleOutput.appendChild(div);
+        };
+
+        const testResults = document.getElementById('test-results');
+        
+        function runTests() {
+            let testsPassed = 0;
+            let totalTests = 0;
+            
+            function addTestResult(name, passed, message = '') {
+                totalTests++;
+                if (passed) testsPassed++;
+                
+                const result = document.createElement('div');
+                result.className = passed ? 'success' : 'error';
+                result.innerHTML = `${passed ? '✅' : '❌'} ${name}${message ? ': ' + message : ''}`;
+                testResults.appendChild(result);
+            }
+            
+            try {
+                // 测试1: 检查UI模块是否存在
+                console.log('测试1: 检查UI模块...');
+                addTestResult('UI模块存在', typeof window.UI !== 'undefined', window.UI ? '已定义' : '未定义');
+                
+                // 测试2: 检查UI模块是否有setupAccessibilitySupport方法
+                console.log('测试2: 检查UI.setupAccessibilitySupport方法...');
+                addTestResult('UI.setupAccessibilitySupport方法', 
+                    window.UI && typeof window.UI.setupAccessibilitySupport === 'function', 
+                    'setupAccessibilitySupport方法检查');
+                
+                // 测试3: 检查ChartModule是否存在
+                console.log('测试3: 检查ChartModule...');
+                addTestResult('ChartModule存在', typeof window.ChartModule !== 'undefined', 'ChartModule检查');
+                
+                // 测试4: 检查serial模块是否存在
+                console.log('测试4: 检查SerialModule...');
+                addTestResult('SerialModule存在', typeof window.SerialModule !== 'undefined', 'SerialModule检查');
+                
+                // 测试5: 检查系统设置模块
+                console.log('测试5: 检查SystemSettingsManager...');
+                addTestResult('SystemSettingsManager存在', typeof window.systemSettingsManager !== 'undefined', '系统设置管理器检查');
+                
+                // 测试6: 尝试初始化UI模块
+                console.log('测试6: 尝试初始化UI模块...');
+                try {
+                    if (window.UI && window.UI.init) {
+                        window.UI.init();
+                        addTestResult('UI模块初始化', true, '初始化成功');
+                    } else {
+                        addTestResult('UI模块初始化', false, 'init方法不存在');
+                    }
+                } catch (error) {
+                    addTestResult('UI模块初始化', false, '初始化失败: ' + error.message);
+                }
+                
+            } catch (error) {
+                console.error('测试运行异常:', error);
+                addTestResult('测试执行', false, '测试运行失败');
+            }
+            
+            // 显示最终结果
+            const finalResult = document.createElement('div');
+            finalResult.innerHTML = `<h3>测试总结: ${testsPassed}/${totalTests} 通过 (${Math.round(testsPassed/totalTests*100)}%)</h3>`;
+            testResults.appendChild(finalResult);
+            
+            if (testsPassed === totalTests) {
+                finalResult.className = 'success';
+                console.log('🎉 所有测试通过！');
+            } else {
+                finalResult.className = 'warning';
+                console.log('⚠️ 部分测试失败，需要进一步修复');
+            }
+        }
+        
+        // 页面加载后运行测试
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('开始运行JavaScript错误修复验证测试...');
+            setTimeout(runTests, 1000); // 延迟1秒确保其他脚本加载完成
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,454 @@
+/* 图表专用样式 */
+
+/* 主图表容器 */
+.chart-wrapper {
+    position: relative;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Chart.js 画布样式 */
+#main-chart {
+    position: relative;
+    z-index: 1;
+}
+
+/* 图表标记样式（参考用户图片） */
+.chart-markers {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.chart-marker {
+    position: absolute;
+    height: 100%;
+    cursor: pointer;
+    pointer-events: all;
+    transition: all 0.2s ease;
+}
+
+.chart-marker:hover {
+    transform: scaleX(1.5);
+}
+
+.chart-marker::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 2px;
+    height: 100%;
+    background: #007bff;
+    transform: translateX(-50%);
+    transition: background 0.2s ease;
+}
+
+.chart-marker:hover::before {
+    background: #0056b3;
+    width: 3px;
+}
+
+/* 峰标记样式 */
+.chart-marker.peak::before {
+    background: #dc3545;
+    width: 3px;
+}
+
+.chart-marker.peak:hover::before {
+    background: #c82333;
+}
+
+/* 背景区域标记 */
+.chart-marker.background::before {
+    background: #17a2b8;
+}
+
+/* 标记标签 */
+.marker-label {
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+    z-index: 15;
+}
+
+.chart-marker:hover .marker-label {
+    opacity: 1;
+}
+
+/* 峰编号标签 */
+.chart-marker.peak .marker-label {
+    background: #dc3545;
+    font-size: 12px;
+    padding: 6px 10px;
+    top: -35px;
+}
+
+.chart-marker.peak .marker-label::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #dc3545;
+}
+
+/* 积分区域高亮 */
+.integration-region {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    background: rgba(102, 126, 234, 0.1);
+    border: 2px solid rgba(102, 126, 234, 0.5);
+    border-radius: 4px;
+    pointer-events: none;
+    z-index: 5;
+}
+
+/* 面积图样式（类似参考图片） */
+.area-chart-background {
+    fill: rgba(135, 206, 235, 0.3);
+    stroke: rgba(135, 206, 235, 0.8);
+    stroke-width: 2;
+}
+
+.area-chart-peak {
+    fill: rgba(255, 182, 193, 0.6);
+    stroke: rgba(255, 182, 193, 0.9);
+    stroke-width: 2;
+}
+
+/* 坐标轴样式 */
+.chart-axis {
+    stroke: #666;
+    stroke-width: 1;
+}
+
+.chart-axis-label {
+    font-size: 12px;
+    fill: #666;
+    font-weight: 600;
+}
+
+.chart-grid-line {
+    stroke: #e9ecef;
+    stroke-width: 1;
+    stroke-dasharray: 2,2;
+}
+
+/* 数据点样式 */
+.chart-data-point {
+    fill: #667eea;
+    stroke: white;
+    stroke-width: 2;
+    r: 4;
+    transition: all 0.2s ease;
+}
+
+.chart-data-point:hover {
+    r: 6;
+    fill: #5a6fd8;
+}
+
+/* 峰值点 */
+.chart-peak-point {
+    fill: #dc3545;
+    stroke: white;
+    stroke-width: 2;
+    r: 6;
+}
+
+/* 图表图例 */
+.chart-legend {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 10px 0;
+    background: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #666;
+}
+
+.legend-color {
+    width: 16px;
+    height: 8px;
+    border-radius: 2px;
+}
+
+.legend-color.counts {
+    background: #667eea;
+}
+
+.legend-color.background {
+    background: rgba(135, 206, 235, 0.6);
+}
+
+.legend-color.peak {
+    background: rgba(255, 182, 193, 0.6);
+    border: 1px solid rgba(255, 182, 193, 0.9);
+}
+
+/* 缩放控制 */
+.chart-zoom-controls {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    z-index: 20;
+}
+
+.zoom-btn {
+    width: 30px;
+    height: 30px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    color: #666;
+    transition: all 0.2s ease;
+}
+
+.zoom-btn:hover {
+    background: white;
+    border-color: #667eea;
+    color: #667eea;
+}
+
+/* 工具提示 */
+.chart-tooltip {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    pointer-events: none;
+    z-index: 30;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.chart-tooltip.show {
+    opacity: 1;
+}
+
+.tooltip-title {
+    font-weight: bold;
+    margin-bottom: 4px;
+    color: #667eea;
+}
+
+.tooltip-content {
+    line-height: 1.4;
+}
+
+/* 数据表格叠加层 */
+.chart-data-table {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 11px;
+    max-width: 200px;
+    z-index: 25;
+    backdrop-filter: blur(5px);
+}
+
+.data-table-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 3px;
+}
+
+.data-table-row:last-child {
+    margin-bottom: 0;
+}
+
+.data-table-label {
+    color: #666;
+    margin-right: 10px;
+}
+
+.data-table-value {
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+/* 分析控制面板 */
+.analysis-controls {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    width: 200px;
+    z-index: 20;
+    backdrop-filter: blur(5px);
+}
+
+.analysis-controls h4 {
+    margin: 0 0 10px 0;
+    color: #2c3e50;
+    font-size: 14px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+.analysis-control {
+    margin-bottom: 10px;
+}
+
+.analysis-control:last-child {
+    margin-bottom: 0;
+}
+
+.analysis-control label {
+    display: block;
+    margin-bottom: 3px;
+    font-size: 12px;
+    color: #666;
+    font-weight: 600;
+}
+
+.analysis-control input {
+    width: 100%;
+    padding: 4px 8px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+.analysis-btn {
+    width: 100%;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 5px;
+    transition: all 0.2s ease;
+}
+
+.analysis-btn:last-child {
+    margin-bottom: 0;
+}
+
+.analysis-btn.analyze {
+    background: #667eea;
+    color: white;
+}
+
+.analysis-btn.analyze:hover {
+    background: #5a6fd8;
+}
+
+.analysis-btn.reset {
+    background: #6c757d;
+    color: white;
+}
+
+.analysis-btn.reset:hover {
+    background: #5a6268;
+}
+
+.analysis-btn.export {
+    background: #28a745;
+    color: white;
+}
+
+.analysis-btn.export:hover {
+    background: #218838;
+}
+
+/* 图表动画 */
+@keyframes chartFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.chart-wrapper {
+    animation: chartFadeIn 0.5s ease-out;
+}
+
+@keyframes dataPointAppear {
+    from {
+        transform: scale(0);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
+.chart-data-point,
+.chart-peak-point {
+    animation: dataPointAppear 0.3s ease-out;
+}
+
+/* 打印样式 */
+@media print {
+    .chart-controls,
+    .chart-zoom-controls,
+    .analysis-controls,
+    .marker-label,
+    .chart-tooltip,
+    .chart-data-table {
+        display: none !important;
+    }
+    
+    .chart-wrapper {
+        box-shadow: none;
+        border: 1px solid #000;
+    }
+    
+    .chart-marker::before {
+        background: #000 !important;
+    }
+}

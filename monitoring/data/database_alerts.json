@@ -1,0 +1,46 @@
+[
+  {
+    "id": "c56ee39c-2303-44b6-b7bb-082747213863",
+    "level": "WARNING",
+    "message": "测试警告",
+    "data": {
+      "test": true
+    },
+    "timestamp": "2025-12-06T08:15:18.120Z",
+    "acknowledged": true,
+    "acknowledgedAt": "2025-12-06T08:15:18.129Z"
+  },
+  {
+    "id": "dac37390-9281-4802-b4c4-1511c423dbf7",
+    "level": "INFO",
+    "message": "性能阈值已更新",
+    "data": {
+      "oldThresholds": {
+        "slowQueryTime": 500,
+        "maxConnections": 100,
+        "highResponseTime": 300,
+        "errorRateThreshold": 3,
+        "maxQPS": 1000
+      },
+      "newThresholds": {
+        "slowQueryTime": 500,
+        "highResponseTime": 300,
+        "errorRateThreshold": 3
+      }
+    },
+    "timestamp": "2025-12-06T08:15:18.109Z",
+    "acknowledged": false
+  },
+  {
+    "id": "2289dcf9-54e7-45cd-8c7a-af3fb8338687",
+    "level": "WARNING",
+    "message": "高响应时间: slowQuery",
+    "data": {
+      "operationId": "READ:users:slowQuery",
+      "responseTime": 1200,
+      "threshold": 500
+    },
+    "timestamp": "2025-12-06T08:15:18.098Z",
+    "acknowledged": false
+  }
+]

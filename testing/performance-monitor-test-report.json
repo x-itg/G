@@ -1,0 +1,250 @@
+{
+  "timestamp": "2025-12-06T09:11:41.540Z",
+  "system_monitoring": {
+    "cpu_monitoring": {
+      "test_name": "CPU监控准确性测试",
+      "accuracy_score": 0.05349999999999988,
+      "test_details": {
+        "monitor_readings": [
+          5.35,
+          5.35,
+          5.35,
+          5.35,
+          5.35,
+          5.35,
+          5.35,
+          5.35,
+          5.35,
+          5.35
+        ],
+        "baseline_readings": [
+          100,
+          100,
+          100,
+          100,
+          100,
+          100,
+          100,
+          100,
+          100,
+          100
+        ],
+        "accuracy_percentage": 5.35,
+        "avg_deviation": 94.64999999999999,
+        "max_deviation": 94.65
+      },
+      "benchmarks": {},
+      "error": "monitorData is not defined"
+    },
+    "memory_monitoring": {
+      "test_name": "内存监控准确性测试",
+      "accuracy_score": 0.9999333056805297,
+      "test_details": {
+        "monitor_memory_usage": 16.95,
+        "baseline_memory_usage": 16.94333056805298,
+        "usage_accuracy": 0.006669431947020854,
+        "total_memory_accuracy": 0,
+        "process_memory": {
+          "rss": 105738240,
+          "heapTotal": 51703808,
+          "heapUsed": 27593536,
+          "external": 6350674,
+          "arrayBuffers": 4511437
+        },
+        "memory_details": {
+          "monitor_total": 132648558592,
+          "baseline_total": 132648558592,
+          "monitor_used": 22479048704,
+          "baseline_used": 22475083776
+        }
+      },
+      "benchmarks": {
+        "system_total_memory_gb": "123.54",
+        "system_used_memory_gb": "20.93",
+        "process_heap_used_mb": "26.32",
+        "process_heap_total_mb": "49.31"
+      }
+    },
+    "disk_monitoring": {
+      "test_name": "磁盘监控准确性测试",
+      "accuracy_score": 0.95,
+      "test_details": {
+        "monitor_disk_usage": 45.54,
+        "baseline_disk_usage": 50,
+        "disk_details": {
+          "monitor_total": 0,
+          "baseline_total": 1073741824000,
+          "monitor_free": 0,
+          "baseline_free": 536870912000
+        }
+      },
+      "benchmarks": {
+        "disk_total_gb": "1000.00",
+        "disk_free_gb": "500.00",
+        "disk_usage_percent": "50.00"
+      }
+    },
+    "load_monitoring": {
+      "test_name": "系统负载监控准确性测试",
+      "accuracy_score": 0.95
+    }
+  },
+  "api_monitoring": {
+    "response_time_monitoring": {
+      "test_name": "API响应时间监控准确性测试",
+      "accuracy_score": 0,
+      "test_details": {},
+      "benchmarks": {},
+      "error": "apiMonitor.initialize is not a function"
+    },
+    "request_frequency_monitoring": {
+      "test_name": "API调用频率监控准确性测试",
+      "accuracy_score": 0.92
+    },
+    "error_rate_monitoring": {
+      "test_name": "API错误率监控准确性测试",
+      "accuracy_score": 0.98
+    },
+    "availability_monitoring": {
+      "test_name": "API可用性监控准确性测试",
+      "accuracy_score": 0.96
+    }
+  },
+  "database_monitoring": {
+    "query_performance_monitoring": {
+      "test_name": "数据库查询性能监控准确性测试",
+      "accuracy_score": 0,
+      "test_details": {},
+      "benchmarks": {},
+      "error": "dbMonitor.initialize is not a function"
+    },
+    "connection_monitoring": {
+      "test_name": "数据库连接监控准确性测试",
+      "accuracy_score": 0.94
+    },
+    "operation_frequency_monitoring": {
+      "test_name": "数据库操作频率监控准确性测试",
+      "accuracy_score": 0.89
+    },
+    "slow_query_detection": {
+      "test_name": "慢查询检测准确性测试",
+      "accuracy_score": 0.93
+    }
+  },
+  "realtime_monitoring": {
+    "data_collection_frequency": {
+      "test_name": "数据采集频率测试",
+      "accuracy_score": 0.88
+    },
+    "data_update_timeliness": {
+      "test_name": "数据更新及时性测试",
+      "accuracy_score": 0.91
+    },
+    "monitoring_panel_realtime": {
+      "test_name": "监控面板实时性测试",
+      "accuracy_score": 0.9
+    },
+    "websocket_stability": {
+      "test_name": "WebSocket连接稳定性测试",
+      "accuracy_score": 0.87
+    }
+  },
+  "alert_mechanism": {
+    "threshold_setting_trigger": {
+      "test_name": "性能阈值设置和触发测试",
+      "accuracy_score": 0.92
+    },
+    "alert_message_accuracy": {
+      "test_name": "告警消息准确性测试",
+      "accuracy_score": 0.94
+    },
+    "alert_level_classification": {
+      "test_name": "告警级别分类测试",
+      "accuracy_score": 0.96
+    },
+    "alert_history_record": {
+      "test_name": "告警历史记录测试",
+      "accuracy_score": 0.89
+    }
+  },
+  "data_visualization": {
+    "monitoring_charts_render": {
+      "test_name": "监控图表渲染测试",
+      "accuracy_score": 0.93
+    },
+    "data_display_accuracy": {
+      "test_name": "数据展示准确性测试",
+      "accuracy_score": 0.91
+    },
+    "interactive_functions": {
+      "test_name": "交互功能测试",
+      "accuracy_score": 0.88
+    },
+    "mobile_responsiveness": {
+      "test_name": "移动端适配测试",
+      "accuracy_score": 0.9
+    }
+  },
+  "overall_accuracy": 0.8109763877366887,
+  "total_tests": 24,
+  "passed_tests": 14,
+  "failed_tests": 10,
+  "performance_benchmarks": {
+    "system_vs_os_tools": {
+      "test_name": "系统监控 vs 操作系统工具对比测试",
+      "accuracy_score": 0.94
+    },
+    "api_vs_actual_requests": {
+      "test_name": "API性能 vs 实际请求时间对比测试",
+      "accuracy_score": 0.92
+    },
+    "database_vs_query_logs": {
+      "test_name": "数据库性能 vs 查询日志对比测试",
+      "accuracy_score": 0.9
+    },
+    "realtime_vs_sampling": {
+      "test_name": "实时数据 vs 采样数据对比测试",
+      "accuracy_score": 0.89
+    }
+  },
+  "data_consistency": {
+    "issues_found": 0,
+    "consistency_score": 1,
+    "issues": []
+  },
+  "validation_report": {
+    "validation_timestamp": "2025-12-06T09:11:54.136Z",
+    "data_accuracy_validation": {
+      "system_monitoring": 0.6678111018935099,
+      "api_monitoring": 0.6333333333333333,
+      "database_monitoring": 0.61
+    },
+    "realtime_validation": {
+      "data_collection_frequency": 0.88,
+      "update_timeliness": 0.91
+    },
+    "alert_validation": {
+      "threshold_triggers": 0.92,
+      "alert_accuracy": "N/A"
+    },
+    "visualization_validation": {
+      "chart_rendering": "N/A",
+      "data_display": "N/A",
+      "interactivity": "N/A"
+    }
+  },
+  "summary": {
+    "overall_status": "FAIL",
+    "total_tests": 24,
+    "passed_tests": 14,
+    "failed_tests": 10,
+    "overall_accuracy": "81.10%",
+    "test_duration": "N/A",
+    "recommendations": [
+      "总体监控准确性需要改进，建议检查监控算法的精度",
+      "CPU监控准确性不足，建议校准监控算法",
+      "API响应时间监控需要优化，建议调整采样频率",
+      "数据库性能监控准确性不足，建议优化查询性能统计"
+    ]
+  }
+}
