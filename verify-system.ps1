@@ -1,6 +1,6 @@
 # 放射化学纯度检测仪系统验证脚本
 # System Verification Script for Radiation Purity Detector
-# Author: MiniMax Agent
+# Author: xitg
 # Version: 2.0.0
 # Date: 2025-12-06
 

@@ -463,4 +463,4 @@ COM3 (数据端口):
 
 **注意**: 本软件专为符合CFR 21 Part 11要求的放射检测应用而设计。在生产环境中使用前，请务必进行充分的验证和测试。
 
-[![Made with ❤️ by MiniMax Agent](https://img.shields.io/badge/Made%20with-%E2%9D%A4%EF%B8%8F%20by%20MiniMax%20Agent-blue.svg)](https://minimax.com)
+[![Made with ❤️ by xitg](https://img.shields.io/badge/Made%20with-%E2%9D%A4%EF%B8%8F%20by%20MiniMax%20Agent-blue.svg)](https://minimax.com)

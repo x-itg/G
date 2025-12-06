@@ -283,5 +283,5 @@ node test-better-sqlite3.js
 *本报告标志着辐射检测器项目成功从sqlite3迁移到better-sqlite3，预期将带来显著的性能提升和开发体验改善。*
 
 **报告生成时间**: 2025-12-05 00:16:26  
-**迁移负责人**: MiniMax Agent  
+**迁移负责人**: xitg  
 **报告版本**: v1.0

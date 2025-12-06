@@ -224,7 +224,7 @@ class RadiationDetectorApp {
                                 type: 'info',
                                 title: '关于',
                                 message: '放射检测仪 CFR 21 Part 11 合规系统',
-                                detail: '版本: 1.0.0\n\n符合CFR 21 Part 11要求的专业放射检测软件\n\n作者: MiniMax Agent\n许可证: UNLICENSED'
+                                detail: '版本: 1.0.0\n\n符合CFR 21 Part 11要求的专业放射检测软件\n\n作者: xitg\n许可证: UNLICENSED'
                             });
                         }
                     },

@@ -33,7 +33,7 @@
     "chromatography",
     "medical"
   ],
-  "author": "MiniMax Agent",
+  "author": "xitg",
   "license": "UNLICENSED",
   "devDependencies": {
     "@types/jest": "^29.5.8",

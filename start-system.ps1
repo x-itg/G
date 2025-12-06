@@ -1,6 +1,6 @@
 ﻿# 放射化学纯度检测仪系统启动脚本
 # System Startup Script for Radiation Purity Detector
-# Author: MiniMax Agent
+# Author: xitg
 # Version: 2.0.0
 # Date: 2025-12-06
 

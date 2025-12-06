@@ -100,5 +100,5 @@
 
 ---
 *修复完成时间: $(date)*
-*修复工具: MiniMax Agent*
+*修复工具: xitg*
 *修复文件数: 4个JavaScript模块*

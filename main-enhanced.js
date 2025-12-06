@@ -739,7 +739,7 @@ class EnhancedRadiationDetectorApp {
 • 用户权限管理
 • 数据完整性验证
 
-开发: MiniMax Agent
+开发: xitg
 许可证: UNLICENSED
 
 启动信息:
