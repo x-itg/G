@@ -25,7 +25,20 @@ class RadiationDetectorDemo {
     }
     
     initializeChart() {
-        const ctx = document.getElementById('main-chart').getContext('2d');
+        // 检查Chart.js是否加载
+        if (typeof Chart === 'undefined') {
+            console.warn('⚠️ Chart.js未加载，使用文本模式显示数据');
+            this.chart = null;
+            return;
+        }
+
+        const canvas = document.getElementById('main-chart');
+        if (!canvas) {
+            console.error('未找到图表画布元素');
+            return;
+        }
+
+        const ctx = canvas.getContext('2d');
         
         // 创建演示用的辐射分布曲线
         this.chart = new Chart(ctx, {
@@ -438,8 +451,10 @@ class RadiationDetectorDemo {
         document.querySelector('.progress-fill').style.width = '0%';
         
         // 重置图表
-        this.chart.data.datasets[0].data = this.generateDemoData();
-        this.chart.update();
+        if (this.chart) {
+            this.chart.data.datasets[0].data = this.generateDemoData();
+            this.chart.update();
+        }
         
         // 重置结果
         this.resetAnalysisResults();

@@ -18,6 +18,31 @@ const PORT = 3000;
 
 // 中间件
 app.use(express.json());
+
+// CSP中间件 - 只对HTML页面应用
+app.use((req, res, next) => {
+    // 只对HTML页面设置CSP
+    if (req.path === '/' || req.path.endsWith('.html')) {
+        res.setHeader(
+            'Content-Security-Policy',
+            "default-src 'self'; " +
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; " +
+            "script-src-elem 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; " +
+            "script-src-attr 'unsafe-inline'; " +
+            "style-src 'self' 'unsafe-inline'; " +
+            "img-src 'self' data: blob:; " +
+            "connect-src 'self' http://localhost:* ws://localhost:*; " +
+            "font-src 'self';"
+        );
+    }
+    next();
+});
+
+// 根路径重定向到主页面
+app.get('/', (req, res) => {
+    res.redirect('/renderer/index.html');
+});
+
 app.use(express.static(__dirname));
 
 // 数据库初始化
@@ -1672,13 +1697,13 @@ app.get('/api/audit', (req, res) => {
 
 // 获取设备状态
 app.get('/api/devices', (req, res) => {
-        try {
-            const rows = db.db.all('SELECT * FROM devices', []);
-            res.json({ success: true, data: rows });
-        } catch (error) {
-            console.error('获取设备列表失败:', error);
-            res.status(500).json({ success: false, message: '数据库错误' });
-        }
+    try {
+        const rows = db.db.prepare('SELECT * FROM devices').all();
+        res.json({ success: true, data: rows || [] });
+    } catch (error) {
+        console.error('获取设备列表失败:', error);
+        res.status(500).json({ success: false, message: '数据库错误', error: error.message });
+    }
 });
 
 // 添加设备
@@ -2147,8 +2172,43 @@ app.delete('/api/validation/history', (req, res) => {
 // 获取系统设置
 app.get('/api/settings', async (req, res) => {
     try {
-        const result = await systemSettingsService.getSystemSettings();
-        res.json(result);
+        // 如果systemSettingsService存在，使用它
+        if (typeof systemSettingsService !== 'undefined' && systemSettingsService.getSystemSettings) {
+            const result = await systemSettingsService.getSystemSettings();
+            res.json(result);
+        } else {
+            // 返回默认设置
+            res.json({
+                success: true,
+                data: {
+                    system: {
+                        language: 'zh-CN',
+                        timezone: 'Asia/Shanghai',
+                        dateFormat: 'YYYY-MM-DD HH:mm:ss',
+                        autoSave: true,
+                        saveInterval: 300000,
+                        debugMode: false,
+                        version: '1.0.0',
+                        buildNumber: '2025.01.001'
+                    },
+                    display: {
+                        theme: 'light',
+                        chartTheme: 'modern',
+                        updateInterval: 100
+                    },
+                    export: {
+                        defaultFormat: 'csv',
+                        includeMetadata: true,
+                        signatureRequired: true
+                    },
+                    security: {
+                        sessionTimeout: 3600000,
+                        maxLoginAttempts: 5,
+                        lockoutDuration: 300000
+                    }
+                }
+            });
+        }
     } catch (error) {
         console.error('获取系统设置失败:', error);
         res.status(500).json({
@@ -2228,12 +2288,30 @@ app.post('/api/settings/reset', async (req, res) => {
 // 获取硬件配置
 app.get('/api/settings/hardware', async (req, res) => {
     try {
-        const result = await systemSettingsService.getHardwareConfig();
-        
-        if (result.success) {
-            res.json(result);
+        // 如果systemSettingsService存在，使用它
+        if (typeof systemSettingsService !== 'undefined' && systemSettingsService.getHardwareConfig) {
+            const result = await systemSettingsService.getHardwareConfig();
+            if (result.success) {
+                res.json(result);
+            } else {
+                res.status(400).json(result);
+            }
         } else {
-            res.status(400).json(result);
+            // 返回默认硬件配置
+            res.json({
+                success: true,
+                data: {
+                    mode: 'simulated',
+                    device: {
+                        type: 'NaI',
+                        name: '模拟探测器',
+                        port: 'SIM0',
+                        baudRate: 9600
+                    },
+                    connected: false,
+                    acquiring: false
+                }
+            });
         }
     } catch (error) {
         console.error('获取硬件配置失败:', error);
@@ -2325,8 +2403,28 @@ app.post('/api/hardware/mode', async (req, res) => {
 app.get('/api/settings/preferences', async (req, res) => {
     try {
         const { userId = 'default' } = req.query;
-        const result = await systemSettingsService.getUserPreferences(userId);
-        res.json(result);
+        // 如果systemSettingsService存在，使用它
+        if (typeof systemSettingsService !== 'undefined' && systemSettingsService.getUserPreferences) {
+            const result = await systemSettingsService.getUserPreferences(userId);
+            res.json(result);
+        } else {
+            // 返回默认用户偏好
+            res.json({
+                success: true,
+                data: {
+                    display: {
+                        theme: 'light',
+                        chartPoints: 1000,
+                        gridLines: true,
+                        legend: true,
+                        notifications: {
+                            enabled: true,
+                            sound: true
+                        }
+                    }
+                }
+            });
+        }
     } catch (error) {
         console.error('获取用户偏好失败:', error);
         res.status(500).json({
@@ -2458,8 +2556,26 @@ app.post('/api/hardware/initialize', async (req, res) => {
 // 获取硬件状态
 app.get('/api/hardware/status', async (req, res) => {
     try {
-        const result = hardwareCommunicationService.getHardwareStatus();
-        res.json(result);
+        // 如果hardwareCommunicationService存在，使用它
+        if (typeof hardwareCommunicationService !== 'undefined' && hardwareCommunicationService.getHardwareStatus) {
+            const result = hardwareCommunicationService.getHardwareStatus();
+            res.json(result);
+        } else {
+            // 返回默认硬件状态
+            res.json({
+                success: true,
+                data: {
+                    connected: false,
+                    acquiring: false,
+                    device: {
+                        name: '模拟探测器',
+                        type: 'NaI',
+                        port: 'SIM0'
+                    },
+                    mode: 'simulated'
+                }
+            });
+        }
     } catch (error) {
         console.error('获取硬件状态失败:', error);
         res.status(500).json({
@@ -3594,6 +3710,11 @@ app.listen(PORT, () => {
     console.log('  CFR 21 Part 11 合规');
     console.log('===================================================');
     console.log(`✅ 服务器运行在: http://localhost:${PORT}`);
+    console.log('');
+    console.log('🌐 访问地址:');
+    console.log(`   主页面: http://localhost:${PORT}/renderer/index.html`);
+    console.log(`   验证页面: http://localhost:${PORT}/public/system-verification.html`);
+    console.log(`   注册演示: http://localhost:${PORT}/registration-demo.html`);
     console.log('');
     console.log('📋 功能说明:');
     console.log('   - 用户认证 (默认: admin / Admin123!)');

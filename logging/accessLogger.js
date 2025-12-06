@@ -36,36 +36,13 @@ class AccessLogger {
      */
     async setupDatabase() {
         try {
-            await this.dbManager.createTable('access_logs', {
-                id: 'TEXT PRIMARY KEY',
-                timestamp: 'TEXT NOT NULL',
-                method: 'TEXT NOT NULL',
-                url: 'TEXT NOT NULL',
-                status_code: 'INTEGER NOT NULL',
-                response_time: 'INTEGER',
-                response_size: 'INTEGER',
-                user_id: 'TEXT',
-                username: 'TEXT',
-                ip_address: 'TEXT',
-                user_agent: 'TEXT',
-                referer: 'TEXT',
-                session_id: 'TEXT',
-                request_id: 'TEXT NOT NULL',
-                created_at: 'TEXT DEFAULT CURRENT_TIMESTAMP'
+            // SimplifiedDatabaseManager 会自动创建表文件（JSON文件），无需手动初始化
+            // 确保表文件存在
+            const tables = ['access_logs', 'access_statistics'];
+            tables.forEach(table => {
+                const logs = this.dbManager.getRecords(table);
+                // 调用getRecords会自动创建表文件如果不存在
             });
-
-            await this.dbManager.createTable('access_statistics', {
-                id: 'TEXT PRIMARY KEY',
-                date: 'TEXT NOT NULL',
-                endpoint: 'TEXT',
-                method: 'TEXT NOT NULL',
-                total_requests: 'INTEGER DEFAULT 0',
-                unique_users: 'INTEGER DEFAULT 0',
-                avg_response_time: 'REAL DEFAULT 0',
-                success_rate: 'REAL DEFAULT 0',
-                created_at: 'TEXT DEFAULT CURRENT_TIMESTAMP'
-            });
-
             console.log('访问日志数据库表设置完成');
         } catch (error) {
             console.error('访问日志数据库设置失败:', error);
@@ -134,8 +111,8 @@ class AccessLogger {
      */
     async logAccess(logData) {
         try {
-            // 保存到数据库
-            await this.dbManager.insert('access_logs', logData);
+            // 使用 addRecord 方法保存到数据库
+            await this.dbManager.addRecord('access_logs', logData);
             
             // 缓存到内存
             this.accessLogs.set(logData.id, logData);
@@ -403,29 +380,48 @@ class AccessLogger {
      */
     async getAccessStatistics({ startDate, endDate, period = 'day' }) {
         try {
-            let query = `
-                SELECT 
-                    DATE(timestamp) as date,
-                    method,
-                    url,
-                    COUNT(*) as total_requests,
-                    AVG(response_time) as avg_response_time,
-                    AVG(response_size) as avg_response_size,
-                    COUNT(DISTINCT user_id) as unique_users,
-                    COUNT(CASE WHEN status_code >= 400 THEN 1 END) as error_count,
-                    COUNT(CASE WHEN status_code < 400 THEN 1 END) as success_count
-                FROM access_logs 
-                WHERE timestamp BETWEEN ? AND ?
-            `;
+            const logs = this.dbManager.getRecords('access_logs');
+            const endDateTime = endDate + 'T23:59:59';
             
-            const params = [startDate, endDate + 'T23:59:59'];
+            // 过滤日期范围
+            const filtered = logs.filter(log => 
+                log.timestamp >= startDate && log.timestamp <= endDateTime
+            );
             
-            const result = await this.dbManager.executeQuery(query, params);
+            // 按日期分组统计
+            const statsByDate = {};
+            filtered.forEach(log => {
+                const date = log.timestamp.split('T')[0];
+                if (!statsByDate[date]) {
+                    statsByDate[date] = {
+                        date,
+                        total_requests: 0,
+                        response_times: [],
+                        response_sizes: [],
+                        unique_users: new Set(),
+                        error_count: 0,
+                        success_count: 0
+                    };
+                }
+                statsByDate[date].total_requests++;
+                statsByDate[date].response_times.push(log.response_time || 0);
+                statsByDate[date].response_sizes.push(log.response_size || 0);
+                if (log.user_id) statsByDate[date].unique_users.add(log.user_id);
+                if (log.status_code >= 400) statsByDate[date].error_count++;
+                else statsByDate[date].success_count++;
+            });
             
-            return result.map(row => ({
-                ...row,
-                success_rate: (row.success_count / row.total_requests) * 100,
-                error_rate: (row.error_count / row.total_requests) * 100
+            // 计算平均值
+            return Object.values(statsByDate).map(stat => ({
+                date: stat.date,
+                total_requests: stat.total_requests,
+                avg_response_time: stat.response_times.reduce((a, b) => a + b, 0) / stat.total_requests,
+                avg_response_size: stat.response_sizes.reduce((a, b) => a + b, 0) / stat.total_requests,
+                unique_users: stat.unique_users.size,
+                error_count: stat.error_count,
+                success_count: stat.success_count,
+                success_rate: (stat.success_count / stat.total_requests) * 100,
+                error_rate: (stat.error_count / stat.total_requests) * 100
             }));
         } catch (error) {
             console.error('获取访问统计失败:', error);
@@ -440,34 +436,50 @@ class AccessLogger {
         try {
             const startDate = this.getDateDaysAgo(period === 'hour' ? 1 : 7);
             const endDate = new Date().toISOString().split('T')[0];
+            const logs = this.dbManager.getRecords('access_logs');
             
-            const query = `
-                SELECT 
-                    url,
-                    COUNT(*) as visits,
-                    COUNT(DISTINCT user_id) as unique_visitors,
-                    AVG(response_time) as avg_response_time,
-                    COUNT(CASE WHEN status_code >= 400 THEN 1 END) as error_count,
-                    COUNT(CASE WHEN status_code < 400 THEN 1 END) as success_count
-                FROM access_logs 
-                WHERE timestamp BETWEEN ? AND ?
-                GROUP BY url
-                ORDER BY visits DESC
-                LIMIT ?
-            `;
+            // 过滤日期范围
+            const filtered = logs.filter(log => 
+                log.timestamp >= startDate && log.timestamp <= (endDate + 'T23:59:59')
+            );
             
-            const result = await this.dbManager.executeQuery(query, [
-                startDate, 
-                endDate + 'T23:59:59', 
-                limit
-            ]);
+            // 按URL分组统计
+            const statsByUrl = {};
+            filtered.forEach(log => {
+                if (!statsByUrl[log.url]) {
+                    statsByUrl[log.url] = {
+                        url: log.url,
+                        visits: 0,
+                        unique_visitors: new Set(),
+                        response_times: [],
+                        error_count: 0,
+                        success_count: 0
+                    };
+                }
+                statsByUrl[log.url].visits++;
+                if (log.user_id) statsByUrl[log.url].unique_visitors.add(log.user_id);
+                statsByUrl[log.url].response_times.push(log.response_time || 0);
+                if (log.status_code >= 400) statsByUrl[log.url].error_count++;
+                else statsByUrl[log.url].success_count++;
+            });
             
-            return result.map(row => ({
-                ...row,
-                success_rate: (row.success_count / row.visits) * 100,
-                error_rate: (row.error_count / row.visits) * 100,
-                popularity_score: row.visits * 0.7 + row.unique_visitors * 0.3
-            }));
+            // 转换并排序
+            const result = Object.values(statsByUrl)
+                .map(stat => ({
+                    url: stat.url,
+                    visits: stat.visits,
+                    unique_visitors: stat.unique_visitors.size,
+                    avg_response_time: stat.response_times.reduce((a, b) => a + b, 0) / stat.visits,
+                    error_count: stat.error_count,
+                    success_count: stat.success_count,
+                    success_rate: (stat.success_count / stat.visits) * 100,
+                    error_rate: (stat.error_count / stat.visits) * 100,
+                    popularity_score: stat.visits * 0.7 + stat.unique_visitors.size * 0.3
+                }))
+                .sort((a, b) => b.visits - a.visits)
+                .slice(0, limit);
+            
+            return result;
         } catch (error) {
             console.error('获取热门页面失败:', error);
             return [];
@@ -479,29 +491,50 @@ class AccessLogger {
      */
     async getUserStatistics(limit = 20) {
         try {
-            const query = `
-                SELECT 
-                    user_id,
-                    username,
-                    COUNT(*) as total_visits,
-                    AVG(response_time) as avg_response_time,
-                    MIN(timestamp) as first_visit,
-                    MAX(timestamp) as last_visit,
-                    COUNT(DISTINCT DATE(timestamp)) as active_days
-                FROM access_logs 
-                WHERE user_id IS NOT NULL
-                GROUP BY user_id, username
-                ORDER BY total_visits DESC
-                LIMIT ?
-            `;
+            const logs = this.dbManager.getRecords('access_logs');
             
-            const result = await this.dbManager.executeQuery(query, [limit]);
+            // 过滤有用户ID的记录
+            const filtered = logs.filter(log => log.user_id);
             
-            return result.map(row => ({
-                ...row,
-                days_since_first_visit: this.daysBetween(row.first_visit, new Date().toISOString()),
-                days_since_last_visit: this.daysBetween(row.last_visit, new Date().toISOString())
-            }));
+            // 按用户分组统计
+            const statsByUser = {};
+            filtered.forEach(log => {
+                if (!statsByUser[log.user_id]) {
+                    statsByUser[log.user_id] = {
+                        user_id: log.user_id,
+                        username: log.username,
+                        total_visits: 0,
+                        response_times: [],
+                        timestamps: [],
+                        dates: new Set()
+                    };
+                }
+                statsByUser[log.user_id].total_visits++;
+                statsByUser[log.user_id].response_times.push(log.response_time || 0);
+                statsByUser[log.user_id].timestamps.push(log.timestamp);
+                statsByUser[log.user_id].dates.add(log.timestamp.split('T')[0]);
+            });
+            
+            // 转换并排序
+            const result = Object.values(statsByUser)
+                .map(stat => {
+                    const timestamps = stat.timestamps.sort();
+                    return {
+                        user_id: stat.user_id,
+                        username: stat.username,
+                        total_visits: stat.total_visits,
+                        avg_response_time: stat.response_times.reduce((a, b) => a + b, 0) / stat.total_visits,
+                        first_visit: timestamps[0],
+                        last_visit: timestamps[timestamps.length - 1],
+                        active_days: stat.dates.size,
+                        days_since_first_visit: this.daysBetween(timestamps[0], new Date().toISOString()),
+                        days_since_last_visit: this.daysBetween(timestamps[timestamps.length - 1], new Date().toISOString())
+                    };
+                })
+                .sort((a, b) => b.total_visits - a.total_visits)
+                .slice(0, limit);
+            
+            return result;
         } catch (error) {
             console.error('获取用户统计失败:', error);
             return [];
@@ -515,53 +548,68 @@ class AccessLogger {
         try {
             const startDate = this.getDateDaysAgo(days);
             const endDate = new Date().toISOString().split('T')[0];
+            const logs = this.dbManager.getRecords('access_logs');
             
-            let query;
-            let orderBy;
+            // 过滤日期范围
+            const filtered = logs.filter(log => 
+                log.timestamp >= startDate && log.timestamp <= (endDate + 'T23:59:59')
+            );
             
-            if (metric === 'users') {
-                query = `
-                    SELECT 
-                        DATE(timestamp) as date,
-                        COUNT(DISTINCT user_id) as daily_users,
-                        COUNT(DISTINCT CASE WHEN user_id IS NOT NULL THEN user_id END) as authenticated_users,
-                        COUNT(DISTINCT CASE WHEN user_id IS NULL THEN ip_address END) as anonymous_users
-                    FROM access_logs 
-                    WHERE timestamp BETWEEN ? AND ?
-                    GROUP BY DATE(timestamp)
-                    ORDER BY date
-                `;
-            } else if (metric === 'response_time') {
-                query = `
-                    SELECT 
-                        DATE(timestamp) as date,
-                        AVG(response_time) as avg_response_time,
-                        MIN(response_time) as min_response_time,
-                        MAX(response_time) as max_response_time,
-                        COUNT(CASE WHEN response_time > 1000 THEN 1 END) as slow_requests
-                    FROM access_logs 
-                    WHERE timestamp BETWEEN ? AND ?
-                    GROUP BY DATE(timestamp)
-                    ORDER BY date
-                `;
-            } else {
-                query = `
-                    SELECT 
-                        DATE(timestamp) as date,
-                        COUNT(*) as total_requests,
-                        COUNT(CASE WHEN status_code >= 400 THEN 1 END) as error_requests,
-                        COUNT(CASE WHEN status_code < 400 THEN 1 END) as success_requests
-                    FROM access_logs 
-                    WHERE timestamp BETWEEN ? AND ?
-                    GROUP BY DATE(timestamp)
-                    ORDER BY date
-                `;
-            }
+            // 按日期分组
+            const statsByDate = {};
+            filtered.forEach(log => {
+                const date = log.timestamp.split('T')[0];
+                if (!statsByDate[date]) {
+                    statsByDate[date] = {
+                        date,
+                        users: new Set(),
+                        authenticated_users: new Set(),
+                        anonymous_ips: new Set(),
+                        response_times: [],
+                        total_requests: 0,
+                        error_requests: 0,
+                        success_requests: 0
+                    };
+                }
+                if (log.user_id) {
+                    statsByDate[date].users.add(log.user_id);
+                    statsByDate[date].authenticated_users.add(log.user_id);
+                } else {
+                    statsByDate[date].anonymous_ips.add(log.ip_address);
+                }
+                statsByDate[date].response_times.push(log.response_time || 0);
+                statsByDate[date].total_requests++;
+                if (log.status_code >= 400) statsByDate[date].error_requests++;
+                else statsByDate[date].success_requests++;
+            });
             
-            const result = await this.dbManager.executeQuery(query, [
-                startDate, 
-                endDate + 'T23:59:59'
-            ]);
+            // 根据metric返回不同结果
+            const result = Object.values(statsByDate).map(stat => {
+                if (metric === 'users') {
+                    return {
+                        date: stat.date,
+                        daily_users: stat.users.size,
+                        authenticated_users: stat.authenticated_users.size,
+                        anonymous_users: stat.anonymous_ips.size
+                    };
+                } else if (metric === 'response_time') {
+                    const times = stat.response_times;
+                    return {
+                        date: stat.date,
+                        avg_response_time: times.reduce((a, b) => a + b, 0) / times.length,
+                        min_response_time: Math.min(...times),
+                        max_response_time: Math.max(...times),
+                        slow_requests: times.filter(t => t > 1000).length
+                    };
+                } else {
+                    return {
+                        date: stat.date,
+                        total_requests: stat.total_requests,
+                        error_requests: stat.error_requests,
+                        success_requests: stat.success_requests
+                    };
+                }
+            }).sort((a, b) => a.date.localeCompare(b.date));
             
             return result;
         } catch (error) {
@@ -643,51 +691,30 @@ class AccessLogger {
      */
     async getAccessDetails({ page = 1, limit = 50, userId, startDate, endDate }) {
         try {
-            let whereConditions = [];
-            let params = [];
+            let logs = this.dbManager.getRecords('access_logs');
             
+            // 应用过滤条件
             if (userId) {
-                whereConditions.push('user_id = ?');
-                params.push(userId);
+                logs = logs.filter(log => log.user_id === userId);
             }
             
             if (startDate) {
-                whereConditions.push('timestamp >= ?');
-                params.push(startDate);
+                logs = logs.filter(log => log.timestamp >= startDate);
             }
             
             if (endDate) {
-                whereConditions.push('timestamp <= ?');
-                params.push(endDate + 'T23:59:59');
+                logs = logs.filter(log => log.timestamp <= (endDate + 'T23:59:59'));
             }
             
-            const whereClause = whereConditions.length > 0 ? 
-                'WHERE ' + whereConditions.join(' AND ') : '';
+            // 排序（最新的在前）
+            logs.sort((a, b) => b.timestamp.localeCompare(a.timestamp));
             
+            const total = logs.length;
             const offset = (page - 1) * limit;
-            params.push(limit, offset);
-            
-            // 获取总数
-            const countQuery = `
-                SELECT COUNT(*) as total 
-                FROM access_logs ${whereClause}
-            `;
-            const countResult = await this.dbManager.executeQuery(countQuery, params.slice(0, -2));
-            const total = countResult[0].total;
-            
-            // 获取分页数据
-            const dataQuery = `
-                SELECT *
-                FROM access_logs 
-                ${whereClause}
-                ORDER BY timestamp DESC
-                LIMIT ? OFFSET ?
-            `;
-            
-            const result = await this.dbManager.executeQuery(dataQuery, params);
+            const paginatedData = logs.slice(offset, offset + limit);
             
             return {
-                data: result,
+                data: paginatedData,
                 total,
                 page,
                 limit,
@@ -711,16 +738,19 @@ class AccessLogger {
     async cleanupOldLogs(daysToKeep) {
         try {
             const cutoffDate = this.getDateDaysAgo(daysToKeep);
+            let logs = this.dbManager.getRecords('access_logs');
             
-            const query = `
-                DELETE FROM access_logs 
-                WHERE timestamp < ?
-            `;
+            const beforeCount = logs.length;
+            // 保留cutoffDate之后的日志
+            logs = logs.filter(log => log.timestamp >= cutoffDate);
+            const afterCount = logs.length;
+            const deletedCount = beforeCount - afterCount;
             
-            const result = await this.dbManager.executeQuery(query, [cutoffDate]);
+            // 写回过滤后的数据
+            await this.dbManager.writeTable('access_logs', logs);
             
-            console.log(`清理了${daysToKeep}天前的访问日志`);
-            return result;
+            console.log(`清理了${daysToKeep}天前的访问日志，删除了${deletedCount}条记录`);
+            return { deletedCount, remainingCount: afterCount };
         } catch (error) {
             console.error('清理旧日志失败:', error);
             throw error;

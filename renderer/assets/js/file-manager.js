@@ -11,8 +11,8 @@ window.FileManager = {
             console.log('🔄 初始化文件管理模块...');
             
             this.setupEventListeners();
-            this.loadFileList();
-            this.loadAnalysisList();
+            // 只在需要时加载文件列表，避免启动时API错误
+            // this.loadFileList();
             
             console.log('✅ 文件管理模块初始化完成');
         } catch (error) {

@@ -702,7 +702,9 @@ window.DeviceManager = {
     
     // API请求辅助方法
     async apiRequest(url, options = {}) {
-        const sessionId = Auth?.getSessionId();
+        // 获取session ID
+        const sessionId = localStorage.getItem('sessionId') || 
+                         (Auth && typeof Auth.getSessionId === 'function' ? Auth.getSessionId() : null);
         const headers = {
             'Content-Type': 'application/json',
             ...options.headers

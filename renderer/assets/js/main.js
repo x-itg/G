@@ -145,13 +145,13 @@ window.MainApp = {
             { name: 'Utils', module: window.Utils, critical: true },
             { name: 'UI', module: window.UI, critical: true },
             { name: 'LoadingIndicator', module: window.LoadingIndicator, critical: true },
-            { name: 'FileManager', module: window.FileManager, critical: true },
-            { name: 'DeviceManager', module: window.DeviceManager, critical: true },
+            { name: 'FileManager', module: window.FileManager, critical: false },
+            { name: 'DeviceManager', module: window.DeviceManager, critical: false },
             { name: 'Auth', module: window.Auth, critical: true },
             { name: 'SerialModule', module: window.SerialModule, critical: true },
-            { name: 'ChartModule', module: window.ChartModule, critical: true },
+            { name: 'ChartModule', module: window.ChartModule, critical: false },
             { name: 'AnalysisModule', module: window.AnalysisModule, critical: true },
-            { name: 'SystemSettingsManager', module: window.systemSettingsManager, critical: true },
+            { name: 'SystemSettingsManager', module: window.systemSettingsManager, critical: false },
             { name: 'ProbeControl', module: window.ProbeControl, critical: false },
             { name: 'DataProcessing', module: window.DataProcessing, critical: false }
         ];
@@ -285,18 +285,22 @@ window.MainApp = {
 
     // 更新连接状态显示
     updateConnectionStatus() {
-        if (this.modules.SerialModule) {
-            const status = this.modules.SerialModule.getConnectionStatus();
-            const statusElement = document.getElementById('connection-status');
-            
-            if (statusElement) {
-                if (status.isConnected) {
-                    statusElement.textContent = '已连接';
-                    statusElement.className = 'connection-status connected';
-                } else {
-                    statusElement.textContent = '未连接';
-                    statusElement.className = 'connection-status disconnected';
+        if (this.modules.SerialModule && typeof this.modules.SerialModule.getConnectionStatus === 'function') {
+            try {
+                const status = this.modules.SerialModule.getConnectionStatus();
+                const statusElement = document.getElementById('connection-status');
+                
+                if (statusElement) {
+                    if (status && status.isConnected) {
+                        statusElement.textContent = '已连接';
+                        statusElement.className = 'connection-status connected';
+                    } else {
+                        statusElement.textContent = '未连接';
+                        statusElement.className = 'connection-status disconnected';
+                    }
                 }
+            } catch (error) {
+                console.warn('⚠️ 获取连接状态失败:', error);
             }
         }
     },

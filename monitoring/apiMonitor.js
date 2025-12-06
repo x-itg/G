@@ -101,7 +101,8 @@ class APIMonitor {
         // 添加请求信息到request对象
         req.requestId = requestId;
         req.startTime = startTime;
-        req.ip = req.ip || req.connection.remoteAddress || req.socket.remoteAddress;
+        // 修复: req.ip是只读属性，不能赋值
+        const clientIp = req.ip || req.connection?.remoteAddress || req.socket?.remoteAddress || 'unknown';
         req.userAgent = req.get('User-Agent') || '';
         req.referrer = req.get('Referrer') || '';
         
@@ -111,7 +112,7 @@ class APIMonitor {
             method: req.method,
             url: req.url,
             startTime: new Date(),
-            ip: req.ip,
+            ip: clientIp,
             userAgent: req.userAgent,
             status: 'active',
             userId: req.user?.id || null,

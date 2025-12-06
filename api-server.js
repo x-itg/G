@@ -97,7 +97,7 @@ app.use(helmet({
 
 // CORS配置
 app.use(cors({
-    origin: config.communication?.cors?.origin || 'http://localhost:3001',
+    origin: config.communication?.cors?.origin || 'http://localhost:3000',
     credentials: config.communication?.cors?.credentials || true,
     methods: config.communication?.cors?.methods || ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: config.communication?.cors?.allowedHeaders || ['Content-Type', 'Authorization']
@@ -893,10 +893,10 @@ process.on('SIGINT', gracefulShutdown);
 const server = app.listen(PORT, () => {
     console.log('🚀 放射检测仪API服务器启动成功!');
     console.log('='.repeat(70));
-    console.log(`📡 服务器地址: http://localhost:${PORT}`);
+    console.log(`📡 API服务器: http://localhost:${PORT}`);
     console.log(`🏥 健康检查: http://localhost:${PORT}/api/health`);
     console.log(`📊 系统状态: http://localhost:${PORT}/api/status`);
-    console.log(`🌐 前端地址: http://localhost:3001`);
+    console.log(`💡 注意: Web前端需要单独启动 web-server.js (端口3000)`);
     console.log(`🖥️ Electron应用: 桌面应用`);
     console.log('='.repeat(70));
     console.log('🔧 基础API端点:');

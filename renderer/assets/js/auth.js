@@ -47,9 +47,11 @@ window.Auth = {
         // 实时表单验证
         this.bindRealTimeValidation();
 
-        // 菜单事件监听
-        window.electronAPI.menu.onUserManagement(() => this.showUserManagement());
-        window.electronAPI.menu.onAuditLog(() => this.showAuditLog());
+        // 菜单事件监听 (仅在Electron环境)
+        if (window.electronAPI && window.electronAPI.menu) {
+            window.electronAPI.menu.onUserManagement(() => this.showUserManagement());
+            window.electronAPI.menu.onAuditLog(() => this.showAuditLog());
+        }
         
         // 绑定其他按钮事件
         this.bindAdditionalEvents();
@@ -2253,8 +2255,10 @@ window.Auth = {
             logContainer.scrollTop = 0;
         }
         
-        // 同时输出到控制台
-        console[level]('Auth:', message);
+        // 同时输出到控制台（确保level是有效的console方法）
+        const validLevels = ['log', 'info', 'warn', 'error', 'debug'];
+        const consoleLevel = validLevels.includes(level) ? level : 'log';
+        console[consoleLevel]('Auth:', message);
     },
 
     // 触发自定义事件

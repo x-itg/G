@@ -120,8 +120,6 @@ function Start-BackendService {
     Write-Log "启动后端服务..."
     
     try {
-        Set-Location $ProjectPath
-        
         # 检查后端服务脚本是否存在
         $backendScript = Join-Path $ProjectPath "api-server.js"
         if (!(Test-Path $backendScript)) {
@@ -129,18 +127,19 @@ function Start-BackendService {
         }
         
         # 启动后端服务 (后台运行)
-        $process = Start-Process -FilePath "node" -ArgumentList $backendScript -WorkingDirectory $ProjectPath -PassThru
+        $process = Start-Process -FilePath "node" -ArgumentList "api-server.js" -WorkingDirectory $ProjectPath -PassThru
         
         Write-Log "后端服务已启动，进程ID: $($process.Id)"
         
-        # 等待服务启动
-        Start-Sleep -Seconds 3
+        # 等待服务启动 - 给予足够时间初始化
+        Start-Sleep -Seconds 8
         
         # 检查服务是否正常运行
         $attempts = 0
-        while ($attempts -lt 10) {
+        $maxAttempts = 15
+        while ($attempts -lt $maxAttempts) {
             try {
-                $response = Invoke-WebRequest -Uri "http://localhost:3000/api/health" -TimeoutSec 5
+                $response = Invoke-WebRequest -Uri "http://localhost:3000/api/health" -TimeoutSec 5 -ErrorAction Stop
                 if ($response.StatusCode -eq 200) {
                     Write-Log "后端服务启动成功"
                     return $true
@@ -148,8 +147,27 @@ function Start-BackendService {
             }
             catch {
                 $attempts++
-                Write-Log "等待后端服务启动... ($attempts/10)"
-                Start-Sleep -Seconds 2
+                if ($attempts -lt $maxAttempts) {
+                    Write-Log "等待后端服务启动... ($attempts/$maxAttempts)"
+                    Start-Sleep -Seconds 2
+                }
+            }
+        }
+        
+        # 检查进程是否还在运行
+        if (Get-Process -Id $process.Id -ErrorAction SilentlyContinue) {
+            Write-Log "后端服务进程正在运行但健康检查失败，可能仍在初始化中" "WARN"
+            # 再等待一会儿
+            Start-Sleep -Seconds 5
+            try {
+                $response = Invoke-WebRequest -Uri "http://localhost:3000/api/health" -TimeoutSec 5 -ErrorAction Stop
+                if ($response.StatusCode -eq 200) {
+                    Write-Log "后端服务启动成功（延迟响应）"
+                    return $true
+                }
+            }
+            catch {
+                Write-Log "后端服务健康检查最终失败" "ERROR"
             }
         }
         
@@ -158,9 +176,6 @@ function Start-BackendService {
     catch {
         Write-Log "后端服务启动失败: $($_.Exception.Message)" "ERROR"
         return $false
-    }
-    finally {
-        Set-Location $ScriptPath
     }
 }
 
@@ -240,7 +255,7 @@ function Test-SystemHealth {
     
     # 检查前端页面
     try {
-        $response = Invoke-WebRequest -Uri "http://localhost:3001" -TimeoutSec 10
+        $response = Invoke-WebRequest -Uri "http://localhost:3000" -TimeoutSec 10
         if ($response.StatusCode -eq 200) {
             $results.Frontend = "正常"
             Write-Log "前端页面检查: 正常"
@@ -257,7 +272,7 @@ function Test-SystemHealth {
     
     # 检查验证页面
     try {
-        $response = Invoke-WebRequest -Uri "http://localhost:3001/system-verification.html" -TimeoutSec 10
+        $response = Invoke-WebRequest -Uri "http://localhost:3000/public/system-verification.html" -TimeoutSec 10
         if ($response.StatusCode -eq 200) {
             $results.Verification = "正常"
             Write-Log "验证页面检查: 正常"
@@ -280,7 +295,7 @@ function Open-Browser {
     Write-Log "打开浏览器访问系统..."
     
     try {
-        Start-Process "http://localhost:3001/system-verification.html"
+        Start-Process "http://localhost:3000/public/system-verification.html"
         Write-Log "浏览器已打开"
     }
     catch {
@@ -293,9 +308,9 @@ function Show-Usage {
     Write-Host ""
     Write-Host "=== 放射化学纯度检测仪系统启动完成 ===" -ForegroundColor Green
     Write-Host ""
-    Write-Host "🌐 系统访问地址:" -ForegroundColor Cyan
-    Write-Host "   主页面:     http://localhost:3001"
-    Write-Host "   验证页面:   http://localhost:3001/system-verification.html"
+    Write-Host "🌐 访问地址:" -ForegroundColor Cyan
+    Write-Host "   主页面:     http://localhost:3000"
+    Write-Host "   验证页面:   http://localhost:3000/public/system-verification.html"
     Write-Host "   API接口:    http://localhost:3000/api"
     Write-Host ""
     Write-Host "🔧 管理命令:" -ForegroundColor Cyan

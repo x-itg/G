@@ -60,6 +60,15 @@ window.ChartModule = {
 
     // 初始化图表
     init() {
+        // 检查Chart.js是否加载
+        if (typeof Chart === 'undefined') {
+            console.warn('⚠️ Chart.js未加载，图表功能将被禁用');
+            console.warn('这可能是由于CSP策略阻止了CDN脚本加载');
+            console.warn('图表模块初始化跳过，系统将以有限功能模式运行');
+            this.isInitialized = false;
+            return;
+        }
+
         this.canvas = document.getElementById('main-chart');
         if (!this.canvas) {
             ErrorHandler.handleError(new Error('找不到图表画布元素'), 'chart_canvas_not_found', {

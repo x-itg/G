@@ -58,11 +58,18 @@ class SystemSettingsManager {
             await this.loadHardwareStatus();
             
             this.isInitialized = true;
-            console.log('系统设置管理器初始化完成');
-            
+            console.log('✅ 系统设置管理器初始化完成');
         } catch (error) {
-            console.error('初始化系统设置管理器失败:', error);
+            console.error('❌ 系统设置管理器初始化失败:', error);
+            // 非关键模块，不抛出错误
         }
+    }
+
+    /**
+     * init方法别名，与main.js兼容
+     */
+    async init() {
+        return await this.initialize();
     }
 
     /**
